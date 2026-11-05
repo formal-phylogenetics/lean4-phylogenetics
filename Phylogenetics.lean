@@ -122,6 +122,8 @@ public import Phylogenetics.Tree.Metric
 public import Phylogenetics.Tree.NeighborJoining
 public import Phylogenetics.Tree.Splice
 public import Phylogenetics.Tree.Splits
+public import Phylogenetics.Tree.SplitsEquivalence
+public import Phylogenetics.Tree.XTree
 
 /-!
 # Phylogenetics

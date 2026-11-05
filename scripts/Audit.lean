@@ -127,6 +127,8 @@ import all Phylogenetics.Tree.Metric
 import all Phylogenetics.Tree.NeighborJoining
 import all Phylogenetics.Tree.Splice
 import all Phylogenetics.Tree.Splits
+import all Phylogenetics.Tree.SplitsEquivalence
+import all Phylogenetics.Tree.XTree
 
 /-!
 # Axiom audit of the library `Phylogenetics`

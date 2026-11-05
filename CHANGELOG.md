@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.1
+
+### New results
+
+- The Splits Equivalence Theorem (Semple, Steel 2003, Theorem 3.1.4), for `X`-trees as Mathlib graphs: a collection of
+  `X`-splits is the split system of an `X`-tree exactly when its splits are pairwise compatible
+  (`SplitsEquivalence.exists_xTree_iff`), and the `X`-tree is unique up to isomorphism (`SplitsEquivalence.xTree_unique`),
+  in `Phylogenetics/Tree/SplitsEquivalence.lean`, with what it uses on trees and laminar families in
+  `Phylogenetics/Tree/XTree.lean`.
+
 ## 0.3.0
 
 The library moves to Lean and Mathlib `v4.36.0-rc1`, and gains directed multigraphs, general rooted
