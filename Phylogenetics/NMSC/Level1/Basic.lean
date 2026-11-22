@@ -156,7 +156,7 @@ theorem single_vecMul_kingmanTransition_two {F : Finset (Finset L)} (hF : IsFore
     · rw [ite_eq_right (fun h => h2 (mem_singleton.1 h)), ite_eq_right h2]
       ring
   · have h2 : G ≠ insert (A ∪ B) F := by rintro rfl; omega
-    rw [hj, h22, ite_eq_right h2, Nat.sub_self, pow_zero, one_apply]
+    rw [hj, h22, ite_eq_right h2, Nat.sub_self, pow_zero, Matrix.one_apply]
     by_cases hGF : G = F
     · subst hGF
       simp

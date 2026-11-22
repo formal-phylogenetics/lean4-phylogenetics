@@ -1042,7 +1042,7 @@ theorem isTraceback_astralTrace (w : QuartetTree X → ℝ) (𝒞 : Finset (Fins
       exact .leaf x
     · have hsup := astralValue_of_card_ne_one w 𝒞 h1
       have hne : (astralSplits 𝒞 C).Nonempty := by
-        rw [nonempty_iff_ne_empty]
+        rw [ne_empty_iff_nonempty.symm]
         rintro he
         rw [he, sup_empty] at hsup
         exact hC hsup

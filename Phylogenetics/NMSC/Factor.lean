@@ -129,7 +129,7 @@ theorem frontier_top_eq_empty (hN : N.IsPhylogenetic) {inj : V → Finset (Finse
     (hF : Frontier N inj (belowSet N e) bot top) {f : E} (hft : N.graph.target f ∈ belowSet N e)
     (hfs : N.graph.source f ∉ belowSet N e) (hfe : f ≠ e) : top f = ∅ := by
   by_contra hne
-  obtain ⟨A, hA⟩ := nonempty_iff_ne_empty.2 hne
+  obtain ⟨A, hA⟩ := ne_empty_iff_nonempty.symm.2 hne
   obtain ⟨x, hx⟩ := (hF.good_top f hft).1.1 A hA
   obtain ⟨u, hu, hxu⟩ := hF.below f hft x (mem_lineages.2 ⟨A, hA, hx⟩)
   obtain ⟨B, hB, -⟩ := mem_lineages.1 hxu
@@ -408,7 +408,7 @@ theorem top_eq_empty_of_liftInj (hN : N.IsPhylogenetic) {inj : V → Finset (Fin
     top e = ∅ := by
   have hF := frontier_of_prod_ne_zero hN hl (downClosed_belowSet e) h
   by_contra hne
-  obtain ⟨A, hA⟩ := nonempty_iff_ne_empty.2 hne
+  obtain ⟨A, hA⟩ := ne_empty_iff_nonempty.symm.2 hne
   obtain ⟨x, hx⟩ := (hF.good_top e (target_mem_belowSet e)).1.1 A hA
   obtain ⟨u, hu, hxu⟩ := hF.below e (target_mem_belowSet e) x (mem_lineages.2 ⟨A, hA, hx⟩)
   rw [liftInj_of_mem hN (mem_belowSet.2 hu)] at hxu

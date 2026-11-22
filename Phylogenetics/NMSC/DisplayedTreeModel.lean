@@ -197,12 +197,12 @@ theorem isHierarchy_displayedClusters [Nonempty X] (hN : N.IsPhylogenetic) (c : 
   refine ⟨mem_displayedClusters.2 ⟨univ_nonempty.ne_empty, N.root, ?_⟩, fun x => ?_, fun A hA => ?_,
     fun A hA B hB => ?_⟩
   · exact eq_univ_of_forall fun x => mem_displayedCluster.2 (hdel.root_reachesOff hN _)
-  · refine mem_displayedClusters.2 ⟨singleton_ne_empty x, N.leaf x, ?_⟩
+  · refine mem_displayedClusters.2 ⟨(singleton_nonempty x).ne_empty, N.leaf x, ?_⟩
     ext y
     rw [mem_displayedCluster, mem_singleton]
     exact ⟨fun h => eq_of_leaf_reachesOff_leaf (D := N.deletedArcs c) hN h,
       fun h => h ▸ Relation.ReflTransGen.refl⟩
-  · exact nonempty_iff_ne_empty.2 (mem_displayedClusters.1 hA).1
+  · exact ne_empty_iff_nonempty.symm.2 (mem_displayedClusters.1 hA).1
   · obtain ⟨-, u, rfl⟩ := mem_displayedClusters.1 hA
     obtain ⟨-, v, rfl⟩ := mem_displayedClusters.1 hB
     by_cases hdis : Disjoint (N.displayedCluster c u) (N.displayedCluster c v)
@@ -249,7 +249,7 @@ theorem displays_displayedSides_of_separates (hN : N.IsPhylogenetic) (c : N.Pare
   obtain ⟨y, hy⟩ : (s.taxa \ P).Nonempty :=
     card_pos.1 (by rw [s.card_of_mem (s.sdiff_mem hP)]; omega)
   obtain ⟨hyq, hyP⟩ := mem_sdiff.1 hy
-  have hAne : A ≠ ∅ := nonempty_iff_ne_empty.1 ⟨a, mem_displayedCluster_of_dominates hN c (hd a ha)⟩
+  have hAne : A ≠ ∅ := ne_empty_iff_nonempty.symm.1 ⟨a, mem_displayedCluster_of_dominates hN c (hd a ha)⟩
   have hAu : A ≠ univ := fun h =>
     notMem_displayedCluster_of_not_isBelow (hn y hyq hyP) (h ▸ mem_univ y)
   refine ⟨A, mem_unroot.2 (Or.inl ⟨mem_displayedClusters.2 ⟨hAne, _, rfl⟩, hAu⟩), ?_⟩
@@ -1613,7 +1613,7 @@ theorem exists_isKeptArc_of_displays (hN : N.IsPhylogenetic) {c : N.ParentChoice
       exact hCu (eq_univ_of_forall fun x => mem_displayedCluster.2
         ((isDeletion_deletedArcs hN c).root_reachesOff hN _))
     have ht : N.graph.target (c ⟨u, hur⟩).val = u := (c ⟨u, hur⟩).property
-    obtain ⟨x₀, hx₀⟩ := nonempty_iff_ne_empty.2 hCe
+    obtain ⟨x₀, hx₀⟩ := ne_empty_iff_nonempty.symm.2 hCe
     refine ⟨P, hP, (c ⟨u, hur⟩).val, ⟨notMem_deletedArcs_choice c _, x₀, ?_⟩, fun x hx => ?_,
       fun x hxq hxP hr => ?_⟩
     · rw [ht]
@@ -2016,7 +2016,7 @@ theorem top_eq_empty_of_inj_empty (hN : N.IsPhylogenetic) {inj : V → Finset (F
     (hf : N.graph.target f ∈ D) : top f = ∅ := by
   have hF := frontier_of_prod_ne_zero hN hl hD h
   by_contra hne
-  obtain ⟨A, hA⟩ := nonempty_iff_ne_empty.2 hne
+  obtain ⟨A, hA⟩ := ne_empty_iff_nonempty.symm.2 hne
   obtain ⟨x, hx⟩ := (hF.good_top f hf).1.1 A hA
   obtain ⟨u, hu, hxu⟩ := hF.below f hf x (mem_lineages.2 ⟨A, hA, hx⟩)
   have key : ∀ w, N.graph.Reaches (N.graph.target f) w → w ∈ D := fun w hw => by

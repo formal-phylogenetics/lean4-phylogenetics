@@ -232,8 +232,8 @@ private theorem p8g_two_sources (hb : G.IsBinary) (hc : c.IsCycle) {h₁ h₂ : 
   obtain ⟨i₂, hi₂, hi₂', hsrc₂⟩ := hsource j k (by omega) le_rfl hparj₂ hparK
   refine ⟨d.getVert i₁, d.getVert i₂, fun h => ?_, d.getVert_mem_support _, hsrc₁,
     d.getVert_mem_support _, hsrc₂⟩
-  have := hdc.getVert_injOn' (by simp only [Set.mem_ofPred_eq]; omega)
-    (by simp only [Set.mem_ofPred_eq]; omega) h
+  have := hdc.getVert_injOn' (by simp only [Set.mem_Iio]; omega)
+    (by simp only [Set.mem_Iio]; omega) h
   omega
 
 /-- **In a level-1 network, every cycle contains exactly one hybrid node.** -/

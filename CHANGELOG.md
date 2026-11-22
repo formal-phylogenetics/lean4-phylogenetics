@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1
+
+The library moves to Lean and Mathlib `v4.37.0-rc1`. No declaration changed its name or its statement. The proofs
+follow Mathlib's changes: the renamed lemmas (`Finset.ne_empty_iff_nonempty`, `Finset.singleton_nonempty`,
+`Real.exp_natCast_mul`, `smul_apply`; `Finset.sup_eq_union` is now a syntactic equality), `Set.Iio` in
+`SimpleGraph.Walk.IsCycle.getVert_injOn'`, and the stricter elaboration of set notation.
+
 ## 0.4.0
 
 The library's areas import one another without a cycle, and `scripts/check_layers.py`, with the areas in

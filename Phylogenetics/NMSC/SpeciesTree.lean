@@ -263,7 +263,7 @@ theorem arrivingForest_congr {t t' : HierarchyArc H → Finset (Finset L)} (v : 
     (h : ∀ e ∈ arcsUnder H v.val, t e = t' e) :
     arrivingForest (sampleNetwork H hH s) t v = arrivingForest (sampleNetwork H hH s) t' v := by
   unfold arrivingForest
-  refine congrArg (_ ∪ ·) (biUnion_congr rfl fun e he => h e (mem_arcsUnder.2 ?_))
+  refine congrArg ((_ : Finset (Finset L)) ∪ ·) (biUnion_congr rfl fun e he => h e (mem_arcsUnder.2 ?_))
   simp only [mem_filter, mem_univ, true_and] at he
   have hsrc : (⟨parentCluster H e.val.val, hH.parentCluster_mem e.val.property e.2⟩ :
       HierarchyVertex H) = v := he
@@ -315,7 +315,7 @@ theorem sup_union_sampledForest (len : Finset X → ℝ) {A : Finset X} (hA : A 
       have := card_pos.2 hne
       omega)
     rw [union_comm]
-    refine congrArg (· ∪ _) ?_
+    refine congrArg (· ∪ (_ : Finset (Finset L))) ?_
     ext C
     rw [mem_leafForest]
     unfold sampledForest

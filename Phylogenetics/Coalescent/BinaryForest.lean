@@ -379,7 +379,7 @@ private theorem kingmanAbsorption_pos_of_lowerClosed {G : Finset (Finset L)} (hG
         Nat.sub_self, pow_zero, Matrix.one_apply_eq]
       exact one_pos
     · -- a smallest cluster of `G` not yet formed
-      obtain ⟨A, hA, hmin⟩ := exists_min_image (G \ F) card (nonempty_iff_ne_empty.2 hempty)
+      obtain ⟨A, hA, hmin⟩ := exists_min_image (G \ F) card (ne_empty_iff_nonempty.symm.2 hempty)
       obtain ⟨hAG, hAF⟩ := mem_sdiff.1 hA
       have hA2 : 2 ≤ #A := by
         by_contra hlt

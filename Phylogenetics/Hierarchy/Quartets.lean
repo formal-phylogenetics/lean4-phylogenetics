@@ -158,7 +158,7 @@ private theorem steel_distinguishing_of_mem_clusters (σ : SpeciesTree X) {A : F
       exact this (mem_univ b)
     · obtain ⟨b, hbP, hbA⟩ := exists_of_ssubset hAP
       obtain ⟨b', hb'⟩ : Pᶜ.Nonempty := by
-        rw [nonempty_iff_ne_empty, Ne, compl_eq_empty_iff]
+        rw [ne_empty_iff_nonempty.symm, Ne, compl_eq_empty_iff]
         exact hPu
       rw [mem_compl] at hb'
       refine ⟨b, mem_compl.2 hbA, b', mem_compl.2 (fun h => hb' (hAP.1 h)), ?_, ?_, ?_⟩

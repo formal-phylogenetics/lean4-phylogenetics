@@ -67,7 +67,7 @@ theorem IsUnrootedTree.nonempty_of_mem {T : Finset (Finset X)} (hT : IsUnrootedT
   obtain ⟨H, hH, rfl⟩ := hT
   rcases mem_unroot.1 hA with ⟨h, -⟩ | ⟨-, h⟩
   · exact hH.2.2.1 A h
-  · exact nonempty_iff_ne_empty.2 fun he => h ((compl_eq_univ_iff A).2 he)
+  · exact ne_empty_iff_nonempty.symm.2 fun he => h ((compl_eq_univ_iff A).2 he)
 
 theorem IsUnrootedTree.compl_mem {T : Finset (Finset X)} (hT : IsUnrootedTree T) {A : Finset X}
     (hA : A ∈ T) : Aᶜ ∈ T := by

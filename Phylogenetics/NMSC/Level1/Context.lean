@@ -483,7 +483,7 @@ theorem quartetCF_eq_sum_top {X : Type u} [DecidableEq X] (N : Net X) (hN : N.le
     obtain ⟨hGg, -, hGl, hroot⟩ := kingmanAbsorption_support_good hHg (right_ne_zero_of_mul hH)
     rw [hFu] at hHl
     have hHne : H.Nonempty := by
-      rw [nonempty_iff_ne_empty]
+      rw [ne_empty_iff_nonempty.symm]
       rintro rfl
       rw [lineages_empty] at hHl
       exact Finset.univ_nonempty.ne_empty hHl.symm

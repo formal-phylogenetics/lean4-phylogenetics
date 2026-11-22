@@ -1166,7 +1166,8 @@ theorem Side.law_toGraph (s : L → X) : (S : Side X) → S.IsMetric → ∀ (f 
     · have e : ((NodeVert.rest v : (Side.node ℓ b N (Side.node ℓ' b' N' S')).Vert) =
           NodeVert.rest l') ↔ v = l' :=
         ⟨fun h => NodeVert.rest.inj h, fun h => congrArg NodeVert.rest h⟩
-      exact congrArg₂ (· ∪ ·) rfl (if_congr e rfl rfl)
+      exact congrArg₂ (· ∪ · : Finset (Finset L) → Finset (Finset L) → Finset (Finset L)) rfl
+        (if_congr e rfl rfl)
     · rw [ite_eq_right (by simp), union_empty]
       rfl
     · rw [ite_eq_right (by simp)]

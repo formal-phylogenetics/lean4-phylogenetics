@@ -400,7 +400,7 @@ theorem model_aeval_deathPoly {k j : ℕ} (hj : 1 ≤ j) (hjk : j ≤ k) (b : Fi
     MvPolynomial.aeval (fun b => exp (-len b)) (model_deathPoly k j b) = deathProb k j (len b) := by
   rw [deathProb_eq_tavare k j hj hjk, model_deathPoly, map_sum]
   refine sum_congr rfl fun m _ => ?_
-  rw [map_mul, map_pow, MvPolynomial.aeval_C, MvPolynomial.aeval_X, ← Real.exp_nat_mul,
+  rw [map_mul, map_pow, MvPolynomial.aeval_C, MvPolynomial.aeval_X, ← Real.exp_natCast_mul,
     eq_ratCast, model_tavareQ_cast, mul_neg]
   exact mul_comm _ _
 

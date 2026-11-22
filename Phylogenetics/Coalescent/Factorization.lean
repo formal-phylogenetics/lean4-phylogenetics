@@ -585,7 +585,7 @@ private theorem fact_deathProb_of_closed {k j : ℕ} (a b c d : ℝ)
     funext m
     rw [h m]
     ring
-  rw [e, ← Real.exp_nat_mul, ← Real.exp_nat_mul]
+  rw [e, ← Real.exp_natCast_mul, ← Real.exp_natCast_mul]
   congr 1
   · congr 1
     · congr 1
@@ -670,11 +670,11 @@ theorem deathProb_small (t : ℝ) :
       deathProb 4 3 t = 2 * T ^ 3 - 2 * T ^ 6 ∧ deathProb 4 4 t = T ^ 6 := by
   intro T
   have hT3 : exp (-(((Nat.choose 3 2 : ℕ) : ℝ) * t)) = T ^ 3 := by
-    rw [← Real.exp_nat_mul, show Nat.choose 3 2 = 3 from rfl]
+    rw [← Real.exp_natCast_mul, show Nat.choose 3 2 = 3 from rfl]
     push_cast
     ring_nf
   have hT6 : exp (-(((Nat.choose 4 2 : ℕ) : ℝ) * t)) = T ^ 6 := by
-    rw [← Real.exp_nat_mul, show Nat.choose 4 2 = 6 from rfl]
+    rw [← Real.exp_natCast_mul, show Nat.choose 4 2 = 6 from rfl]
     push_cast
     ring_nf
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩

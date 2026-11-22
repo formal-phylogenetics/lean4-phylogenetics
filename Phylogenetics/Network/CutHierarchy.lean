@@ -121,11 +121,11 @@ theorem mem_unroot_cutHierarchy (hN : N.IsPhylogenetic) (r : X) (A : Finset X) :
   · intro hA
     rcases mem_unroot.mp hA with ⟨hm, hne⟩ | ⟨hm, hne⟩
     · refine ⟨hH.2.2.1 A hm, ?_, N.hasCutSplit_of_mem_cutHierarchy hN r hm hne⟩
-      exact Finset.nonempty_iff_ne_empty.mpr
+      exact Finset.ne_empty_iff_nonempty.symm.mpr
         (fun he => hne ((Finset.compl_eq_empty_iff A).mp he))
     · have hcut := N.hasCutSplit_of_mem_cutHierarchy hN r hm hne
       refine ⟨?_, hH.2.2.1 Aᶜ hm, ?_⟩
-      · exact Finset.nonempty_iff_ne_empty.mpr
+      · exact Finset.ne_empty_iff_nonempty.symm.mpr
           (fun he => hne ((Finset.compl_eq_univ_iff A).mpr he))
       · apply (N.hasCutSplit_compl (A : Set X)).mp
         simpa only [Finset.coe_compl] using hcut

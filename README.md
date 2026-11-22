@@ -82,7 +82,7 @@ import Phylogenetics.MSC.Marginal          -- marginalization of the multispecie
 
 Lake builds only the imported modules and the modules they import. No module imports all of
 Mathlib: each imports the Mathlib modules that it uses. `import Phylogenetics` imports every
-module. The library is on Lean `v4.36.0-rc1` and the Mathlib release of the same name. Earlier module
+module. The library is on Lean `v4.37.0-rc1` and the Mathlib release of the same name. Earlier module
 paths and names are listed in the [changelog](CHANGELOG.md).
 
 ## Contents

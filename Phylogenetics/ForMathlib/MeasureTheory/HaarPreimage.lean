@@ -35,7 +35,7 @@ theorem addHaar_preimage_eq_zero_of_surjective (L : E →ₗ[ℝ] F) (hL : Funct
   obtain ⟨c, -, hc⟩ := L.exists_map_addHaar_eq_smul_addHaar μ ν hL
   have hm : Measurable L := L.continuous_of_finiteDimensional.measurable
   refine measure_mono_null (Set.preimage_mono (subset_toMeasurable ν s)) ?_
-  rw [← Measure.map_apply hm (measurableSet_toMeasurable ν s), hc, Measure.smul_apply,
+  rw [← Measure.map_apply hm (measurableSet_toMeasurable ν s), hc, smul_apply,
     measure_toMeasurable, hs, smul_zero]
 
 end LinearMap

@@ -323,7 +323,7 @@ theorem card_roots_eq_zero_iff {F : Finset (Finset L)} : #(roots F) = 0 ↔ F = 
   rw [card_eq_zero, roots_eq_empty_iff]
 
 theorem roots_nonempty_iff {F : Finset (Finset L)} : (roots F).Nonempty ↔ F.Nonempty := by
-  rw [nonempty_iff_ne_empty, nonempty_iff_ne_empty, Ne, Ne, roots_eq_empty_iff]
+  rw [ne_empty_iff_nonempty.symm, ne_empty_iff_nonempty.symm, Ne, Ne, roots_eq_empty_iff]
 
 /-- Every lineage of a forest lies in a root. -/
 theorem exists_mem_roots_of_mem_lineages {F : Finset (Finset L)}
