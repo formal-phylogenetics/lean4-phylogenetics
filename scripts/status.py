@@ -11,9 +11,10 @@
     python3 scripts/status.py next             # the papers to start next, hub by hub
 
 `check` exits with status 1 on errors: a bad registry or catalog, or a repository of a catalog that
-breaks the conventions (a module outside its root, a module another repository has, off the train).
-Problems of the older repositories are warnings. `check` and `next` read the private overlay;
-`readme` never does, since the READMEs are public.
+breaks the conventions (a module outside its root and its Palomar submissions, a submission named as
+another repository's root, a module another repository has, off the train). Problems of the older
+repositories are warnings. `check` and `next` read the private overlay; `readme` never does, since the
+READMEs are public.
 """
 
 from __future__ import annotations
@@ -41,25 +42,47 @@ def lake_config(repo: Path) -> dict | None:
     return tomllib.loads(f.read_text()) if f.is_file() else None
 
 
-def modules(repo: Path, conf: dict) -> set[str]:
-    """The module names of a Lake package: every `.lean` file under the root of each `lean_lib`."""
+def modules(repo: Path, conf: dict) -> dict[str, dict]:
+    """The module names of a Lake package, each with the `lean_lib` it is in: every `.lean` file
+    under the root of each library."""
     src = repo / conf.get('srcDir', '.')
-    found = set()
+    found: dict[str, dict] = {}
     for lib in conf.get('lean_lib', []):
         lib_src = src / lib.get('srcDir', '.')
         for pat in lib.get('globs') or lib.get('roots') or [lib['name']]:
             base = re.sub(r'\.[+*]$', '', pat)
             rel = Path(*base.split('.'))
             if (lib_src / rel).with_suffix('.lean').is_file():
-                found.add(base)
+                found.setdefault(base, lib)
             if (lib_src / rel).is_dir():
                 for dirpath, dirnames, filenames in os.walk(lib_src / rel):  # does not follow links
                     dirnames[:] = [d for d in dirnames if not d.startswith('.')]
                     for fn in filenames:
                         if fn.endswith('.lean'):
                             path = Path(dirpath, fn).relative_to(lib_src).with_suffix('')
-                            found.add('.'.join(path.parts))
+                            found.setdefault('.'.join(path.parts), lib)
     return found
+
+
+def is_palomar(lib: dict) -> bool:
+    """Whether a `lean_lib` is the Palomar library: the source directory `palomar/`."""
+    return os.path.normpath(lib.get('srcDir', '.')) == 'palomar'
+
+
+def submissions(mods: dict[str, dict]) -> tuple[dict[str, set[str]], set[str]]:
+    """The Palomar submissions of a package (each name `<P>` with its modules `<P>.Challenge` and
+    `<P>.Solution`), and the modules of its Palomar library that are neither."""
+    subs: dict[str, set[str]] = {}
+    other = set()
+    for m, lib in mods.items():
+        if not is_palomar(lib):
+            continue
+        parts = m.split('.')
+        if len(parts) == 2 and parts[1] in ('Challenge', 'Solution'):
+            subs.setdefault(parts[0], set()).add(m)
+        else:
+            other.add(m)
+    return subs, other
 
 
 def git(repo: Path, *args: str) -> tuple[int, str]:
@@ -71,7 +94,10 @@ def scan(path: Path) -> dict | None:
     conf = lake_config(path)
     if conf is None:
         return None
-    info = {'path': path, 'package': conf.get('name', '?'), 'modules': modules(path, conf)}
+    mods = modules(path, conf)
+    subs, other = submissions(mods)
+    info = {'path': path, 'package': conf.get('name', '?'), 'modules': set(mods),
+            'submissions': subs, 'palomar_other': other}
     tc = path / 'lean-toolchain'
     info['toolchain'] = tc.read_text().strip() if tc.is_file() else ''
     pins = {}
@@ -121,13 +147,22 @@ def check(c: col.Collection) -> int:
                 complain(f'{name}: requires {pkg} at {have[:7]} (train: {rev[:7]})')
         if listed and listed.get('lean') and not info['toolchain'].endswith(':' + listed['lean']):
             warnings.append(f'{name}: the registry says Lean {listed["lean"]}, the repository has {info["toolchain"]}')
+        info['complain'] = complain
         if new:
-            allowed = {f'{p.root}Challenge', f'{p.root}Solution'}
-            outside = sorted(m for m in info['modules'] if m.split('.')[0] != p.root and m not in allowed)
+            # Every module is under the root, but the Palomar submissions <P>.Challenge and
+            # <P>.Solution in palomar/, and, in the older layout, <Root>Challenge and <Root>Solution.
+            allowed = {f'{p.root}Challenge', f'{p.root}Solution'} | set().union(*info['submissions'].values())
+            outside = sorted(m for m in info['modules'] - info['palomar_other']
+                             if m.split('.')[0] != p.root and m not in allowed)
             if outside:
                 errors.append(f'{name}: modules outside the root {p.root}/: {", ".join(outside[:8])}')
+            if info['palomar_other']:
+                errors.append(f'{name}: modules of palomar/ that are not a Challenge or a Solution: '
+                              + ', '.join(sorted(info['palomar_other'])[:8]))
             if info['package'] != p.root:
                 errors.append(f'{name}: package {info["package"]!r}, catalog root {p.root!r}')
+            if info['submissions'] and p.paper not in info['submissions']:
+                warnings.append(f'{name}: palomar/ has no submission {p.paper}, the paper\'s name in its catalog')
 
     # Each library of the tree against the train's pin: commits that change no Lean file are fine.
     for r in c.library_repos():
@@ -139,6 +174,23 @@ def check(c: col.Collection) -> int:
         if code != 0:
             warnings.append(f'{r["name"]}: its Lean files have changed since the train\'s pin {rev[:7]} '
                             '(move the train: docs/WORKFLOW.md, Section 7)')
+
+    # The Palomar submissions: the root of their modules is no repository's root, no other
+    # repository's module root, and no other paper's name.
+    roots = {p.root: p.repo for p in c.papers}
+    roots.update({r['package']: r['name'] for r in c.repos if r.get('package')})
+    names = {p.paper: p.repo for p in c.papers}
+    for name, info in scanned.items():
+        for sub in sorted(info['submissions']):
+            if sub in roots:
+                info['complain'](f'{name}: its Palomar submission {sub} has the name of the root of {roots[sub]}')
+            others = sorted(o for o, x in scanned.items()
+                            if o != name and sub in {m.split('.')[0] for m in x['modules']})
+            if others:
+                info['complain'](f'{name}: its Palomar submission {sub} has the name of a module root of '
+                                 + ', '.join(others))
+            if names.get(sub, name) != name:
+                info['complain'](f'{name}: its Palomar submission {sub} has the name of the paper of {names[sub]}')
 
     # Module names and cited sources that two repositories share.
     owners: dict[str, list[str]] = {}

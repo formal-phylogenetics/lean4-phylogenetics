@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-11-21: the layout of new repositories
+
+The library does not change: it stays at 0.4.1, and the train's pin of `Phylogenetics` does not move.
+
+A new paper's repository has the standard layout of formalize-math-paper (`docs/CONVENTIONS.md`, Sections 2 and 3):
+its code in `<Root>/Common/` and `<Root>/<Paper>/`, its Palomar submission in `palomar/<Paper>/` (the modules
+`<Paper>.Challenge` and `<Paper>.Solution`, the Challenge's theorems in the namespace `<Paper>Challenge`), and its
+documents, the private `NEXT.md` among them, in `docs/<Paper>/`. `<Paper>` is the catalog's new field `paper`: the
+first author's surname and the year (`SolisLemus2016`), derived when an entry gives none, unique across the hubs, and
+different from every repository's root. The repositories made earlier keep their layout.
+
+- `scripts/collection.py` derives and checks `paper`. `scripts/status.py check` accepts a repository's Palomar
+  submissions, and fails on one named as another repository's root or module root.
+- `scripts/new_paper.py` scaffolds the new layout. It takes `--root` for a paper whose catalog root is its author and
+  year, refuses to start such a repository without it, and records the root and the paper's name in its hub's catalog.
+
 ## 0.4.1
 
 The library moves to Lean and Mathlib `v4.37.0-rc1`. No declaration changed its name or its statement. The proofs

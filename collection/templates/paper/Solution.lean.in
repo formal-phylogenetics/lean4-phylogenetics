@@ -1,8 +1,10 @@
 module
 
-public import {{root}}.Defs
+public import {{root}}.{{paper}}.Defs
 
 /-! # {{cite}}: the proofs of the statements of record
 
-Restates each theorem of `{{root}}Challenge` word for word and proves it from the library
-(formalize-math-paper, Phase 6). It is the entry point of the library. -/
+Restates each theorem of `{{paper}}.Challenge` word for word, in the namespace
+`{{paper}}Challenge`,
+and proves it from the library (formalize-math-paper, Phase 6). It is the entry point of the
+library. -/

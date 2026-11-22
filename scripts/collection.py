@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import re
 import tomllib
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -27,6 +28,39 @@ ROLES = ('root', 'hub', 'paper', 'background', 'tool')
 # Generic module roots that older repositories use and that no new repository may use: Lean module
 # names are global, and the repositories of the collection import one another.
 RESERVED_ROOTS = {'Basic', 'External', 'Challenge', 'Solution', 'MainResults', 'Main', 'Defs'}
+# Letters that Unicode does not decompose into an ASCII letter and an accent.
+FOLD = {'ß': 'ss', 'ø': 'o', 'Ø': 'O', 'æ': 'ae', 'Æ': 'Ae', 'œ': 'oe', 'Œ': 'Oe', 'ł': 'l', 'Ł': 'L',
+        'đ': 'd', 'Đ': 'D', 'ð': 'd', 'Ð': 'D', 'þ': 'th', 'Þ': 'Th', 'ı': 'i'}
+
+
+def surname(authors: str) -> str:
+    """The first author's surname in ASCII CamelCase: diacritics folded, spaces, hyphens and
+    apostrophes removed, each part capitalized ("van Iersel" -> "VanIersel", "Solís-Lemus" ->
+    "SolisLemus")."""
+    first = re.split(r',|\band\b', authors)[0]
+    first = re.sub(r'\bet al\.?', '', first)
+    text = ''.join(FOLD.get(ch, ch) for ch in unicodedata.normalize('NFKD', first))
+    text = ''.join(ch for ch in text if not unicodedata.combining(ch))
+    return ''.join(w[0].upper() + w[1:] for w in re.split(r'[^A-Za-z0-9]+', text) if w)
+
+
+def first_year(year: str) -> str:
+    """The first year of a catalog's `year` ("2025–2026" -> "2025")."""
+    m = re.search(r'\d{4}', year)
+    return m.group(0) if m else ''
+
+
+def is_author_year(root: str, authors: str, year: str) -> bool:
+    """Whether a root is the paper's author and year: the first author's surname, the first year,
+    and possibly a keyword (`Banos2019`, `Holtgrefe2025Level2`)."""
+    base = re.escape(surname(authors) + first_year(year))
+    return re.fullmatch(base + r'([A-Z][A-Za-z0-9]*)?', root) is not None
+
+
+def derive_paper(root: str, authors: str, year: str) -> str:
+    """The paper's name when its catalog entry gives none: its root when the root is its author and
+    year, otherwise the first author's surname and the first year (`SolisLemus2016`)."""
+    return root if is_author_year(root, authors, year) else surname(authors) + first_year(year)
 
 
 @dataclass
@@ -42,6 +76,7 @@ class Paper:
     root: str
     status: str
     hub: str = ''
+    paper: str = ''         # the paper's name; derived (`derive_paper`) when the entry gives none
     short: str = ''
     repo: str = ''
     commit: str = ''
@@ -53,10 +88,18 @@ class Paper:
     def __post_init__(self):
         if not self.repo:
             self.repo = f'lean4-{self.id}'
+        self.paper_given = bool(self.paper)   # whether the entry states `paper`
+        if not self.paper:
+            self.paper = derive_paper(self.root, self.authors, self.year)
 
     @property
     def path(self) -> Path:
         return WORKSPACE / self.repo
+
+    @property
+    def new_layout(self) -> bool:
+        """Whether its repository exists in the layout of docs/CONVENTIONS.md, Section 3."""
+        return (self.path / 'palomar').is_dir()
 
     @property
     def github(self) -> str:
@@ -122,16 +165,29 @@ class Collection:
         if len(set(names)) != len(names):
             errors.append('the registry lists a repository twice')
         hubs = {h['name'] for h in self.hubs}
-        seen: dict[str, dict[str, str]] = {'id': {}, 'root': {}, 'repo': {}}
+        # The roots of the repositories, by owner: each package of the registry, and each paper's.
+        packages = {r['package']: r['name'] for r in self.repos if r.get('package')}
+        roots = {p.root: p.repo for p in self.papers} | packages
+        seen: dict[str, dict[str, str]] = {'id': {}, 'root': {}, 'repo': {}, 'paper': {}}
         for p in self.papers:
             where = f'paper {p.id!r} ({p.hub})'
             if not re.fullmatch(r'[a-z0-9]+(-[a-z0-9]+)*', p.id):
                 errors.append(f'{where}: an id is lower case letters, digits and hyphens')
-            if not re.fullmatch(r'[A-Z][A-Za-z0-9]*', p.root):
-                errors.append(f'{where}: root {p.root!r} is not a capitalized Lean identifier')
-            if p.root in RESERVED_ROOTS:
-                errors.append(f'{where}: root {p.root!r} is reserved')
-            for key in ('id', 'root', 'repo'):
+            for key in ('root', 'paper'):
+                value = getattr(p, key)
+                if not re.fullmatch(r'[A-Z][A-Za-z0-9]*', value):
+                    errors.append(f'{where}: {key} {value!r} is not a capitalized ASCII Lean identifier')
+                if value in RESERVED_ROOTS:
+                    errors.append(f'{where}: {key} {value!r} is reserved')
+            if packages.get(p.root, p.repo) != p.repo:
+                errors.append(f'{where}: root {p.root!r} is the package of {packages[p.root]}')
+            # The Palomar library's modules are <paper>.Challenge and <paper>.Solution: no
+            # repository's modules may be under that name.
+            if roots.get(p.paper, p.repo) != p.repo:
+                errors.append(f'{where}: paper {p.paper!r} is the root of {roots[p.paper]}')
+            if p.paper == p.root and p.new_layout:
+                errors.append(f'{where}: paper {p.paper!r} is its own root; name the root after the subject')
+            for key in ('id', 'root', 'repo', 'paper'):
                 value = getattr(p, key)
                 if value in seen[key]:
                     errors.append(f'{where}: {key} {value!r} is also that of {seen[key][value]!r}')
@@ -232,23 +288,40 @@ def load(private: bool = False, hubs_from: Path | None = None) -> Collection:
         if p:
             for k, v in o.items():
                 setattr(p, k, v)
+            if 'paper' in o:
+                p.paper_given = True
+            elif not p.paper_given:
+                p.paper = derive_paper(p.root, p.authors, p.year)
     return c
 
 
-def set_status(c: Collection, pid: str, status: str) -> None:
-    """Change one paper's `status` line in its hub's catalog, leaving the rest of the file as it is."""
-    assert status in STATUSES
+def set_field(c: Collection, pid: str, key: str, value: str, after: str = 'root') -> None:
+    """Set one string field of a paper in its hub's catalog, leaving the rest of the file as it is:
+    its line is replaced, or, if the entry has none, added after the line of `after`."""
     p = c.paper(pid)
     path = c.catalogs[p.hub]
     lines = path.read_text().splitlines(keepends=True)
     start = next((i for i, l in enumerate(lines) if l.strip() == f'id = "{pid}"'), None)
     if start is None:
         raise SystemExit(f'no paper {pid!r} in {path}')
-    for i in range(start + 1, len(lines)):
-        if lines[i].startswith('[['):
+    end = next((i for i in range(start + 1, len(lines)) if lines[i].startswith('[[')), len(lines))
+    line = f'{key} = "{value}"\n'
+    for i in range(start + 1, end):
+        if re.match(rf'{key}\s*=', lines[i]):
+            lines[i] = line
             break
-        if re.match(r'status\s*=', lines[i]):
-            lines[i] = f'status = "{status}"\n'
-            path.write_text(''.join(lines))
-            return
-    raise SystemExit(f'paper {pid!r} has no status line in {path}')
+    else:
+        at = next((i for i in range(start + 1, end) if re.match(rf'{after}\s*=', lines[i])), None)
+        if at is None:
+            raise SystemExit(f'paper {pid!r} has no {key} line and no {after} line in {path}')
+        lines.insert(at + 1, line)
+    path.write_text(''.join(lines))
+    setattr(p, key, value)
+    if key == 'paper':
+        p.paper_given = True
+
+
+def set_status(c: Collection, pid: str, status: str) -> None:
+    """Change one paper's `status` line in its hub's catalog, leaving the rest of the file as it is."""
+    assert status in STATUSES
+    set_field(c, pid, 'status', status)

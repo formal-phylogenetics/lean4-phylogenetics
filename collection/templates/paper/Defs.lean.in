@@ -2,8 +2,9 @@ module
 
 /-! # The definitions of the Challenge
 
-The definitions that `{{root}}Challenge` states its theorems with, between the markers of
-`scripts/sync_challenge_defs.py`, which copies them word for word into the Challenge
+The definitions that the Challenge states its theorems with, between the markers of
+`scripts/sync_challenge_defs.py`, which copies them word for word into the Challenge,
+`palomar/{{paper}}/Challenge.lean`
 (formalize-math-paper, `references/palomar.md`, Section 2).
 
 This module imports exactly what the Challenge imports: Lean, Mathlib, and nothing from this

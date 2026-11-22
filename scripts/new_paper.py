@@ -3,22 +3,31 @@
 
     python3 scripts/new_paper.py ID              # e.g. snaq, nanuq-plus
     python3 scripts/new_paper.py ID --dry-run    # show what it would do
+    python3 scripts/new_paper.py ID --root ROOT  # a paper whose catalog root is its author and year
 
-It creates lean4-<id> in the workspace, on the train, under the paper's hub, with
+It creates lean4-<id> in the workspace, on the train, under the paper's hub, in the layout of
+docs/CONVENTIONS.md, Section 3, with <Root> the catalog's root and <Paper> the paper's name:
 
-  - lakefile.toml, lean-toolchain and lake-manifest.json: it requires Mathlib, the root library
-    Phylogenetics, the library of its hub, the libraries of the hubs it `uses`, and the
-    repositories of the formalized papers it builds on, each by commit;
-  - the module root <Root>/ with Basic/ and External/ (each with a README), and <Root>/Defs.lean,
-    <Root>Challenge.lean, <Root>Solution.lean as placeholder modules;
+  - lakefile.toml, lean-toolchain and lake-manifest.json: the libraries Common, <Paper> and
+    Palomar; it requires Mathlib, the root library Phylogenetics, the library of its hub, the
+    libraries of the hubs it `uses`, and the repositories of the formalized papers it builds on,
+    each by commit;
+  - <Root>/Common/Basic/ and <Root>/Common/External/, each with a README, and
+    <Root>/<Paper>/Defs.lean, palomar/<Paper>/Challenge.lean and palomar/<Paper>/Solution.lean as
+    placeholder modules;
   - .gitignore, LICENSE, a stub README.md, and CI that builds;
-  - its private files (notes/, NEXT.md, .vscode/, CLAUDE.md), kept outside the repository and
-    linked into it by gitignored symbolic links, from templates kept with this repository's own
-    private files (where its gitignored `notes` link points);
+  - its private files (notes/, docs/<Paper>/NEXT.md, .vscode/, CLAUDE.md), kept outside the
+    repository and linked into it by gitignored symbolic links, from templates kept with this
+    repository's own private files (where its gitignored `notes` link points);
 
 then seeds .lake/packages from local checkouts on the train, by hard links, so that nothing is
-downloaded or rebuilt; builds; checks that the dependencies are up to date; commits; and marks the
-paper "in-progress" in its hub's catalog. Nothing is pushed and no GitHub repository is created.
+downloaded or rebuilt; builds; checks that the dependencies are up to date; commits; and records in
+its hub's catalog the paper's root and name, and its status "in-progress". Nothing is pushed and no
+GitHub repository is created.
+
+A paper without a method's name has its author and year as its root in the catalog, which is also
+its paper's name: name the root after the paper's subject with --root (`--root Level1Quarnets`).
+It refuses to start a repository whose root is its paper's name.
 """
 
 from __future__ import annotations
@@ -143,10 +152,10 @@ def siblings_text(c: col.Collection, p: col.Paper, notes: list[str]) -> str:
             how = f'formalized in {q.repo}, required at `{q.commit[:7]}`: import it (CONVENTIONS, Section 6)'
         elif q.status == 'formalized':
             how = (f'formalized in {q.repo}, which is off the train and cannot be required: state what the '
-                   f'proofs use in `{p.root}/External/` and prove it there (CONVENTIONS, Section 4)')
+                   f'proofs use in `{p.root}/Common/External/` and prove it there (CONVENTIONS, Section 4)')
         else:
-            how = (f'not formalized yet ({q.status}): state what the proofs use in `{p.root}/External/` and '
-                   f'prove it there, and record it in the catalog (CONVENTIONS, Section 4)')
+            how = (f'not formalized yet ({q.status}): state what the proofs use in `{p.root}/Common/External/` '
+                   f'and prove it there, and record it in the catalog (CONVENTIONS, Section 4)')
         for cov in q.covered_by:
             how += f'; already in {cov["repo"]}: {cov["what"]}'
         lines.append(f'- `{q.id}`, {q.cite}: {how}.')
@@ -250,6 +259,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0],
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('id', help="the paper's id in its hub's catalog/papers.toml")
+    ap.add_argument('--root', default=None,
+                    help="the repository's root, named after the paper's subject, for a paper whose catalog "
+                         "root is its author and year; recorded in the catalog")
     ap.add_argument('--workspace', type=Path, default=col.WORKSPACE,
                     help='where to create the repository (default: beside this one)')
     ap.add_argument('--private-root', type=Path, default=None,
@@ -275,6 +287,15 @@ def main() -> None:
     p = c.paper(args.id)
     if p.status == 'formalized':
         raise SystemExit(f'{p.id} is formalized already, in {p.repo}')
+    old_root = p.root
+    if args.root:
+        p.root = args.root   # the paper's name, derived from the old root if not given, stays
+        errors = c.validate()
+        if errors:
+            raise SystemExit(f'--root {args.root}:\n  ' + '\n  '.join(errors))
+    if p.root == p.paper:
+        raise SystemExit(f'{p.id}: its root {p.root} is its paper\'s name; name the root after the paper\'s '
+                         'subject with --root ROOT (CONVENTIONS, Section 2)')
     folder = col.private_folder()
     if folder is None:
         raise SystemExit("this repository has no `notes` link to its private folder, which holds the "
@@ -293,7 +314,11 @@ def main() -> None:
     reqs, cannot = requirements(c, p)
     print(f'{p.repo}: {p.cite}, "{p.title}"')
     print(f'  hub           {p.hub}')
-    print(f'  module root   {p.root}/   (package {p.root}, Challenge {p.root}Challenge)')
+    print(f'  root          {p.root}/   (package {p.root}'
+          + (f', renamed from {old_root} in the catalog' if p.root != old_root else '') + ')')
+    print(f'  paper         {p.paper}   (library {p.root}/{p.paper}/, namespace {p.paper}; Challenge '
+          f'palomar/{p.paper}/, namespace {p.paper}Challenge'
+          + ('' if p.paper_given else '; recorded in the catalog') + ')')
     print(f'  train         {c.train["lean"]}, Mathlib {c.train["mathlib"]}')
     for r in reqs:
         print(f'  requires      {r["name"]} at {r["rev"][:7]} ({r["url"]})')
@@ -307,8 +332,8 @@ def main() -> None:
 
     hub = c.repo(p.hub)
     values = {
-        'id': p.id, 'repo': p.repo, 'root': p.root, 'cite': p.cite, 'authors': p.authors,
-        'title': p.title, 'year': p.year, 'url': p.url, 'lean': c.train['lean'],
+        'id': p.id, 'repo': p.repo, 'root': p.root, 'paper': p.paper, 'cite': p.cite,
+        'authors': p.authors, 'title': p.title, 'year': p.year, 'url': p.url, 'lean': c.train['lean'],
         'mathlib': c.train['mathlib'], 'date': datetime.date.today().isoformat(),
         'hub': p.hub, 'hub_url': hub['url'], 'hub_title': hub.get('title', p.hub),
         'root_path': str(col.ROOT), 'catalog_path': str(c.catalogs[p.hub]),
@@ -323,15 +348,18 @@ def main() -> None:
     }
 
     print('Writing the repository')
-    for sub in ('Basic', 'External'):
-        (repo / p.root / sub).mkdir(parents=True)
-    (repo / '.github' / 'workflows').mkdir(parents=True)
+    # Lake fails on a glob whose directory does not exist: each library's directory starts with a file.
+    for d in (f'{p.root}/Common/Basic', f'{p.root}/Common/External', f'{p.root}/{p.paper}',
+              f'palomar/{p.paper}', f'docs/{p.paper}', '.github/workflows'):
+        (repo / d).mkdir(parents=True)
     files = {
         'lakefile.toml': 'lakefile.toml.in', '.gitignore': 'gitignore.in', 'README.md': 'README.md.in',
         '.github/workflows/lean_action_ci.yml': 'lean_action_ci.yml.in',
-        f'{p.root}/Defs.lean': 'Defs.lean.in', f'{p.root}/Basic/README.md': 'Basic-README.md.in',
-        f'{p.root}/External/README.md': 'External-README.md.in',
-        f'{p.root}Challenge.lean': 'Challenge.lean.in', f'{p.root}Solution.lean': 'Solution.lean.in',
+        f'{p.root}/Common/Basic/README.md': 'Basic-README.md.in',
+        f'{p.root}/Common/External/README.md': 'External-README.md.in',
+        f'{p.root}/{p.paper}/Defs.lean': 'Defs.lean.in',
+        f'palomar/{p.paper}/Challenge.lean': 'Challenge.lean.in',
+        f'palomar/{p.paper}/Solution.lean': 'Solution.lean.in',
     }
     for out, template in files.items():
         (repo / out).write_text(render(TEMPLATES / template, values))
@@ -346,8 +374,10 @@ def main() -> None:
     (notes / 'NEXT.md').write_text(render(templates / 'NEXT.md.in', values))
     (notes / 'CLAUDE.md').write_text(render(templates / 'CLAUDE.md.in', values))
     shutil.copyfile(templates / 'vscode-settings.json', notes / '.vscode' / 'settings.json')
-    for name in ('notes', 'NEXT.md', '.vscode', 'CLAUDE.md'):
-        os.symlink(os.path.relpath(notes / name, repo), repo / name)
+    links = {'notes': 'notes', f'docs/{p.paper}/NEXT.md': 'NEXT.md', '.vscode': '.vscode',
+             'CLAUDE.md': 'CLAUDE.md'}
+    for at, name in links.items():
+        os.symlink(os.path.relpath(notes / name, (repo / at).parent), repo / at)
 
     print('Setting up the dependencies')
     inherited: list[dict] = []
@@ -374,12 +404,21 @@ def main() -> None:
         run(['git', 'init', '--quiet', '-b', 'main'], cwd=repo)
         run(['git', 'add', '-A'], cwd=repo)
         message = (f'Start the project from the templates of lean4-phylogenetics\n\n'
-                   f'{p.cite}, {p.url}. A paper of the hub {p.hub}. Module root {p.root}; Lean and Mathlib '
-                   f'{c.train["mathlib"]}; ' + ', '.join(f'{r["name"]} at {r["rev"][:7]}' for r in reqs) + '.\n')
+                   f'{p.cite}, {p.url}. A paper of the hub {p.hub}. Root {p.root}, paper {p.paper}; '
+                   f'Lean and Mathlib {c.train["mathlib"]}; '
+                   + ', '.join(f'{r["name"]} at {r["rev"][:7]}' for r in reqs) + '.\n')
         if args.trailer:
             message += '\n' + '\n'.join(args.trailer) + '\n'
         run(['git', 'commit', '--quiet', '-m', message], cwd=repo)
 
+    # The repository's paths use the paper's name: from now on the entry states it, so that
+    # correcting the citation does not change it.
+    if p.root != old_root:
+        col.set_field(c, p.id, 'root', p.root)
+        print(f'Recorded root = "{p.root}" for {p.id} in {c.catalogs[p.hub]}')
+    if not p.paper_given:
+        col.set_field(c, p.id, 'paper', p.paper)
+        print(f'Recorded paper = "{p.paper}" for {p.id} in {c.catalogs[p.hub]}')
     if not args.keep_status and p.status in ('todo', 'partial'):
         col.set_status(c, p.id, 'in-progress')
         print(f'Marked {p.id} in-progress in {c.catalogs[p.hub]} (run scripts/status.py readme --write)')

@@ -2,7 +2,7 @@ name = "{{root}}"
 version = "0.1.0"
 keywords = ["math", "phylogenetics"]
 description = "{{description}}"
-defaultTargets = ["{{root}}", "{{root}}Challenge", "{{root}}Solution"]
+defaultTargets = ["Common", "{{paper}}", "Palomar"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -10,18 +10,26 @@ autoImplicit = false
 maxSynthPendingDepth = 3
 
 {{requires}}
-# The paper's library. Every module of the project is under {{root}}/, so that the repositories of
-# the collection can require one another (lean4-phylogenetics, docs/CONVENTIONS.md, Section 2):
-# {{root}}/Basic/ (general mathematics), {{root}}/External/ (the results the paper cites) and the
-# paper's own sections.
-[[lean_lib]]
-name = "{{root}}"
-globs = ["{{root}}.+"]
+# Every module of the project is under its root but the Palomar submission's, so that the
+# repositories of the collection can require one another (lean4-phylogenetics,
+# docs/CONVENTIONS.md, Sections 2 and 3). Lake fails on a glob whose directory does not exist.
 
-# The statements of record, which import only Mathlib, and their proofs from the library
-# (Comparator: comparator.json).
+# General mathematics and the results the paper cites:
+# {{root}}/Common/Basic/ and {{root}}/Common/External/.
 [[lean_lib]]
-name = "{{root}}Challenge"
+name = "Common"
+globs = ["{{root}}.Common.+"]
 
+# The paper's library, in the namespace {{paper}}:
+# {{root}}/{{paper}}/.
 [[lean_lib]]
-name = "{{root}}Solution"
+name = "{{paper}}"
+globs = ["{{root}}.{{paper}}.+"]
+
+# The paper's Challenge and Solution, the modules of the source directory palomar/
+# {{paper}}.Challenge and {{paper}}.Solution
+# (Comparator: palomar/{{paper}}/comparator.json).
+[[lean_lib]]
+name = "Palomar"
+srcDir = "palomar"
+globs = ["{{paper}}.+"]

@@ -23,24 +23,29 @@ python3 scripts/status.py next
 
 lists the open papers hub by hub, family by family, with each paper's state: *ready* when every
 paper that its entry says it builds on is formalized, or *waits on* the ones that are not. A paper
-that waits can still be done first: what it uses from the earlier paper is then stated and proved
-in its `External/` (CONVENTIONS, Section 4). But the earlier paper usually costs less to do first,
-and then the later one imports it. `builds_on` holds only what was known before each paper's
-inventory; the inventory (the skill's Phase 1) completes it.
+that waits can still be done first: what it uses from the earlier paper is then stated and proved in
+its `<Root>/Common/External/` (CONVENTIONS, Section 4). But the earlier paper usually costs less to
+do first, and then the later one imports it. `builds_on` holds only what was known before each
+paper's inventory; the inventory (the skill's Phase 1) completes it.
 
 ## 2. Start its repository
 
 ```sh
-python3 scripts/new_paper.py <id> --dry-run   # the plan: hub, root, requirements, paths
+python3 scripts/new_paper.py <id> --dry-run   # the plan: hub, root, paper, requirements, paths
 python3 scripts/new_paper.py <id>
 ```
 
-It creates `../lean4-<id>` (CONVENTIONS, Section 3) and its private files (Section 7). It requires
-the root library, the paper's hub's library, the hubs it `uses`, and the formalized papers it
-builds on, each at its pin, and lists in the manifest everything they require in turn. It
-hard-links the compiled dependencies from local checkouts (Mathlib from the hub's), builds, checks
-that the dependencies are up to date, makes the first commit, and marks the paper `in-progress` in
-its hub's catalog. Nothing is downloaded, pushed or created on GitHub.
+It creates `../lean4-<id>` in the layout of CONVENTIONS, Section 3, and its private files
+(Section 7). It requires the root library, the paper's hub's library, the hubs it `uses`, and the
+formalized papers it builds on, each at its pin, and lists in the manifest everything they require
+in turn. It hard-links the compiled dependencies from local checkouts (Mathlib from the hub's),
+builds, checks that the dependencies are up to date, and makes the first commit. In the paper's
+entry in its hub's catalog, it records the paper's name (`paper`, if the entry derived it) and
+marks the paper `in-progress`. Nothing is downloaded, pushed or created on GitHub.
+
+- A paper whose catalog root is its author and year (`Banos2019`), which is also its paper's name,
+  gets a root named after its subject first: `--root Level1Quarnets`. The script refuses to start
+  the repository without it, and records the new root in the catalog (CONVENTIONS, Section 2).
 
 - `--no-seed` fetches the dependencies instead (`lake update`, `lake exe cache get`).
 - `--seed <path>` hard-links Mathlib from another local repository on the train.
@@ -67,7 +72,8 @@ and in the session:
 The scaffold has written the session's instructions (private: CONVENTIONS, Section 7), which
 import CONVENTIONS.md and answer the Phase 0 questions that the collection settles. The skill then
 asks only what is still open, and its Phase 2 finds the project set up: it adds the paper's
-sections under `<Root>/`.
+sections under `<Root>/<Paper>/`, general mathematics under `<Root>/Common/Basic/` and the results
+the paper cites under `<Root>/Common/External/`.
 
 What to watch for, beyond the skill's own gates:
 
@@ -76,10 +82,11 @@ What to watch for, beyond the skill's own gates:
   in `builds_on` in the hub's catalog.
 - **Phase 2.** Missing foundations (`collection/foundations.toml`): if another paper will need the
   same definitions, the maintainer decides whether to build them in their home first (Section 6).
-- **Phase 3.** The Challenge restates its definitions in Mathlib's vocabulary, and the library
-  proves the bridges to the collection's definitions.
-- **Phase 6.** Name the root `<Root>` in the audit and in CI, where the skill's templates name
-  `PaperName External Basic`; the audit imports the modules of the required libraries too.
+- **Phase 3.** The Challenge, `palomar/<Paper>/Challenge.lean`, restates its definitions in
+  Mathlib's vocabulary (copied from `<Root>/<Paper>/Defs.lean`), and the library proves the bridges
+  to the collection's definitions.
+- **Phase 6.** In the audit and in CI, the skill's `ProjectName` is `<Root>` and its `PaperName` is
+  `<Paper>`; the audit imports the modules of the required libraries too.
 
 ## 4. Finish it
 
@@ -97,7 +104,9 @@ first:
 gh repo create vltanh/lean4-<id> --private --source . --push   # or --public
 ```
 
-Then Palomar's preflight and submission, as the skill's Phase 9 describes.
+Then Palomar's preflight (`.github/workflows/palomar_preflight_<paper>.yml`, with the paper's name
+in lower case, naming `palomar/<Paper>/comparator.json` and `palomar/<Paper>/formalization.yaml`)
+and submission, as the skill's Phase 9 describes.
 
 ## 6. Move shared code up the tree
 
@@ -140,5 +149,6 @@ join it the same way, when a paper needs to require them.
   errors: a bad registry or catalog, or a repository of a catalog, the root or a hub that breaks the
   conventions.
 - To add a paper: add its `[[paper]]` entry to its hub's catalog (an id and a root unused in every
-  hub), then `python3 scripts/status.py readme --write`. To add a hub: add it to the registry with
+  hub, and a `paper` if the derived name is wrong or taken: CONVENTIONS, Section 2), then
+  `python3 scripts/status.py readme --write`. To add a hub: add it to the registry with
   its library's pin, give it a library, a catalog and a README with the generated blocks.
