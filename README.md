@@ -54,11 +54,11 @@ the tree at one commit, the train:
 
 | | Version or commit |
 | --- | --- |
-| Lean | `leanprover/lean4:v4.36.0-rc1` |
-| Mathlib | `v4.36.0-rc1` |
-| Phylogenetics | [`8c66a13`](https://github.com/vltanh/lean4-phylogenetics/commit/8c66a1354fc32f0e59ee22634916b154eebb54ee) |
-| TreeOfBlobs | [`289439f`](https://github.com/vltanh/lean4-tob/commit/289439fa2a79279ca6cc9f3b1e39496602d93db1) |
-| PhyloNetwork | [`2c40af0`](https://github.com/vltanh/lean4-phylo-network/commit/2c40af02ee813cf5ac8b6b7eafc0510172041bc0) |
+| Lean | `leanprover/lean4:v4.37.0-rc1` |
+| Mathlib | `v4.37.0-rc1` |
+| Phylogenetics | [`4daee15`](https://github.com/vltanh/lean4-phylogenetics/commit/4daee158d74436ce6ed6f52e337ba00f1b43ea32) |
+| TreeOfBlobs | [`b2dadbd`](https://github.com/vltanh/lean4-tob/commit/b2dadbda0c992091dd6e9105e1394c5b7557602c) |
+| PhyloNetwork | [`51d53ff`](https://github.com/vltanh/lean4-phylo-network/commit/51d53ffd885195694fd0ce91090f07efa620db7a) |
 
 <!-- END collection:train -->
 
@@ -159,12 +159,12 @@ What is not connected:
 
 | Repository | Role | Under | Lean | Required by new repositories | Holds |
 | --- | --- | --- | --- | --- | --- |
-| [lean4-phylogenetics](https://github.com/vltanh/lean4-phylogenetics) | root | - | v4.36.0-rc1 | always | What every repository shares: rooted networks (cuts, blobs, induced networks, the tree of blobs, level-1 networks), trees and quartets, neighbor joining and ASTRAL's dynamic program, Kingman's coalescent, the multispecies coalescent and the network multispecies coalescent with quartet concordance factors |
-| [lean4-tob](https://github.com/vltanh/lean4-tob) | hub | lean4-phylogenetics | v4.36.0-rc1 | when needed | What the papers on inferring the tree of blobs share: hypothesis tests on quartet concordance factors, blobs of level-1 networks, networks given by tables, and the sources several papers cite (Mitchell et al. 2019, Rhodes 2020, Huber et al. 2025) |
-| [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | hub | lean4-phylogenetics | v4.36.0-rc1 | always | What the papers on estimating whole networks share: nothing yet. Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data |
+| [lean4-phylogenetics](https://github.com/vltanh/lean4-phylogenetics) | root | - | v4.37.0-rc1 | always | What every repository shares: rooted networks (cuts, blobs, induced networks, the tree of blobs, level-1 networks), trees and quartets, neighbor joining and ASTRAL's dynamic program, Kingman's coalescent, the multispecies coalescent and the network multispecies coalescent with quartet concordance factors |
+| [lean4-tob](https://github.com/vltanh/lean4-tob) | hub | lean4-phylogenetics | v4.37.0-rc1 | when needed | What the papers on inferring the tree of blobs share: hypothesis tests on quartet concordance factors, blobs of level-1 networks, networks given by tables, and the sources several papers cite (Mitchell et al. 2019, Rhodes 2020, Huber et al. 2025) |
+| [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | hub | lean4-phylogenetics | v4.37.0-rc1 | always | What the papers on estimating whole networks share: nothing yet. Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data |
 | [lean4-camus](https://github.com/vltanh/lean4-camus) | paper | lean4-phylo-network | v4.35.0-rc4 | no. Off the train (Lean v4.35.0-rc4); requires lean4-adr11 rather than lean4-phylogenetics, and has top-level Challenge and Solution modules | Willson, Warnow 2026 (CAMUS), with Observation 2 and the site model of Warnow, Tabatabaee, Evans 2025 |
 | [lean4-adr11](https://github.com/vltanh/lean4-adr11) | background | lean4-phylogenetics | v4.35.0-rc3 | no. Off the train (Lean v4.35.0-rc3); use lean4-phylogenetics instead | Allman, Degnan, Rhodes 2011: the rooted species tree from unrooted gene trees under the coalescent; its general parts are in lean4-phylogenetics |
-| [lean4-gusfield2007](https://github.com/vltanh/lean4-gusfield2007) | background | lean4-phylogenetics | v4.36.0-rc1 | when needed. Requires lean4-phylogenetics 0.3.1 (f1a3592), from before the train moved to 0.4.0; its modules use the generic roots External and MainResults, which no other repository may use | Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination |
+| [lean4-gusfield2007](https://github.com/vltanh/lean4-gusfield2007) | background | lean4-phylogenetics | v4.37.0-rc1 | when needed. Its modules use the generic roots External and MainResults, which no other repository may use | Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination |
 | [formalize-math-paper](https://github.com/vltanh/formalize-math-paper) | tool | - | - | no | The procedure that formalizes each paper |
 
 <!-- END collection:repositories -->

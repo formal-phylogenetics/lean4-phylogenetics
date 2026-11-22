@@ -12,13 +12,13 @@
 # The release that every repository is on, and the commit of each library of the tree that the
 # repositories below it require. Move the train deliberately, root first (docs/WORKFLOW.md, Section 7).
 [train]
-lean = "leanprover/lean4:v4.36.0-rc1"
-mathlib = "v4.36.0-rc1"
+lean = "leanprover/lean4:v4.37.0-rc1"
+mathlib = "v4.37.0-rc1"
 
 [train.pins]
-Phylogenetics = "8c66a1354fc32f0e59ee22634916b154eebb54ee"     # lean4-phylogenetics 0.4.0
-TreeOfBlobs = "289439fa2a79279ca6cc9f3b1e39496602d93db1"       # lean4-tob 0.2.0
-PhyloNetwork = "2c40af02ee813cf5ac8b6b7eafc0510172041bc0"      # lean4-phylo-network 0.1.0
+Phylogenetics = "4daee158d74436ce6ed6f52e337ba00f1b43ea32"     # lean4-phylogenetics 0.4.1
+TreeOfBlobs = "b2dadbda0c992091dd6e9105e1394c5b7557602c"       # lean4-tob 0.2.0
+PhyloNetwork = "51d53ffd885195694fd0ce91090f07efa620db7a"      # lean4-phylo-network 0.1.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it
@@ -29,7 +29,7 @@ name = "lean4-phylogenetics"
 role = "root"
 package = "Phylogenetics"
 url = "https://github.com/vltanh/lean4-phylogenetics"
-lean = "v4.36.0-rc1"
+lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetics"
 summary = "What every repository shares: rooted networks (cuts, blobs, induced networks, the tree of blobs, level-1 networks), trees and quartets, neighbor joining and ASTRAL's dynamic program, Kingman's coalescent, the multispecies coalescent and the network multispecies coalescent with quartet concordance factors"
@@ -40,7 +40,7 @@ role = "hub"
 parent = "lean4-phylogenetics"
 package = "TreeOfBlobs"
 url = "https://github.com/vltanh/lean4-tob"
-lean = "v4.36.0-rc1"
+lean = "v4.37.0-rc1"
 require = "when-needed"
 title = "The tree of blobs"
 summary = "What the papers on inferring the tree of blobs share: hypothesis tests on quartet concordance factors, blobs of level-1 networks, networks given by tables, and the sources several papers cite (Mitchell et al. 2019, Rhodes 2020, Huber et al. 2025)"
@@ -51,7 +51,7 @@ role = "hub"
 parent = "lean4-phylogenetics"
 package = "PhyloNetwork"
 url = "https://github.com/vltanh/lean4-phylo-network"
-lean = "v4.36.0-rc1"
+lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetic network estimation"
 summary = "What the papers on estimating whole networks share: nothing yet. Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data"
@@ -84,10 +84,10 @@ role = "background"
 parent = "lean4-phylogenetics"
 package = "Gusfield2007"
 url = "https://github.com/vltanh/lean4-gusfield2007"
-lean = "v4.36.0-rc1"
+lean = "v4.37.0-rc1"
 require = "when-needed"
 summary = "Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination"
-note = "Requires lean4-phylogenetics 0.3.1 (f1a3592), from before the train moved to 0.4.0; its modules use the generic roots External and MainResults, which no other repository may use"
+note = "Its modules use the generic roots External and MainResults, which no other repository may use"
 
 [[repo]]
 name = "formalize-math-paper"

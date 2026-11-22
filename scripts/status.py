@@ -351,6 +351,15 @@ def next_papers(c: col.Collection) -> int:
     return 0
 
 
+def fetch_hubs() -> None:
+    """Clone, shallowly, every hub of the registry that is not in the workspace."""
+    for hub in col.load(private=False).hubs:
+        path = col.WORKSPACE / hub['name']
+        if not path.exists():
+            subprocess.run(['git', 'clone', '--quiet', '--depth', '1', hub['url'], str(path)], check=True)
+            print(f'cloned {hub["name"]}')
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     sub = ap.add_subparsers(dest='cmd')
@@ -360,9 +369,14 @@ def main() -> None:
     g.add_argument('--write', action='store_true')
     g.add_argument('--check', action='store_true')
     r.add_argument('--repo', action='append', default=[], help='only this repository\'s README (repeatable)')
+    r.add_argument('--fetch-hubs', action='store_true',
+                   help='clone the hubs that are not in the workspace (in CI, where only one is checked out): '
+                        'a hub\'s papers may build on papers of another hub')
     sub.add_parser('next', help='the papers to start next')
     args = ap.parse_args()
     if args.cmd == 'readme':
+        if args.fetch_hubs:
+            fetch_hubs()
         sys.exit(readme(col.load(private=False), args.write, args.check, args.repo))
     c = col.load(private=True)
     sys.exit(next_papers(c) if args.cmd == 'next' else check(c))
