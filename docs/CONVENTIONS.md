@@ -44,10 +44,9 @@ What may require what:
 - Requirements never form a cycle. `scripts/status.py check` checks the pins and the module names.
 
 Older repositories have restrictions, recorded in the registry and checked by
-`scripts/status.py check`: lean4-camus and lean4-adr11 are off the train (Lean v4.35), so no
-repository on the train can require them until they move to it. lean4-camus, lean4-adr11 and
-lean4-gusfield2007 use generic top-level modules (`Challenge`, `Solution`, `External`,
-`MainResults`), which no other repository may use.
+`scripts/status.py check`: lean4-camus, lean4-adr11 and lean4-gusfield2007 use generic top-level
+modules (`Challenge`, `Solution`, `External`, `MainResults`), which no other repository may use, and
+lean4-camus requires lean4-adr11 rather than the root library.
 
 ## 2. Names
 
