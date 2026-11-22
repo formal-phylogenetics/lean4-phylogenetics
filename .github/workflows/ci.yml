@@ -32,5 +32,8 @@ jobs:
         run: >-
           diff <( (echo Phylogenetics.lean; find Phylogenetics -name '*.lean') | sed 's/\.lean$//; s#/#.#g' | sort)
           <(grep '^import all Phylogenetics' scripts/Audit.lean | sed 's/^import all //' | sort)
+      # The areas of the library import one another without a cycle (scripts/layers.toml).
+      - name: Check the imports between the areas
+        run: python3 scripts/check_layers.py
       - name: Audit the axioms
         run: lake env lean scripts/Audit.lean

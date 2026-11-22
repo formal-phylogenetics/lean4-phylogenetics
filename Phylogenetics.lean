@@ -29,13 +29,13 @@ public import Phylogenetics.Graph.Defs
 public import Phylogenetics.Graph.Degree
 public import Phylogenetics.Graph.Tree
 public import Phylogenetics.Hierarchy.Basic
-public import Phylogenetics.Hierarchy.Classify
+public import Phylogenetics.MSC.Classify
 public import Phylogenetics.Hierarchy.Counts
 public import Phylogenetics.Hierarchy.Defs
 public import Phylogenetics.Hierarchy.Quartets
 public import Phylogenetics.Hierarchy.RootLocation
-public import Phylogenetics.Hierarchy.Shapes
-public import Phylogenetics.Hierarchy.Small
+public import Phylogenetics.MSC.Shapes
+public import Phylogenetics.MSC.Small
 public import Phylogenetics.Hierarchy.SpeciesTree
 public import Phylogenetics.MSC.Basic
 public import Phylogenetics.MSC.Contract

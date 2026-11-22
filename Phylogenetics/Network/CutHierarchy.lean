@@ -19,6 +19,7 @@ construction uses graph cuts, not an arbitrary assigned tree.
 * `cutHierarchy_isHierarchy`, `mem_cutHierarchy`: the hierarchy of the cuts.
 * `mem_unroot_cutHierarchy`: its unrooted splits are the nonempty proper cut sides.
 * `cutHierarchy_graph_cuts`: the graph realizing it has the same labelled cuts.
+* `treeOfBlobs_isUnrootedTree`: the tree of blobs of a phylogenetic network is an unrooted tree.
 -/
 
 @[expose] public section
@@ -150,3 +151,21 @@ theorem cutHierarchy_graph_cuts (hN : N.IsPhylogenetic) (r : X) (A : Finset X) :
   rw [hierarchyNetwork_hasCutSplit_iff, N.mem_unroot_cutHierarchy hN r A]
 
 end Phylogenetics.RootedNetwork
+
+namespace Phylogenetics
+
+open Finset
+open scoped Classical
+
+variable {X : Type*} [Fintype X] [DecidableEq X]
+
+/-- The tree of blobs is an unrooted tree. -/
+theorem treeOfBlobs_isUnrootedTree {V E : Type*} {N : RootedNetwork V E X} (hN : N.IsPhylogenetic)
+    [Nonempty X] : IsUnrootedTree (treeOfBlobs N) := by
+  obtain ⟨r⟩ := ‹Nonempty X›
+  refine ⟨N.cutHierarchy r, N.cutHierarchy_isHierarchy hN r, ?_⟩
+  ext A
+  rw [N.mem_unroot_cutHierarchy hN r A]
+  simp only [treeOfBlobs, mem_filter, mem_univ, true_and]
+
+end Phylogenetics

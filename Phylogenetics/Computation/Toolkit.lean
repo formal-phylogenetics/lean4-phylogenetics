@@ -2,7 +2,7 @@ module
 
 public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Phylogenetics.Computation.Engine
-public import Phylogenetics.Hierarchy.Small
+public import Phylogenetics.MSC.Small
 public import Mathlib.Tactic.Ring
 
 /-!

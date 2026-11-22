@@ -4,6 +4,7 @@ public import Phylogenetics.Network.DeletedArcs
 public import Phylogenetics.NMSC.Analytic
 public import Phylogenetics.NMSC.TreeCF
 public import Phylogenetics.NMSC.Witness
+public import Phylogenetics.Network.CutHierarchy
 
 /-!
 # The displayed tree model, and the network multispecies coalescent with common inheritance

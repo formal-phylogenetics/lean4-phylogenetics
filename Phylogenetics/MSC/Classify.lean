@@ -1,6 +1,6 @@
 module
 
-public import Phylogenetics.Hierarchy.Small
+public import Phylogenetics.MSC.Small
 public import Phylogenetics.MSC.Relabel
 public import Mathlib.Tactic.FinCases
 

@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.4.0
+
+The library's areas import one another without a cycle, and `scripts/check_layers.py`, with the areas in
+`scripts/layers.toml`, keeps them so: graphs and trees at the bottom, networks above both, the coalescent above trees,
+and the network multispecies coalescent above networks and the coalescent. Each area could become a Lake package of its
+own. No declaration changed its name or its statement.
+
+The repository is also the root of the collection of formalizations that require it: the registry of its repositories,
+the shared foundations, the conventions, the workflow and the tools (`collection/`, `docs/`, `scripts/*.py`).
+
+### Module paths
+
+| Earlier | Now |
+| --- | --- |
+| `Phylogenetics.Hierarchy.Small` | `Phylogenetics.MSC.Small` |
+| `Phylogenetics.Hierarchy.Classify` | `Phylogenetics.MSC.Classify` |
+| `Phylogenetics.Hierarchy.Shapes` | `Phylogenetics.MSC.Shapes` |
+| `treeOfBlobs_isUnrootedTree`, in `Phylogenetics.Tree.Splits` | the same theorem, in `Phylogenetics.Network.CutHierarchy` |
+
 ## 0.3.1
 
 ### New results

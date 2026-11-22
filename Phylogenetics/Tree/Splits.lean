@@ -2,7 +2,6 @@ module
 
 public import Phylogenetics.Tree.Defs
 public import Phylogenetics.Hierarchy.Basic
-public import Phylogenetics.Network.CutHierarchy
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
@@ -27,7 +26,6 @@ The combinatorics of unrooted trees, on the representation by sides of splits of
   (`existsUnique_center`);
 * a split with two taxa on each side lies in the tree when all its quartets are displayed
   (`mem_of_forall_displays`).
-* `treeOfBlobs_isUnrootedTree`: the tree of blobs of a phylogenetic network is an unrooted tree;
 * `QuartetTree.exists_eq_pair`, `quartetOfCherry`, `quartetTree`, `card_treesOn`,
   `QuartetTree.card_alternatives`: the three quartet trees on a set of four taxa;
 * `IsUnrootedTree.displays_unique`, `IsBinaryTree.exists_displays`: an unrooted tree displays at most one
@@ -174,15 +172,6 @@ theorem isUnrootedTree_iff (hX : 2 ≤ Fintype.card X) (T : Finset (Finset X)) :
   have : Nonempty X := Fintype.card_pos_iff.1 (by omega)
   obtain ⟨r⟩ := this
   exact ⟨rootedAt T r, rootedAt_isHierarchy h r, unroot_rootedAt h r⟩
-
-/-- The tree of blobs is an unrooted tree. -/
-theorem treeOfBlobs_isUnrootedTree {V E : Type*} {N : RootedNetwork V E X} (hN : N.IsPhylogenetic)
-    [Nonempty X] : IsUnrootedTree (treeOfBlobs N) := by
-  obtain ⟨r⟩ := ‹Nonempty X›
-  refine ⟨N.cutHierarchy r, N.cutHierarchy_isHierarchy hN r, ?_⟩
-  ext A
-  rw [N.mem_unroot_cutHierarchy hN r A]
-  simp only [treeOfBlobs, mem_filter, mem_univ, true_and]
 
 /-! ### Quartet trees -/
 

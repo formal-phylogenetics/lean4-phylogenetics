@@ -1,0 +1,39 @@
+# The areas of the library and what each may import. `scripts/check_layers.py` checks every import of
+# Phylogenetics/ against this file, and that the areas form no cycle, so that each area could become a
+# Lake package of its own. Imports of Mathlib are not listed: every area may use them.
+
+# Analysis and measure theory that do not mention phylogenetics, for Mathlib.
+[units.ForMathlib]
+paths = ["Phylogenetics/ForMathlib"]
+imports = []
+
+# Directed multigraphs with named arcs, their connectivity, bridges and blobs.
+[units.Graphs]
+paths = ["Phylogenetics/Graph"]
+imports = []
+
+# Trees: rooted trees as hierarchies, unrooted trees as split families, quartets, tree metrics,
+# neighbor joining, ASTRAL's dynamic program, gene trees.
+[units.Trees]
+paths = ["Phylogenetics/Hierarchy", "Phylogenetics/Tree"]
+imports = []
+
+# Rooted networks, their cuts, blobs, induced networks and tree of blobs; level-1 networks.
+[units.Networks]
+paths = ["Phylogenetics/Network"]
+imports = ["Graphs", "Trees"]
+
+# Kingman's coalescent, the multispecies coalescent on species trees, and its computations.
+[units.Coalescent]
+paths = ["Phylogenetics/Coalescent", "Phylogenetics/MSC", "Phylogenetics/Computation"]
+imports = ["Trees"]
+
+# The network multispecies coalescent, on general networks and on level-1 terms.
+[units.NMSC]
+paths = ["Phylogenetics/NMSC"]
+imports = ["ForMathlib", "Trees", "Networks", "Coalescent"]
+
+# The root module, which imports every module.
+[units.Root]
+paths = ["Phylogenetics.lean"]
+imports = ["ForMathlib", "Graphs", "Trees", "Networks", "Coalescent", "NMSC"]

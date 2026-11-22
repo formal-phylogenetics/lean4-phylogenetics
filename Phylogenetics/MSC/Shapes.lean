@@ -1,6 +1,6 @@
 module
 
-public import Phylogenetics.Hierarchy.Classify
+public import Phylogenetics.MSC.Classify
 
 /-!
 # Rooted tree shapes on three, four and five taxa

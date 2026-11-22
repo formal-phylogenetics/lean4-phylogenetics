@@ -34,13 +34,13 @@ import all Phylogenetics.Graph.Defs
 import all Phylogenetics.Graph.Degree
 import all Phylogenetics.Graph.Tree
 import all Phylogenetics.Hierarchy.Basic
-import all Phylogenetics.Hierarchy.Classify
+import all Phylogenetics.MSC.Classify
 import all Phylogenetics.Hierarchy.Counts
 import all Phylogenetics.Hierarchy.Defs
 import all Phylogenetics.Hierarchy.Quartets
 import all Phylogenetics.Hierarchy.RootLocation
-import all Phylogenetics.Hierarchy.Shapes
-import all Phylogenetics.Hierarchy.Small
+import all Phylogenetics.MSC.Shapes
+import all Phylogenetics.MSC.Small
 import all Phylogenetics.Hierarchy.SpeciesTree
 import all Phylogenetics.MSC.Basic
 import all Phylogenetics.MSC.Contract
