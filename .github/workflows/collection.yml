@@ -1,0 +1,22 @@
+name: Collection
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read # Read access to repository contents
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # This README's tables are generated from collection/; the hubs' READMEs are checked in theirs.
+      - name: Check that the README is current
+        run: python3 scripts/status.py readme --check --repo lean4-phylogenetics
+      # The registry's consistency. The other repositories are not checked out here, so their
+      # checks report only warnings; run `scripts/status.py check` in the workspace for those.
+      - name: Check the registry
+        run: python3 scripts/status.py check

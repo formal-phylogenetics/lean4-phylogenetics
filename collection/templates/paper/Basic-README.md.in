@@ -1,0 +1,9 @@
+# General mathematics
+
+Lemmas that say nothing about phylogenetics, filed by field as Mathlib files them
+(`{{root}}/Basic/Combinatorics/`, `{{root}}/Basic/Probability/`, …) and named as Mathlib would name
+them, so that they can be contributed to Mathlib. They import only Mathlib.
+
+Before adding one, search Mathlib and lean4-phylogenetics (`Phylogenetics/ForMathlib/`): a lemma
+that a second repository of the collection needs moves up the tree, to the lowest hub above both
+(lean4-phylogenetics, docs/CONVENTIONS.md, Section 4).

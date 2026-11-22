@@ -1,0 +1,27 @@
+name = "{{root}}"
+version = "0.1.0"
+keywords = ["math", "phylogenetics"]
+description = "{{description}}"
+defaultTargets = ["{{root}}", "{{root}}Challenge", "{{root}}Solution"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+maxSynthPendingDepth = 3
+
+{{requires}}
+# The paper's library. Every module of the project is under {{root}}/, so that the repositories of
+# the collection can require one another (lean4-phylogenetics, docs/CONVENTIONS.md, Section 2):
+# {{root}}/Basic/ (general mathematics), {{root}}/External/ (the results the paper cites) and the
+# paper's own sections.
+[[lean_lib]]
+name = "{{root}}"
+globs = ["{{root}}.+"]
+
+# The statements of record, which import only Mathlib, and their proofs from the library
+# (Comparator: comparator.json).
+[[lean_lib]]
+name = "{{root}}Challenge"
+
+[[lean_lib]]
+name = "{{root}}Solution"

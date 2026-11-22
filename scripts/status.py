@@ -1,0 +1,372 @@
+#!/usr/bin/env python3
+"""The state of the collection, from the registry, the hubs' catalogs and the repositories on disk.
+
+    python3 scripts/status.py check            # the registry and the catalogs, and every repository
+                                               # in the workspace: versions against the train, module
+                                               # names that two repositories share, sources
+                                               # formalized twice
+    python3 scripts/status.py readme --write   # regenerate the tables of this README and of every
+                                               # hub's README found in the workspace
+    python3 scripts/status.py readme --check   # fail if one is out of date (--repo NAME: only that one)
+    python3 scripts/status.py next             # the papers to start next, hub by hub
+
+`check` exits with status 1 on errors: a bad registry or catalog, or a repository of a catalog that
+breaks the conventions (a module outside its root, a module another repository has, off the train).
+Problems of the older repositories are warnings. `check` and `next` read the private overlay;
+`readme` never does, since the READMEs are public.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+import tomllib
+from pathlib import Path
+
+import collection as col
+
+LEAN_PATHS = ['*.lean', 'lakefile.toml', 'lake-manifest.json', 'lean-toolchain']
+
+
+# ---------------------------------------------------------------------------------------------
+# Repositories on disk
+
+
+def lake_config(repo: Path) -> dict | None:
+    f = repo / 'lakefile.toml'
+    return tomllib.loads(f.read_text()) if f.is_file() else None
+
+
+def modules(repo: Path, conf: dict) -> set[str]:
+    """The module names of a Lake package: every `.lean` file under the root of each `lean_lib`."""
+    src = repo / conf.get('srcDir', '.')
+    found = set()
+    for lib in conf.get('lean_lib', []):
+        lib_src = src / lib.get('srcDir', '.')
+        for pat in lib.get('globs') or lib.get('roots') or [lib['name']]:
+            base = re.sub(r'\.[+*]$', '', pat)
+            rel = Path(*base.split('.'))
+            if (lib_src / rel).with_suffix('.lean').is_file():
+                found.add(base)
+            if (lib_src / rel).is_dir():
+                for dirpath, dirnames, filenames in os.walk(lib_src / rel):  # does not follow links
+                    dirnames[:] = [d for d in dirnames if not d.startswith('.')]
+                    for fn in filenames:
+                        if fn.endswith('.lean'):
+                            path = Path(dirpath, fn).relative_to(lib_src).with_suffix('')
+                            found.add('.'.join(path.parts))
+    return found
+
+
+def git(repo: Path, *args: str) -> tuple[int, str]:
+    r = subprocess.run(['git', '-C', str(repo), *args], text=True, capture_output=True)
+    return r.returncode, r.stdout.strip()
+
+
+def scan(path: Path) -> dict | None:
+    conf = lake_config(path)
+    if conf is None:
+        return None
+    info = {'path': path, 'package': conf.get('name', '?'), 'modules': modules(path, conf)}
+    tc = path / 'lean-toolchain'
+    info['toolchain'] = tc.read_text().strip() if tc.is_file() else ''
+    pins = {}
+    mf = path / 'lake-manifest.json'
+    if mf.is_file():
+        for e in json.loads(mf.read_text()).get('packages', []):
+            pins[e['name']] = e.get('inputRev') if e['name'] == 'mathlib' else e.get('rev')
+    info['pins'] = pins
+    info['head'] = git(path, 'rev-parse', 'HEAD')[1]
+    info['dirty'] = bool(git(path, 'status', '--porcelain', '--untracked-files=no')[1])
+    info['ahead'] = git(path, 'rev-list', '--count', '@{u}..HEAD')[1] or '-'
+    return info
+
+
+def check(c: col.Collection) -> int:
+    errors = [f'catalog: {e}' for e in c.validate()]
+    warnings: list[str] = []
+    pins = c.train.get('pins', {})
+    # The repositories to look at: the registry's, and those of the catalogs' papers.
+    targets: dict[str, col.Paper | None] = {r['name']: None for r in c.repos if r.get('role') != 'tool'}
+    for p in c.papers:
+        targets[p.repo] = p
+    scanned: dict[str, dict] = {}
+    for name, p in targets.items():
+        path = col.WORKSPACE / name
+        if not path.is_dir():
+            if p is None or p.status == 'in-progress' or (p.status == 'formalized' and p.commit):
+                warnings.append(f'{name}: not found at {path}')
+            continue
+        info = scan(path)
+        if info is None:
+            warnings.append(f'{name}: no lakefile.toml; not scanned')
+            continue
+        scanned[name] = info
+        listed = c.repo(name)
+        new = p is not None and (listed is None or listed.get('role') not in ('paper', 'background'))
+        complain = errors.append if (new or (listed and listed.get('role') in ('root', 'hub'))) else warnings.append
+        if p is not None and p.status in ('todo', 'partial'):
+            warnings.append(f'{name}: exists, but its catalog says {p.id} is {p.status}')
+        if info['toolchain'] != c.train['lean']:
+            complain(f'{name}: off the train: {info["toolchain"]} (train: {c.train["lean"]})')
+        if 'mathlib' in info['pins'] and info['pins']['mathlib'] != c.train['mathlib']:
+            complain(f'{name}: Mathlib {info["pins"]["mathlib"]} (train: {c.train["mathlib"]})')
+        for pkg, rev in pins.items():
+            have = info['pins'].get(pkg)
+            if have and have != rev:
+                complain(f'{name}: requires {pkg} at {have[:7]} (train: {rev[:7]})')
+        if listed and listed.get('lean') and not info['toolchain'].endswith(':' + listed['lean']):
+            warnings.append(f'{name}: the registry says Lean {listed["lean"]}, the repository has {info["toolchain"]}')
+        if new:
+            allowed = {f'{p.root}Challenge', f'{p.root}Solution'}
+            outside = sorted(m for m in info['modules'] if m.split('.')[0] != p.root and m not in allowed)
+            if outside:
+                errors.append(f'{name}: modules outside the root {p.root}/: {", ".join(outside[:8])}')
+            if info['package'] != p.root:
+                errors.append(f'{name}: package {info["package"]!r}, catalog root {p.root!r}')
+
+    # Each library of the tree against the train's pin: commits that change no Lean file are fine.
+    for r in c.library_repos():
+        info = scanned.get(r['name'])
+        rev = pins.get(r.get('package', ''))
+        if not info or not rev:
+            continue
+        code, _ = git(info['path'], 'diff', '--quiet', rev, 'HEAD', '--', *LEAN_PATHS)
+        if code != 0:
+            warnings.append(f'{r["name"]}: its Lean files have changed since the train\'s pin {rev[:7]} '
+                            '(move the train: docs/WORKFLOW.md, Section 7)')
+
+    # Module names and cited sources that two repositories share.
+    owners: dict[str, list[str]] = {}
+    sources: dict[str, set[str]] = {}
+    for name, info in scanned.items():
+        for m in info['modules']:
+            owners.setdefault(m, []).append(name)
+            parts = m.split('.')
+            if 'External' in parts[:-1]:
+                sources.setdefault(parts[parts.index('External') + 1], set()).add(name)
+    old = {r['name'] for r in c.repos if r.get('role') in ('paper', 'background')}
+    for m, names in sorted(owners.items()):
+        if len(names) > 1:
+            (warnings if set(names) <= old else errors).append(
+                f'module {m} is in {", ".join(sorted(names))}: they cannot be required together')
+    for src, names in sorted(sources.items()):
+        if len(names) > 1:
+            warnings.append(f'cited source {src} is formalized in {", ".join(sorted(names))}: require one '
+                            'from the other, or move it to the lowest hub above both')
+
+    print(f'Train: {c.train["lean"]}, Mathlib {c.train["mathlib"]}; '
+          + ', '.join(f'{k} {v[:7]}' for k, v in pins.items()) + '\n')
+    rows = [('Repository', 'Package', 'Lean', 'Phylogenetics', 'HEAD', 'State')]
+    for name, info in sorted(scanned.items()):
+        state = ('modified' if info['dirty'] else 'clean') + (
+            f', {info["ahead"]} unpushed' if info['ahead'] not in ('0', '-') else '')
+        rows.append((name, info['package'], info['toolchain'].split(':')[-1],
+                     (info['pins'].get('Phylogenetics') or '-')[:7], info['head'][:7] or '-', state))
+    widths = [max(len(r[i]) for r in rows) for i in range(len(rows[0]))]
+    for i, r in enumerate(rows):
+        print('  '.join(x.ljust(w) for x, w in zip(r, widths)).rstrip())
+        if i == 0:
+            print('  '.join('-' * w for w in widths))
+    for hub in c.hubs:
+        ps = [p for p in c.papers if p.hub == hub['name']]
+        if ps:
+            counts = {s: sum(p.status == s for p in ps) for s in col.STATUSES}
+            print(f'\n{hub["name"]}: {len(ps)} papers: ' + ', '.join(f'{n} {s}' for s, n in counts.items() if n))
+    for title, items in (('Errors', errors), ('Warnings', warnings)):
+        if items:
+            print(f'\n{title}:')
+            for x in items:
+                print(f'  - {x}')
+    if not errors:
+        print('\nNo errors.')
+    return 1 if errors else 0
+
+
+# ---------------------------------------------------------------------------------------------
+# READMEs
+
+
+def cell(text: str) -> str:
+    return text.replace('|', '\\|').replace('\n', ' ')
+
+
+STATUS_WORDS = {'formalized': 'formalized', 'in-progress': 'in progress', 'partial': 'partly covered', 'todo': 'to do'}
+KIND_WORDS = {'theory': 'theory', 'method': 'method', 'theory+algorithm': 'theory and algorithm'}
+
+
+def anchor(fid: int, title: str) -> str:
+    return '#' + re.sub(r'[^\w\- ]', '', f'{fid}. {title}'.lower()).replace(' ', '-')
+
+
+def block_summary(c: col.Collection, hub: str) -> str:
+    fams = sorted(f for (h, f) in c.families if h == hub)
+    head = ('| Family | Papers | Formalized | In progress | Partly covered | To do |\n'
+            '| --- | ---: | ---: | ---: | ---: | ---: |')
+    rows, total = [], {s: 0 for s in col.STATUSES}
+    for fid in fams:
+        fam = c.families[(hub, fid)]
+        ps = c.in_family(hub, fid)
+        n = {s: sum(p.status == s for p in ps) for s in col.STATUSES}
+        for s in total:
+            total[s] += n[s]
+        rows.append(f'| [{fid}. {fam["title"]}]({anchor(fid, fam["title"])}) | {len(ps)} | {n["formalized"]} | '
+                    f'{n["in-progress"]} | {n["partial"]} | {n["todo"]} |')
+    count = sum(total.values())
+    rows.append(f'| **All** | **{count}** | **{total["formalized"]}** | **{total["in-progress"]}** | '
+                f'**{total["partial"]}** | **{total["todo"]}** |')
+    return head + '\n' + '\n'.join(rows)
+
+
+def block_papers(c: col.Collection, hub: str) -> str:
+    out = []
+    fams = sorted(f for (h, f) in c.families if h == hub)
+    for fid in fams:
+        fam = c.families[(hub, fid)]
+        if len(fams) > 1:
+            out.append(f'### {fid}. {fam["title"]}\n')
+            if fam.get('priority'):
+                out.append(f'Priority: {fam["priority"]}.\n')
+        out.append('| # | Paper | Kind | Repository | Status | Uses |\n| ---: | --- | --- | --- | --- | --- |')
+        for p in c.in_family(hub, fid):
+            if p.status in ('formalized', 'in-progress') and p.commit:
+                repo = f'[{p.repo}]({p.github})'
+            else:
+                repo = f'`{p.repo}`'
+            status = STATUS_WORDS[p.status]
+            if p.status == 'formalized' and not c.on_train(p.repo):
+                status += ' (off the train)'
+            if p.covered_by and p.status != 'formalized':
+                status += ': ' + ', '.join(sorted({x['repo'] for x in p.covered_by}))
+            uses = [c.paper(d).short or c.paper(d).cite for d in p.builds_on] + list(p.uses)
+            out.append(f'| {p.order} | {cell(p.authors)} ({p.year}), [{cell(p.title)}]({p.url}) | '
+                       f'{KIND_WORDS[p.kind]} | {repo} | {cell(status)} | {cell(", ".join(uses)) or "-"} |')
+        out.append('')
+    return '\n'.join(out).rstrip()
+
+
+def block_tree(c: col.Collection) -> str:
+    rows = ['| Node | Repository | Its library | Holds |', '| --- | --- | --- | --- |']
+    for r in c.library_repos():
+        node = 'root' if r['role'] == 'root' else f'hub: {r.get("title", "")}'
+        rows.append(f'| {cell(node)} | [{r["name"]}]({r["url"]}) | `{r["package"]}` | {cell(r.get("summary", ""))} |')
+    return '\n'.join(rows)
+
+
+def block_repositories(c: col.Collection) -> str:
+    words = {'always': 'always', 'when-needed': 'when needed', 'no': 'no'}
+    rows = ['| Repository | Role | Under | Lean | Required by new repositories | Holds |',
+            '| --- | --- | --- | --- | --- | --- |']
+    for r in c.repos:
+        req = words.get(r.get('require', ''), r.get('require', '-'))
+        if r.get('note'):
+            req += f'. {r["note"]}'
+        rows.append(f'| [{r["name"]}]({r["url"]}) | {r["role"]} | {r.get("parent", "-")} | {r.get("lean", "-")} | '
+                    f'{cell(req)} | {cell(r.get("summary", ""))} |')
+    return '\n'.join(rows)
+
+
+def block_foundations(c: col.Collection) -> str:
+    rows = ['| Foundation | Status | Home | Where | Families |', '| --- | --- | --- | --- | --- |']
+    order = {'available': 0, 'partial': 1, 'missing': 2}
+    for f in sorted(c.foundations, key=lambda f: order[f['status']]):
+        rows.append(f'| {cell(f["name"])} | {f["status"]} | {f["home"]} | {cell(f.get("where") or "-")} | '
+                    f'{cell(", ".join(f.get("needed_by", [])))} |')
+    return '\n'.join(rows)
+
+
+def block_train(c: col.Collection) -> str:
+    rows = ['| | Version or commit |', '| --- | --- |', f'| Lean | `{c.train["lean"]}` |',
+            f'| Mathlib | `{c.train["mathlib"]}` |']
+    by_package = {r.get('package'): r for r in c.library_repos()}
+    for pkg, rev in c.train['pins'].items():
+        r = by_package.get(pkg)
+        link = f'[`{rev[:7]}`]({r["url"]}/commit/{rev})' if r else f'`{rev[:7]}`'
+        rows.append(f'| {pkg} | {link} |')
+    return '\n'.join(rows)
+
+
+ROOT_BLOCKS = {'collection:tree': block_tree, 'collection:train': block_train,
+               'collection:repositories': block_repositories, 'collection:foundations': block_foundations}
+HUB_BLOCKS = {'catalog:summary': block_summary, 'catalog:papers': block_papers}
+
+
+def render(text: str, blocks: dict, *args) -> str:
+    for name, fn in blocks.items():
+        begin, end = f'<!-- BEGIN {name} -->', f'<!-- END {name} -->'
+        pattern = re.compile(re.escape(begin) + r'.*?' + re.escape(end), re.S)
+        if not pattern.search(text):
+            continue
+        body = (f'{begin}\n<!-- Generated by lean4-phylogenetics/scripts/status.py readme --write. Do not edit. -->\n\n'
+                f'{fn(*args)}\n\n{end}')
+        text = pattern.sub(lambda m: body, text)
+    return text
+
+
+def readme(c: col.Collection, write: bool, check_only: bool, only: list[str]) -> int:
+    targets = [(col.ROOT / 'README.md', ROOT_BLOCKS, (c,), 'lean4-phylogenetics')]
+    for hub in c.hubs:
+        if hub['name'] in c.catalogs:
+            targets.append((col.WORKSPACE / hub['name'] / 'README.md', HUB_BLOCKS, (c, hub['name']), hub['name']))
+    status = 0
+    for path, blocks, args, name in targets:
+        if only and name not in only:
+            continue
+        old = path.read_text()
+        new = render(old, blocks, *args)
+        if check_only:
+            if new != old:
+                print(f'{path} is out of date: run python3 scripts/status.py readme --write')
+                status = 1
+            else:
+                print(f'{path} is up to date.')
+        elif write:
+            path.write_text(new)
+            print(f'{path} written.' if new != old else f'{path} was up to date.')
+        else:
+            sys.stdout.write(new)
+    return status
+
+
+def next_papers(c: col.Collection) -> int:
+    print('Papers to start, hub by hub; "ready" means every paper it builds on is formalized.\n')
+    for hub in c.hubs:
+        for (h, fid), fam in sorted(c.families.items()):
+            if h != hub['name']:
+                continue
+            open_ = [p for p in c.in_family(h, fid) if p.status in ('todo', 'partial', 'in-progress')]
+            if not open_:
+                continue
+            print(f'{h}, {fid}. {fam["title"]}')
+            for p in open_:
+                waits = [d for d in p.builds_on if c.paper(d).status != 'formalized']
+                state = 'in progress' if p.status == 'in-progress' else (
+                    'ready' if not waits else 'waits on ' + ', '.join(waits))
+                print(f'  {p.id:30} {state}{" (partly covered)" if p.status == "partial" else ""}')
+            print()
+    return 0
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
+    sub = ap.add_subparsers(dest='cmd')
+    sub.add_parser('check', help='check the registry, the catalogs and the repositories on disk')
+    r = sub.add_parser('readme', help='regenerate the READMEs\' tables')
+    g = r.add_mutually_exclusive_group()
+    g.add_argument('--write', action='store_true')
+    g.add_argument('--check', action='store_true')
+    r.add_argument('--repo', action='append', default=[], help='only this repository\'s README (repeatable)')
+    sub.add_parser('next', help='the papers to start next')
+    args = ap.parse_args()
+    if args.cmd == 'readme':
+        sys.exit(readme(col.load(private=False), args.write, args.check, args.repo))
+    c = col.load(private=True)
+    sys.exit(next_papers(c) if args.cmd == 'next' else check(c))
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,154 @@
+# The shared mathematics that the papers of the hubs need, and where it is or will be.
+#
+# A foundation is a definition or standard theory that several papers use. Its home is the lowest
+# node of the tree above every repository that uses it (docs/CONVENTIONS.md, Section 4): this
+# repository's library when papers of several hubs need it, a hub's library when only that hub's
+# papers do. A foundation that a paper builds first moves to its home when a second paper needs it.
+#
+# status: "available" (in its home, on the train), "partial" (part of it exists; `where` says what),
+#         "missing"
+# needed_by: the hubs and families (of the hub's catalog) that need it
+
+[[foundation]]
+id = "rooted-networks"
+name = "Rooted phylogenetic networks: directed multigraphs, cuts and cut edges, blobs, induced networks, the tree of blobs, the level of a blob"
+status = "available"
+home = "lean4-phylogenetics"
+where = "Phylogenetics/Graph/, Phylogenetics/Network/"
+needed_by = ["lean4-tob", "lean4-phylo-network: 1-5"]
+
+[[foundation]]
+id = "level1-rooted"
+name = "Rooted binary metric level-1 networks, as terms and as digraphs, and their correspondence"
+status = "available"
+home = "lean4-phylogenetics"
+where = "Phylogenetics/Network/Level1/"
+needed_by = ["lean4-tob", "lean4-phylo-network: 1-3"]
+
+[[foundation]]
+id = "trees"
+name = "Rooted trees as hierarchies, unrooted trees as split families, quartets, gene trees, tree metrics, neighbor joining, the four-point condition, ASTRAL's dynamic program, the Splits Equivalence Theorem"
+status = "available"
+home = "lean4-phylogenetics"
+where = "Phylogenetics/Hierarchy/, Phylogenetics/Tree/"
+needed_by = ["lean4-tob", "lean4-phylo-network: 1-5"]
+
+[[foundation]]
+id = "coalescent"
+name = "Kingman's coalescent, the multispecies coalescent, and the network multispecies coalescent on general networks, with quartet concordance factors, induced networks and the displayed tree model"
+status = "available"
+home = "lean4-phylogenetics"
+where = "Phylogenetics/Coalescent/, Phylogenetics/MSC/, Phylogenetics/NMSC/"
+needed_by = ["lean4-tob", "lean4-phylo-network: 1, 5"]
+
+[[foundation]]
+id = "level1-cf"
+name = "Quartet concordance factors of level-1 networks: those of the components of a cycle are those of the induced quarnets (Baños 2019); metric cycles"
+status = "available"
+home = "lean4-phylogenetics"
+where = "Phylogenetics/NMSC/Level1/"
+needed_by = ["lean4-phylo-network: 1"]
+
+[[foundation]]
+id = "quartet-tests"
+name = "Hypothesis tests on quartet concordance factors: the T1, T3 and star tests and their limit laws (Mitchell et al. 2019), combining p-values, missing taxa"
+status = "available"
+home = "lean4-tob"
+where = "TreeOfBlobs/Testing/, TreeOfBlobs/External/MitchellAllmanRhodes2019/. Papers of lean4-phylo-network use them too (NANUQ), so they belong in lean4-phylogenetics"
+needed_by = ["lean4-tob", "lean4-phylo-network: 1"]
+
+[[foundation]]
+id = "level1-blobs"
+name = "Blobs of level-1 networks in the language of domination: bridges, the reticulation and the cycle of a blob, blocks, treelike sets of four taxa, the strict dominance of an induced cut-edge split"
+status = "available"
+home = "lean4-tob"
+where = "TreeOfBlobs/Level1Blobs.lean, TreeOfBlobs/Wedge.lean, TreeOfBlobs/Level1Blocks.lean, TreeOfBlobs/Level1CF.lean. NANUQ uses them too, so they belong in lean4-phylogenetics"
+needed_by = ["lean4-tob", "lean4-phylo-network: 1"]
+
+[[foundation]]
+id = "tree-of-blobs-inference"
+name = "Identifiability and consistent inference of the tree of blobs from quartet concordance factors, and B-quartets"
+status = "available"
+home = "lean4-tob"
+where = "the papers of lean4-tob: lean4-allman2023, lean4-tinnik, lean4-tob-qmc, lean4-ectoblob"
+needed_by = ["lean4-phylo-network: 1"]
+
+[[foundation]]
+id = "semi-directed"
+name = "Semi-directed networks: the semi-directed network of a rooted one, rootability and multi-rootability, level-k and galled semi-directed networks; the NMSC's concordance factors as a function of the semi-directed network"
+status = "missing"
+home = "lean4-phylogenetics"
+where = "Huber et al. 2025, Theorem 5.1, is proved on rooted networks instead (TreeOfBlobs/External/HuberEtAl2025/)"
+needed_by = ["lean4-phylo-network: 1, 2"]
+
+[[foundation]]
+id = "quarnets-quinnets"
+name = "Quarnets and quinnets: restricting a (semi-directed) network to four or five taxa, and the networks they encode"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "induced rooted networks (inducedNetwork) and level-1 quarnet concordance factors exist; semi-directed quarnets and quinnets do not"
+needed_by = ["lean4-phylo-network: 1, 2"]
+
+[[foundation]]
+id = "quintet-cf"
+name = "Quintet concordance factors under the NMSC"
+status = "missing"
+home = "lean4-phylo-network"
+where = ""
+needed_by = ["lean4-phylo-network: 1"]
+
+[[foundation]]
+id = "network-classes"
+name = "Classes of networks: level-k, galled trees and galled networks, tree-child, orchard, tree-based"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "level-1 (RootedNetwork.IsLevelOne); tree-basedness of level-1 networks in lean4-camus, off the train"
+needed_by = ["lean4-phylo-network: 2-4"]
+
+[[foundation]]
+id = "triplets-trinets"
+name = "Rooted triplets, binets, trinets and clusters displayed by a network; least common ancestors and LCA constraints"
+status = "partial"
+home = "lean4-phylo-network"
+where = "least common ancestors in lean4-tob (TreeOfBlobs/LCA.lean)"
+needed_by = ["lean4-phylo-network: 3"]
+
+[[foundation]]
+id = "multi-tree"
+name = "Networks from several trees: displayed trees, hybridization number, cherry-picking sequences, agreement forests, Robinson–Foulds distances to networks"
+status = "partial"
+home = "lean4-phylo-network"
+where = "the displayed tree model (Phylogenetics/NMSC/DisplayedTreeModel.lean); the trees contained in a level-1 network in lean4-camus, off the train"
+needed_by = ["lean4-phylo-network: 4"]
+
+[[foundation]]
+id = "sequence-models"
+name = "Sequence evolution on networks: the CFN, Jukes–Cantor and GTR models, site-pattern probabilities, bi-allelic markers and SNPs, the logDet distance"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "the logDet distance in lean4-ectoblob (ECToBlob/LogDet.lean); the SNP site model of Warnow et al. 2025 in lean4-camus, off the train"
+needed_by = ["lean4-phylo-network: 1, 5"]
+
+[[foundation]]
+id = "likelihood"
+name = "Likelihood, pseudolikelihood and composite likelihood of networks, and the consistency of their maximizers"
+status = "missing"
+home = "lean4-phylogenetics"
+where = ""
+needed_by = ["lean4-phylo-network: 1, 5"]
+
+[[foundation]]
+id = "bayesian"
+name = "Priors on networks, posteriors, and the Markov chains that sample them"
+status = "missing"
+home = "lean4-phylo-network"
+where = ""
+needed_by = ["lean4-phylo-network: 5"]
+
+[[foundation]]
+id = "network-distances"
+name = "Distances between networks (the μ-distance) and inter-taxon quartet distances"
+status = "partial"
+home = "lean4-phylo-network"
+where = "quartet distances of trees and of level-1 networks: lean4-tob (TreeOfBlobs/External/Rhodes2020/) and lean4-nanuq (Nanuq/NANUQ.lean)"
+needed_by = ["lean4-phylo-network: 2"]

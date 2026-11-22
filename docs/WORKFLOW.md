@@ -1,0 +1,144 @@
+# Workflow
+
+How a paper of a hub's catalog becomes a finished formalization, and how the collection is kept
+together. The rules are in [CONVENTIONS.md](CONVENTIONS.md). The repositories sit side by side in
+one directory; the commands run from this repository.
+
+## Contents
+
+1. Choose a paper
+2. Start its repository
+3. Formalize it
+4. Finish it
+5. Publish it
+6. Move shared code up the tree
+7. Move the train
+8. Keep the registry and the catalogs current
+
+## 1. Choose a paper
+
+```sh
+python3 scripts/status.py next
+```
+
+lists the open papers hub by hub, family by family, with each paper's state: *ready* when every
+paper that its entry says it builds on is formalized, or *waits on* the ones that are not. A paper
+that waits can still be done first: what it uses from the earlier paper is then stated and proved
+in its `External/` (CONVENTIONS, Section 4). But the earlier paper usually costs less to do first,
+and then the later one imports it. `builds_on` holds only what was known before each paper's
+inventory; the inventory (the skill's Phase 1) completes it.
+
+## 2. Start its repository
+
+```sh
+python3 scripts/new_paper.py <id> --dry-run   # the plan: hub, root, requirements, paths
+python3 scripts/new_paper.py <id>
+```
+
+It creates `../lean4-<id>` (CONVENTIONS, Section 3) and its private files (Section 7). It requires
+the root library, the paper's hub's library, the hubs it `uses`, and the formalized papers it
+builds on, each at its pin, and lists in the manifest everything they require in turn. It
+hard-links the compiled dependencies from local checkouts (Mathlib from the hub's), builds, checks
+that the dependencies are up to date, makes the first commit, and marks the paper `in-progress` in
+its hub's catalog. Nothing is downloaded, pushed or created on GitHub.
+
+- `--no-seed` fetches the dependencies instead (`lake update`, `lake exe cache get`).
+- `--seed <path>` hard-links Mathlib from another local repository on the train.
+- A hard-linked file is shared by two checkouts. Both pin the same commits, so neither should
+  ever rebuild a dependency. If a build in the new repository starts compiling Mathlib or a library
+  of the collection, stop it, delete its `.lake/packages`, and fetch them with `lake exe cache get`
+  there, so that the other checkout's files stay as they were.
+
+Then run `python3 scripts/status.py readme --write`, and commit the hub.
+
+## 3. Formalize it
+
+```sh
+cd ../lean4-<id>
+claude
+```
+
+and in the session:
+
+```text
+/formalize-math-paper <the paper's DOI or arXiv link>
+```
+
+The scaffold has written the session's instructions (private: CONVENTIONS, Section 7), which
+import CONVENTIONS.md and answer the Phase 0 questions that the collection settles. The skill then
+asks only what is still open, and its Phase 2 finds the project set up: it adds the paper's
+sections under `<Root>/`.
+
+What to watch for, beyond the skill's own gates:
+
+- **Phase 1.** For each cited result, where its proof can come from: Mathlib, the root library, a
+  hub's library, another paper's repository, or nowhere yet. Record the papers that the proofs use
+  in `builds_on` in the hub's catalog.
+- **Phase 2.** Missing foundations (`collection/foundations.toml`): if another paper will need the
+  same definitions, the maintainer decides whether to build them in their home first (Section 6).
+- **Phase 3.** The Challenge restates its definitions in Mathlib's vocabulary, and the library
+  proves the bridges to the collection's definitions.
+- **Phase 6.** Name the root `<Root>` in the audit and in CI, where the skill's templates name
+  `PaperName External Basic`; the audit imports the modules of the required libraries too.
+
+## 4. Finish it
+
+When the skill's completion gates are met, update the hub (CONVENTIONS, Section 9): the entry's
+status, commit and citation, `builds_on`, and `covered_by` of other entries; then
+`python3 scripts/status.py readme --write` and `python3 scripts/status.py check` here, and commit
+the hub.
+
+## 5. Publish it
+
+Only with the maintainer's go-ahead, each step on its own (CONVENTIONS, Section 8), and upstream
+first:
+
+```sh
+gh repo create vltanh/lean4-<id> --private --source . --push   # or --public
+```
+
+Then Palomar's preflight and submission, as the skill's Phase 9 describes.
+
+## 6. Move shared code up the tree
+
+When a second repository needs a definition or a result that lives lower in the tree:
+
+1. Find its new home: the lowest node above both repositories (CONVENTIONS, Section 4).
+2. In that repository, on a branch: add it under the home's names and in the directory of its topic,
+   acknowledged to its source; keep the home's conventions (its README, its changelog if it has one,
+   the audit); bump `version` in its lakefile.
+3. Where it was, replace the definition by a deprecated alias of the new one
+   (`@[deprecated (since := "<date>")] alias Old.name := New.name`), so that nothing breaks.
+4. Move the train's pin of the home (Section 7), then, in each repository that had its own copy, use
+   the home's, and prove that no statement changed (the skill's `scripts/stmt_diff.py`).
+
+## 7. Move the train
+
+To a new Lean and Mathlib release, or to new commits of the libraries:
+
+1. This repository: move its toolchain and Mathlib, build, audit, commit.
+2. Each hub, in the order of their requirements: move Mathlib and the pins
+   (`lake update Phylogenetics`, and the other libraries it requires), build, audit, route check,
+   commit.
+3. Each paper's repository, upstream first (`builds_on` order): the same, then its Comparator.
+4. Edit `[train]` in `collection/repos.toml`, and the `commit` of each moved paper in its hub's
+   catalog; run `python3 scripts/status.py check`, which must report no repository off the train
+   apart from the known ones.
+
+A Palomar entry stays pinned to the commit it was submitted at: moving the train does not change
+it, and resubmitting is the maintainer's decision. The older repositories that are off the train
+join it the same way, when a paper needs to require them.
+
+## 8. Keep the registry and the catalogs current
+
+- `collection/repos.toml` is the source of truth for the tree and the train,
+  `collection/foundations.toml` for the shared mathematics, and each hub's `catalog/papers.toml`
+  for its papers. The READMEs' tables are generated from them: never edit those tables by hand.
+- `python3 scripts/status.py check` compares the registry and the catalogs with the repositories in
+  the workspace: versions against the train, module names that two repositories share (which
+  prevents requiring both), and cited sources that two repositories formalize. It fails only on
+  errors: a bad registry or catalog, or a repository of a catalog, the root or a hub that breaks the
+  conventions.
+- To add a paper: add its `[[paper]]` entry to its hub's catalog (an id and a root unused in every
+  hub), then `python3 scripts/status.py readme --write`. To add a hub: add it to the registry with
+  its library's pin, give it a library, a catalog and a README with the generated blocks.

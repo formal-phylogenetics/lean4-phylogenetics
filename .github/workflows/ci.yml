@@ -1,8 +1,12 @@
 name: CI
 
 on:
+  # The collection's files (the registry, the catalogs' tools, the documents) do not change the
+  # library; .github/workflows/collection.yml checks them.
   push:
+    paths-ignore: ['collection/**', 'docs/**', 'scripts/*.py', '*.md']
   pull_request:
+    paths-ignore: ['collection/**', 'docs/**', 'scripts/*.py', '*.md']
   workflow_dispatch:
 
 permissions:

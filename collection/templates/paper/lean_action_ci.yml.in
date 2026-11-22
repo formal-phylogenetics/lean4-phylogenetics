@@ -1,0 +1,26 @@
+name: Lean Action CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read # Read access to repository contents
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Mathlib's compiled files take most of the runner's disk; remove preinstalled toolchains
+      # that the build does not use.
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+      - uses: actions/checkout@v7
+      - uses: leanprover/lean-action@v1
+      # formalize-math-paper adds its checks here (its assets/lean_action_ci.yml): the audit, the
+      # route check, the Challenge's copy of the definitions, the links and the tables. Its library
+      # roots `PaperName External Basic` are the one root `{{root}}` in this collection.

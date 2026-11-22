@@ -1,0 +1,10 @@
+module
+
+/-! # {{cite}}: the statements of record
+
+{{authors}}, *{{title}}* ({{year}}), <{{url}}>.
+
+The paper's main results, with `sorry` proofs, in Mathlib's vocabulary, in the namespace
+`{{root}}Challenge` (formalize-math-paper, Phase 3). This module imports only Lean and Mathlib:
+Palomar accepts nothing else in a Challenge but Tau Ceti and CSLib, which mark the entry as having
+qualified statement dependencies. -/

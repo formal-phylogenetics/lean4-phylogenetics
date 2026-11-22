@@ -1,0 +1,24 @@
+# {{cite}}, in Lean
+
+A Lean 4 and Mathlib formalization, in progress, of
+
+> {{authors}}, *{{title}}* ({{year}}), <{{url}}>.
+
+It is a paper of the hub [{{hub}}]({{hub_url}}) ({{hub_title}}), in the collection of formalizations
+rooted at [lean4-phylogenetics](https://github.com/vltanh/lean4-phylogenetics), one paper per repository.
+
+This page is rewritten when the formalization is done.
+
+## Building
+
+```sh
+lake exe cache get
+lake build
+```
+
+Lean and Mathlib `{{mathlib}}` ([`lean-toolchain`](lean-toolchain),
+[`lake-manifest.json`](lake-manifest.json)).
+
+## License
+
+Apache-2.0: [LICENSE](LICENSE).
