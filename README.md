@@ -56,9 +56,9 @@ the tree at one commit, the train:
 | --- | --- |
 | Lean | `leanprover/lean4:v4.36.0-rc1` |
 | Mathlib | `v4.36.0-rc1` |
-| Phylogenetics | [`f1a3592`](https://github.com/vltanh/lean4-phylogenetics/commit/f1a3592dee6e3f7d5e7a68a0695ac457de23d2de) |
-| TreeOfBlobs | [`389fcc7`](https://github.com/vltanh/lean4-tob/commit/389fcc736bb686d4f7e507c179dbb91a06e360a1) |
-| PhyloNetwork | [`35eda5b`](https://github.com/vltanh/lean4-phylo-network/commit/35eda5baac0e9bf2bf0c74f16f2438d9175cf91c) |
+| Phylogenetics | [`8c66a13`](https://github.com/vltanh/lean4-phylogenetics/commit/8c66a1354fc32f0e59ee22634916b154eebb54ee) |
+| TreeOfBlobs | [`289439f`](https://github.com/vltanh/lean4-tob/commit/289439fa2a79279ca6cc9f3b1e39496602d93db1) |
+| PhyloNetwork | [`2c40af0`](https://github.com/vltanh/lean4-phylo-network/commit/2c40af02ee813cf5ac8b6b7eafc0510172041bc0) |
 
 <!-- END collection:train -->
 
@@ -164,7 +164,7 @@ What is not connected:
 | [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | hub | lean4-phylogenetics | v4.36.0-rc1 | always | What the papers on estimating whole networks share: nothing yet. Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data |
 | [lean4-camus](https://github.com/vltanh/lean4-camus) | paper | lean4-phylo-network | v4.35.0-rc4 | no. Off the train (Lean v4.35.0-rc4); requires lean4-adr11 rather than lean4-phylogenetics, and has top-level Challenge and Solution modules | Willson, Warnow 2026 (CAMUS), with Observation 2 and the site model of Warnow, Tabatabaee, Evans 2025 |
 | [lean4-adr11](https://github.com/vltanh/lean4-adr11) | background | lean4-phylogenetics | v4.35.0-rc3 | no. Off the train (Lean v4.35.0-rc3); use lean4-phylogenetics instead | Allman, Degnan, Rhodes 2011: the rooted species tree from unrooted gene trees under the coalescent; its general parts are in lean4-phylogenetics |
-| [lean4-gusfield2007](https://github.com/vltanh/lean4-gusfield2007) | background | lean4-phylogenetics | v4.36.0-rc1 | when needed. Its modules use the generic roots External and MainResults, which no other repository may use | Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination |
+| [lean4-gusfield2007](https://github.com/vltanh/lean4-gusfield2007) | background | lean4-phylogenetics | v4.36.0-rc1 | when needed. Requires lean4-phylogenetics 0.3.1 (f1a3592), from before the train moved to 0.4.0; its modules use the generic roots External and MainResults, which no other repository may use | Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination |
 | [formalize-math-paper](https://github.com/vltanh/formalize-math-paper) | tool | - | - | no | The procedure that formalizes each paper |
 
 <!-- END collection:repositories -->

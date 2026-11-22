@@ -16,9 +16,9 @@ lean = "leanprover/lean4:v4.36.0-rc1"
 mathlib = "v4.36.0-rc1"
 
 [train.pins]
-Phylogenetics = "f1a3592dee6e3f7d5e7a68a0695ac457de23d2de"   # lean4-phylogenetics 0.3.1
-TreeOfBlobs = "389fcc736bb686d4f7e507c179dbb91a06e360a1"     # lean4-tob 0.2.0
-PhyloNetwork = "35eda5baac0e9bf2bf0c74f16f2438d9175cf91c"    # lean4-phylo-network 0.1.0
+Phylogenetics = "8c66a1354fc32f0e59ee22634916b154eebb54ee"     # lean4-phylogenetics 0.4.0
+TreeOfBlobs = "289439fa2a79279ca6cc9f3b1e39496602d93db1"       # lean4-tob 0.2.0
+PhyloNetwork = "2c40af02ee813cf5ac8b6b7eafc0510172041bc0"      # lean4-phylo-network 0.1.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it
@@ -87,7 +87,7 @@ url = "https://github.com/vltanh/lean4-gusfield2007"
 lean = "v4.36.0-rc1"
 require = "when-needed"
 summary = "Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination"
-note = "Its modules use the generic roots External and MainResults, which no other repository may use"
+note = "Requires lean4-phylogenetics 0.3.1 (f1a3592), from before the train moved to 0.4.0; its modules use the generic roots External and MainResults, which no other repository may use"
 
 [[repo]]
 name = "formalize-math-paper"
