@@ -2,7 +2,7 @@ name = "{{root}}"
 version = "0.1.0"
 keywords = ["math", "phylogenetics"]
 description = "{{description}}"
-defaultTargets = ["Common", "{{paper}}", "Palomar"]
+defaultTargets = ["{{root}}", "Palomar"]
 
 [leanOptions]
 pp.unicode.fun = true
@@ -10,26 +10,22 @@ autoImplicit = false
 maxSynthPendingDepth = 3
 
 {{requires}}
-# Every module of the project is under its root but the Palomar submission's, so that the
-# repositories of the collection can require one another (lean4-phylogenetics,
-# docs/CONVENTIONS.md, Sections 2 and 3). Lake fails on a glob whose directory does not exist.
+# Every module of the project is in {{root}}/, but its Challenge and its Solution, which are in
+# palomar/ (lean4-phylogenetics, docs/CONVENTIONS.md, Sections 2 and 3). Lake fails on a glob whose
+# directory, or a root whose file, does not exist.
 
-# General mathematics and the results the paper cites:
-# {{root}}/Common/Basic/ and {{root}}/Common/External/.
+# The paper's library, in the namespace {{paper}}: general mathematics in {{root}}/Basic/, the
+# results the paper cites in {{root}}/External/, the definitions of the Challenge in
+# {{root}}/Defs.lean, and the paper's sections.
 [[lean_lib]]
-name = "Common"
-globs = ["{{root}}.Common.+"]
+name = "{{root}}"
+globs = ["{{root}}.+"]
 
-# The paper's library, in the namespace {{paper}}:
-# {{root}}/{{paper}}/.
-[[lean_lib]]
-name = "{{paper}}"
-globs = ["{{root}}.{{paper}}.+"]
-
-# The paper's Challenge and Solution, the modules of the source directory palomar/
-# {{paper}}.Challenge and {{paper}}.Solution
-# (Comparator: palomar/{{paper}}/comparator.json).
+# The paper's Challenge and Solution, the modules {{paper}}.Challenge and {{paper}}.Solution of
+# the source directory palomar/ (Comparator: palomar/{{paper}}/comparator.json). Declared last:
+# Lake gives a module to the last library whose patterns match it, and the glob above matches
+# these names when the paper's name is the root.
 [[lean_lib]]
 name = "Palomar"
 srcDir = "palomar"
-globs = ["{{paper}}.+"]
+roots = ["{{paper}}.Challenge", "{{paper}}.Solution"]

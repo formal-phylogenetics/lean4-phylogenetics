@@ -28,5 +28,5 @@ jobs:
       # of palomar/{{paper}}/Solution.lean
       # and of the libraries this repository requires (lean4-phylogenetics, docs/CONVENTIONS.md,
       # Section 3); the route check of docs/{{paper}}/paper_routes.tsv;
-      # the copy of {{root}}/{{paper}}/Defs.lean
+      # the copy of {{root}}/Defs.lean
       # in palomar/{{paper}}/Challenge.lean; the links and the tables.

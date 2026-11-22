@@ -1,6 +1,6 @@
 module
 
-public import {{root}}.{{paper}}.Defs
+public import {{root}}.Defs
 
 /-! # {{cite}}: the proofs of the statements of record
 

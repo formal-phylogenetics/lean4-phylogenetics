@@ -1,7 +1,7 @@
 # General mathematics
 
 Lemmas that say nothing about phylogenetics, filed by field as Mathlib files them
-(`Combinatorics/`, `Probability/`, … in `{{root}}/Common/Basic/`) and named as Mathlib would name
+(`Combinatorics/`, `Probability/`, … in `{{root}}/Basic/`) and named as Mathlib would name
 them, so that they can be contributed to Mathlib. They import only Mathlib.
 
 Before adding one, search Mathlib and lean4-phylogenetics (`Phylogenetics/ForMathlib/`): a lemma

@@ -13,7 +13,6 @@ from __future__ import annotations
 
 import re
 import tomllib
-import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -28,39 +27,6 @@ ROLES = ('root', 'hub', 'paper', 'background', 'tool')
 # Generic module roots that older repositories use and that no new repository may use: Lean module
 # names are global, and the repositories of the collection import one another.
 RESERVED_ROOTS = {'Basic', 'External', 'Challenge', 'Solution', 'MainResults', 'Main', 'Defs'}
-# Letters that Unicode does not decompose into an ASCII letter and an accent.
-FOLD = {'ß': 'ss', 'ø': 'o', 'Ø': 'O', 'æ': 'ae', 'Æ': 'Ae', 'œ': 'oe', 'Œ': 'Oe', 'ł': 'l', 'Ł': 'L',
-        'đ': 'd', 'Đ': 'D', 'ð': 'd', 'Ð': 'D', 'þ': 'th', 'Þ': 'Th', 'ı': 'i'}
-
-
-def surname(authors: str) -> str:
-    """The first author's surname in ASCII CamelCase: diacritics folded, spaces, hyphens and
-    apostrophes removed, each part capitalized ("van Iersel" -> "VanIersel", "Solís-Lemus" ->
-    "SolisLemus")."""
-    first = re.split(r',|\band\b', authors)[0]
-    first = re.sub(r'\bet al\.?', '', first)
-    text = ''.join(FOLD.get(ch, ch) for ch in unicodedata.normalize('NFKD', first))
-    text = ''.join(ch for ch in text if not unicodedata.combining(ch))
-    return ''.join(w[0].upper() + w[1:] for w in re.split(r'[^A-Za-z0-9]+', text) if w)
-
-
-def first_year(year: str) -> str:
-    """The first year of a catalog's `year` ("2025–2026" -> "2025")."""
-    m = re.search(r'\d{4}', year)
-    return m.group(0) if m else ''
-
-
-def is_author_year(root: str, authors: str, year: str) -> bool:
-    """Whether a root is the paper's author and year: the first author's surname, the first year,
-    and possibly a keyword (`Banos2019`, `Holtgrefe2025Level2`)."""
-    base = re.escape(surname(authors) + first_year(year))
-    return re.fullmatch(base + r'([A-Z][A-Za-z0-9]*)?', root) is not None
-
-
-def derive_paper(root: str, authors: str, year: str) -> str:
-    """The paper's name when its catalog entry gives none: its root when the root is its author and
-    year, otherwise the first author's surname and the first year (`SolisLemus2016`)."""
-    return root if is_author_year(root, authors, year) else surname(authors) + first_year(year)
 
 
 @dataclass
@@ -76,7 +42,7 @@ class Paper:
     root: str
     status: str
     hub: str = ''
-    paper: str = ''         # the paper's name; derived (`derive_paper`) when the entry gives none
+    paper: str = ''         # the paper's name, if not its root (docs/CONVENTIONS.md, Section 2)
     short: str = ''
     repo: str = ''
     commit: str = ''
@@ -90,16 +56,11 @@ class Paper:
             self.repo = f'lean4-{self.id}'
         self.paper_given = bool(self.paper)   # whether the entry states `paper`
         if not self.paper:
-            self.paper = derive_paper(self.root, self.authors, self.year)
+            self.paper = self.root
 
     @property
     def path(self) -> Path:
         return WORKSPACE / self.repo
-
-    @property
-    def new_layout(self) -> bool:
-        """Whether its repository exists in the layout of docs/CONVENTIONS.md, Section 3."""
-        return (self.path / 'palomar').is_dir()
 
     @property
     def github(self) -> str:
@@ -166,14 +127,18 @@ class Collection:
             errors.append('the registry lists a repository twice')
         hubs = {h['name'] for h in self.hubs}
         # The roots of the repositories, by owner: each package of the registry, and each paper's.
+        # Papers that share a repository share its root.
         packages = {r['package']: r['name'] for r in self.repos if r.get('package')}
         roots = {p.root: p.repo for p in self.papers} | packages
-        seen: dict[str, dict[str, str]] = {'id': {}, 'root': {}, 'repo': {}, 'paper': {}}
+        seen_id: dict[str, str] = {}
+        seen_root: dict[str, str] = {}            # root -> repository
+        seen_paper: dict[str, Paper] = {}         # an explicit `paper` -> its entry
         for p in self.papers:
             where = f'paper {p.id!r} ({p.hub})'
             if not re.fullmatch(r'[a-z0-9]+(-[a-z0-9]+)*', p.id):
                 errors.append(f'{where}: an id is lower case letters, digits and hyphens')
-            for key in ('root', 'paper'):
+            # The root, and the paper's name when the entry states one; by default it is the root.
+            for key in ('root', 'paper') if p.paper_given else ('root',):
                 value = getattr(p, key)
                 if not re.fullmatch(r'[A-Z][A-Za-z0-9]*', value):
                     errors.append(f'{where}: {key} {value!r} is not a capitalized ASCII Lean identifier')
@@ -181,17 +146,19 @@ class Collection:
                     errors.append(f'{where}: {key} {value!r} is reserved')
             if packages.get(p.root, p.repo) != p.repo:
                 errors.append(f'{where}: root {p.root!r} is the package of {packages[p.root]}')
-            # The Palomar library's modules are <paper>.Challenge and <paper>.Solution: no
-            # repository's modules may be under that name.
+            # The Palomar library's modules are <paper>.Challenge and <paper>.Solution: they may be
+            # under the repository's own root, never under another's.
             if roots.get(p.paper, p.repo) != p.repo:
                 errors.append(f'{where}: paper {p.paper!r} is the root of {roots[p.paper]}')
-            if p.paper == p.root and p.new_layout:
-                errors.append(f'{where}: paper {p.paper!r} is its own root; name the root after the subject')
-            for key in ('id', 'root', 'repo', 'paper'):
-                value = getattr(p, key)
-                if value in seen[key]:
-                    errors.append(f'{where}: {key} {value!r} is also that of {seen[key][value]!r}')
-                seen[key][value] = p.id
+            if p.id in seen_id:
+                errors.append(f'{where}: id {p.id!r} is also that of a paper of {seen_id[p.id]}')
+            seen_id[p.id] = p.hub
+            if seen_root.setdefault(p.root, p.repo) != p.repo:
+                errors.append(f'{where}: root {p.root!r} is also that of {seen_root[p.root]}')
+            if p.paper_given:
+                other = seen_paper.setdefault(p.paper, p)
+                if other.repo != p.repo:   # within a repository, the check below reports it
+                    errors.append(f'{where}: paper {p.paper!r} is also that of {other.id!r}')
             if p.status not in STATUSES:
                 errors.append(f'{where}: status {p.status!r} is not one of {STATUSES}')
             if p.kind not in KINDS:
@@ -211,6 +178,22 @@ class Collection:
             for cov in p.covered_by:
                 if set(cov) != {'repo', 'what'}:
                     errors.append(f'{where}: each covered_by entry has exactly `repo` and `what`')
+        # A repository with several papers (formalize-math-paper, references/multi-paper.md): one
+        # root, and a name of its own for each paper, at most one of them the default, the root.
+        by_repo: dict[str, list[Paper]] = {}
+        for p in self.papers:
+            by_repo.setdefault(p.repo, []).append(p)
+        for repo, ps in by_repo.items():
+            if len({q.root for q in ps}) > 1:
+                errors.append(f'repository {repo}: its papers share its root, but their entries give '
+                              + ', '.join(f'{q.root!r} ({q.id})' for q in ps))
+            names: dict[str, str] = {}
+            for q in ps:
+                if q.paper in names:
+                    errors.append(f'repository {repo}: papers {names[q.paper]!r} and {q.id!r} have the '
+                                  f'same name {q.paper!r}; each paper of a repository has its own `paper` '
+                                  '(at most one leaves it to the root)')
+                names.setdefault(q.paper, q.id)
         cycle = find_cycle({p.id: p.builds_on for p in self.papers})
         if cycle:
             errors.append('builds_on has a cycle: ' + ' -> '.join(cycle))
@@ -291,7 +274,7 @@ def load(private: bool = False, hubs_from: Path | None = None) -> Collection:
             if 'paper' in o:
                 p.paper_given = True
             elif not p.paper_given:
-                p.paper = derive_paper(p.root, p.authors, p.year)
+                p.paper = p.root
     return c
 
 
@@ -317,8 +300,6 @@ def set_field(c: Collection, pid: str, key: str, value: str, after: str = 'root'
         lines.insert(at + 1, line)
     path.write_text(''.join(lines))
     setattr(p, key, value)
-    if key == 'paper':
-        p.paper_given = True
 
 
 def set_status(c: Collection, pid: str, status: str) -> None:

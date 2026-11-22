@@ -1,10 +1,10 @@
 # The results the paper cites
 
-One directory per source, `{{root}}/Common/External/<Source>/`, with modules
-`{{root}}.Common.External.<Source>.…`,
+One directory per source, `{{root}}/External/<Source>/`, with modules
+`{{root}}.External.<Source>.…`,
 declarations in the namespace `External.<Source>`, and a `README.md` giving the source, the
 statement, and how the paper uses it. Each result is stated in its source's terms and proved
-(formalize-math-paper, Phase 5). These modules import Mathlib, `Common/Basic/` and the libraries
+(formalize-math-paper, Phase 5). These modules import Mathlib, `{{root}}/Basic/` and the libraries
 this repository requires, never the paper's library.
 
 A source that another repository of the collection already formalizes (lean4-phylogenetics, a

@@ -24,9 +24,9 @@ python3 scripts/status.py next
 lists the open papers hub by hub, family by family, with each paper's state: *ready* when every
 paper that its entry says it builds on is formalized, or *waits on* the ones that are not. A paper
 that waits can still be done first: what it uses from the earlier paper is then stated and proved in
-its `<Root>/Common/External/` (CONVENTIONS, Section 4). But the earlier paper usually costs less to
-do first, and then the later one imports it. `builds_on` holds only what was known before each
-paper's inventory; the inventory (the skill's Phase 1) completes it.
+its `<Root>/External/` (CONVENTIONS, Section 4). But the earlier paper usually costs less to do
+first, and then the later one imports it. `builds_on` holds only what was known before each paper's
+inventory; the inventory (the skill's Phase 1) completes it.
 
 ## 2. Start its repository
 
@@ -35,18 +35,20 @@ python3 scripts/new_paper.py <id> --dry-run   # the plan: hub, root, paper, requ
 python3 scripts/new_paper.py <id>
 ```
 
-It creates `../lean4-<id>` in the layout of CONVENTIONS, Section 3, and its private files
-(Section 7). It requires the root library, the paper's hub's library, the hubs it `uses`, and the
-formalized papers it builds on, each at its pin, and lists in the manifest everything they require
-in turn. It hard-links the compiled dependencies from local checkouts (Mathlib from the hub's),
-builds, checks that the dependencies are up to date, and makes the first commit. In the paper's
-entry in its hub's catalog, it records the paper's name (`paper`, if the entry derived it) and
-marks the paper `in-progress`. Nothing is downloaded, pushed or created on GitHub.
+It creates `../lean4-<id>` (or the entry's `repo`) in the layout of CONVENTIONS, Section 3, and its
+private files (Section 7). It requires the root library, the paper's hub's library, the hubs it
+`uses`, and the formalized papers it builds on, each at its pin, and lists in the manifest
+everything they require in turn. It hard-links the compiled dependencies from local checkouts
+(Mathlib from the hub's), builds, checks that the dependencies are up to date, makes the first
+commit, and marks the paper `in-progress` in its hub's catalog. Nothing is downloaded, pushed or
+created on GitHub.
 
-- A paper whose catalog root is its author and year (`Banos2019`), which is also its paper's name,
-  gets a root named after its subject first: `--root Level1Quarnets`. The script refuses to start
-  the repository without it, and records the new root in the catalog (CONVENTIONS, Section 2).
-
+- Papers on one topic may share a repository (CONVENTIONS, Sections 2 and 3). The script starts it
+  with the first of them, in the layout of one paper, and refuses a repository that exists: the
+  others join it by hand, as the skill's `references/multi-paper.md` says. When the second joins,
+  the first paper's code moves to `<Root>/<Root>/` and `<Root>/Common/` (its Section 9); each paper
+  then has a library, a submission and a directory of documents, and the README becomes the
+  umbrella README. Their entries are then marked `in-progress`.
 - `--no-seed` fetches the dependencies instead (`lake update`, `lake exe cache get`).
 - `--seed <path>` hard-links Mathlib from another local repository on the train.
 - A hard-linked file is shared by two checkouts. Both pin the same commits, so neither should
@@ -69,11 +71,11 @@ and in the session:
 /formalize-math-paper <the paper's DOI or arXiv link>
 ```
 
-The scaffold has written the session's instructions (private: CONVENTIONS, Section 7), which
-import CONVENTIONS.md and answer the Phase 0 questions that the collection settles. The skill then
-asks only what is still open, and its Phase 2 finds the project set up: it adds the paper's
-sections under `<Root>/<Paper>/`, general mathematics under `<Root>/Common/Basic/` and the results
-the paper cites under `<Root>/Common/External/`.
+The scaffold has written the session's instructions (private: CONVENTIONS, Section 7), which import
+CONVENTIONS.md and answer the Phase 0 questions that the collection settles. The skill then asks
+only what is still open, and its Phase 2 finds the project set up: it adds the paper's sections
+under `<Root>/`, general mathematics under `<Root>/Basic/` and the results the paper cites under
+`<Root>/External/`.
 
 What to watch for, beyond the skill's own gates:
 
@@ -83,8 +85,8 @@ What to watch for, beyond the skill's own gates:
 - **Phase 2.** Missing foundations (`collection/foundations.toml`): if another paper will need the
   same definitions, the maintainer decides whether to build them in their home first (Section 6).
 - **Phase 3.** The Challenge, `palomar/<Paper>/Challenge.lean`, restates its definitions in
-  Mathlib's vocabulary (copied from `<Root>/<Paper>/Defs.lean`), and the library proves the bridges
-  to the collection's definitions.
+  Mathlib's vocabulary (copied from `<Root>/Defs.lean`), and the library proves the bridges to the
+  collection's definitions.
 - **Phase 6.** In the audit and in CI, the skill's `ProjectName` is `<Root>` and its `PaperName` is
   `<Paper>`; the audit imports the modules of the required libraries too.
 
@@ -148,7 +150,7 @@ join it the same way, when a paper needs to require them.
   prevents requiring both), and cited sources that two repositories formalize. It fails only on
   errors: a bad registry or catalog, or a repository of a catalog, the root or a hub that breaks the
   conventions.
-- To add a paper: add its `[[paper]]` entry to its hub's catalog (an id and a root unused in every
-  hub, and a `paper` if the derived name is wrong or taken: CONVENTIONS, Section 2), then
-  `python3 scripts/status.py readme --write`. To add a hub: add it to the registry with
-  its library's pin, give it a library, a catalog and a README with the generated blocks.
+- To add a paper: add its `[[paper]]` entry to its hub's catalog (an id unused in every hub, and a
+  root unused by the other repositories; for a shared repository, its `repo`, its root and a
+  `paper`), then `python3 scripts/status.py readme --write`. To add a hub: add it to the registry
+  with its library's pin, give it a library, a catalog and a README with the generated blocks.
