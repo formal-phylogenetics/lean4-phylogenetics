@@ -144,6 +144,14 @@ def submissions(mods: dict[str, dict]) -> tuple[dict[str, set[str]], set[str]]:
     return subs, other
 
 
+def deprecated(repo: Path, m: str) -> bool:
+    """Whether the module `m` of the package at `repo` is deprecated: its file, under the package's
+    source directory, has a `deprecated_module` command."""
+    conf = lake_config(repo) or {}
+    f = (repo / conf.get('srcDir', '.') / Path(*m.split('.'))).with_suffix('.lean')
+    return f.is_file() and any(line.startswith('deprecated_module') for line in f.read_text().splitlines())
+
+
 def git(repo: Path, *args: str) -> tuple[int, str]:
     r = subprocess.run(['git', '-C', str(repo), *args], text=True, capture_output=True)
     return r.returncode, r.stdout.strip()
@@ -288,7 +296,9 @@ def check(c: col.Collection) -> int:
         for m in info['modules']:
             owners.setdefault(m, []).append(name)
             parts = m.split('.')
-            if 'External' in parts[:-1]:
+            # A deprecated module (`deprecated_module`) that imports the source's new home does not
+            # formalize it again.
+            if 'External' in parts[:-1] and not deprecated(info['path'], m):
                 sources.setdefault(parts[parts.index('External') + 1], set()).add(name)
     old = {r['name'] for r in c.repos if r.get('role') in ('paper', 'background')}
     for m, names in sorted(owners.items()):

@@ -18,9 +18,9 @@ lean = "leanprover/lean4:v4.37.0-rc1"
 mathlib = "v4.37.0-rc1"
 
 [train.pins]
-Phylogenetics = "b56ce531644230622f069aaa8aa51a5143c1411e"     # lean4-phylogenetics 0.5.0
-TreeOfBlobs = "f3e570dec6a32e57ae5b189806d3d02a8658fd32"       # lean4-tob 0.2.0
-PhyloNetwork = "d069aaa85c4d9ee9d2a8746b71170f27c92a8633"      # lean4-phylo-network 0.1.0
+Phylogenetics = "3fcabfd7d191990dda268b0b3968d945b65eb59a"     # lean4-phylogenetics 0.6.1
+PhyloNetwork = "4ed2bb0f7085acbf1326f43e2a5c582ba4566125"      # lean4-phylo-network 0.2.0
+TreeOfBlobs = "31465cd5dd0b4c173b8bcb49bb5f5dfeb8c99241"       # lean4-tob 0.3.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it (a hub under a hub is a sub-hub)
@@ -76,9 +76,11 @@ name = "lean4-allman2011"
 role = "background"
 parent = "lean4-phylogenetics"
 package = "Allman2011"
+root = "Allman2011"
 url = "https://github.com/vltanh/lean4-allman2011"
 lean = "v4.37.0-rc1"
 require = "when-needed"
+commit = "d4ada2c6cbbb5b8629eb9740dc5d5a9984a06a78"
 summary = "Allman, Degnan, Rhodes 2011: the rooted species tree from unrooted gene trees under the coalescent, stated on the species trees of lean4-phylogenetics"
 note = "Requires lean4-phylogenetics at the train's pin, which holds its general parts, and has the layout of a paper's repository (root and paper Allman2011)"
 
@@ -91,7 +93,7 @@ root = "Gusfield2007"
 url = "https://github.com/vltanh/lean4-gusfield2007"
 lean = "v4.37.0-rc1"
 require = "when-needed"
-commit = "1bf41f999de29159a9e3059eb5d037b740c3e729"
+commit = "bd3940001c6f030816f13191b348596763b1f146"
 summary = "Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination"
 
 [[repo]]
