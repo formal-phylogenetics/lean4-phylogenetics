@@ -1,8 +1,9 @@
 # Workflow
 
 How a paper of a hub's catalog becomes a finished formalization, and how the collection is kept
-together. The rules are in [CONVENTIONS.md](CONVENTIONS.md). The repositories sit side by side in
-one directory; the commands run from this repository.
+together. The rules are in [CONVENTIONS.md](CONVENTIONS.md). The repositories are in one directory,
+the workspace: this one and the private repository at its top, the hubs in `hubs/`, the
+repositories of papers in `papers/`. The commands run from this repository.
 
 ## Contents
 

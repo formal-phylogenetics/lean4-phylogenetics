@@ -7,7 +7,7 @@
 Run it when the paper's formalization starts, one paper at a time, not ahead of it: a repository
 that waits moves with every train with nothing in it (docs/WORKFLOW.md, Section 2).
 
-It creates lean4-<id> in the workspace, on the train, under the paper's hub, in the layout of
+It creates lean4-<id> in the workspace's papers/, on the train, under the paper's hub, in the layout of
 docs/CONVENTIONS.md, Section 3, with <Root> the catalog's root and <Paper> the paper's name (the
 root, unless the entry gives `paper`):
 
@@ -92,7 +92,7 @@ def requirements(c: col.Collection, p: col.Paper) -> tuple[list[dict], list[str]
         what = ('The hub of this paper' if name == p.hub else
                 f'The hub {name}, above the hub of this paper' if name in above else
                 f'The hub {name}, whose library this paper uses')
-        reqs.append(dict(name=hub['package'], url=hub['url'], rev=pins[hub['package']], local=col.WORKSPACE / name,
+        reqs.append(dict(name=hub['package'], url=hub['url'], rev=pins[hub['package']], local=c.path(name),
                          comment=f'{what}: {hub.get("title", "")}.'))
     notes = []
     for dep in p.builds_on:
@@ -133,7 +133,7 @@ def closure(reqs: list[dict]) -> list[dict]:
                                      f'but this repository requires it at {seen[name]["rev"][:7]}')
                 continue
             repo = sub['git'].rstrip('/').rsplit('/', 1)[-1]
-            local = col.WORKSPACE / repo
+            local = col.repo_path(repo)
             entry = dict(name=name, url=sub['git'], rev=sub['rev'], local=local if name != 'Phylogenetics' else None)
             seen[name] = entry
             out.append(entry)
@@ -269,7 +269,7 @@ def main() -> None:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('id', help="the paper's id in its hub's catalog/papers.toml")
     ap.add_argument('--workspace', type=Path, default=col.WORKSPACE,
-                    help='where to create the repository (default: beside this one)')
+                    help='the workspace, whose papers/ gets the repository (default: the one this repository is in)')
     ap.add_argument('--private-root', type=Path, default=None,
                     help='the private repository, with one folder per repository (default: the one '
                          "that this repository's `notes` link points into)")
@@ -298,7 +298,7 @@ def main() -> None:
         raise SystemExit("this repository has no `notes` link to its private folder, which holds the "
                          'templates of the private files')
     workspace = args.workspace.resolve()
-    repo = workspace / p.repo
+    repo = workspace / col.LAYOUT['paper'] / p.repo
     private_root = (args.private_root or folder.parent).resolve()
     notes = private_root / p.repo
     if repo.exists() or repo.is_symlink():
@@ -309,7 +309,7 @@ def main() -> None:
         raise SystemExit(f'{notes} exists already')
     if not private_root.is_dir():
         raise SystemExit(f'no private repository at {private_root} (use --private-root)')
-    seed = (args.seed or col.WORKSPACE / p.hub).resolve()
+    seed = (args.seed or c.path(p.hub)).resolve()
 
     reqs, cannot = requirements(c, p)
     print(f'{p.repo}: {p.cite}, "{p.title}"')

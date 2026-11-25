@@ -4,8 +4,9 @@ The collection is a tree of repositories. Its root, lean4-phylogenetics, holds t
 everything shares, the registry of the repositories (collection/repos.toml), the shared foundations
 (collection/foundations.toml), the conventions and the tools. Each hub holds a library of what its
 papers share, and a catalog of its papers (catalog/papers.toml). A hub's parent is the root or another
-hub, of which it is a sub-hub: lean4-phylo-tree-of-blobs is a sub-hub of lean4-phylo-network. The repositories sit
-side by side in one directory, the workspace.
+hub, of which it is a sub-hub: lean4-phylo-tree-of-blobs is a sub-hub of lean4-phylo-network. The repositories are
+in one directory, the workspace: this one and the private repository at its top, the hubs in hubs/, the
+repositories of papers in papers/ (`repo_path`).
 
 Imported by scripts/status.py and scripts/new_paper.py. Python 3.11 or later.
 """
@@ -22,6 +23,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent      # this repository
 COLLECTION = ROOT / 'collection'
 WORKSPACE = ROOT.parent
+# Where the repositories are in the workspace, by role; the root, the tools and the private repository
+# are at its top.
+LAYOUT = {'hub': 'hubs', 'paper': 'papers', 'background': 'papers'}
 GITHUB_OWNER = 'vltanh'
 
 STATUSES = ('formalized', 'in-progress', 'partial', 'todo')
@@ -65,7 +69,7 @@ class Paper:
 
     @property
     def path(self) -> Path:
-        return WORKSPACE / self.repo
+        return repo_path(self.repo, 'paper')
 
     @property
     def github(self) -> str:
@@ -103,6 +107,12 @@ class Collection:
 
     def repo(self, name: str) -> dict | None:
         return next((r for r in self.repos if r['name'] == name), None)
+
+    def path(self, name: str) -> Path:
+        """Where the repository `name` is, or goes, in the workspace (`repo_path`)."""
+        r = self.repo(name)
+        role = r.get('role', '') if r else ('paper' if any(p.repo == name for p in self.papers) else '')
+        return repo_path(name, role)
 
     def in_family(self, hub: str, fid: int) -> list[Paper]:
         return sorted((p for p in self.papers if p.hub == hub and p.family == fid), key=lambda p: p.order)
@@ -279,6 +289,17 @@ class Collection:
         return errors
 
 
+def repo_path(name: str, role: str = '') -> Path:
+    """Where the repository `name` is in the workspace: in the folder of its role (`LAYOUT`), or found
+    in hubs/, in papers/ or at the top, as in CI, where a hub is checked out beside the root. One that
+    is nowhere goes in the folder of its role."""
+    home = WORKSPACE / LAYOUT[role] / name if role in LAYOUT else WORKSPACE / name
+    for path in (home, WORKSPACE / 'hubs' / name, WORKSPACE / 'papers' / name, WORKSPACE / name):
+        if path.exists():
+            return path
+    return home
+
+
 def fold(text: str) -> str:
     """Lower case ASCII words: titles and names compared up to case, accents and punctuation."""
     text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode().lower()
@@ -372,9 +393,8 @@ def load(private: bool = False, hubs_from: Path | None = None) -> Collection:
     if private and folder and (folder / 'catalog-private.toml').exists():
         overlay = _toml(folder / 'catalog-private.toml')
         c.repos += overlay.get('repo', [])
-    workspace = hubs_from or WORKSPACE
     for hub in c.hubs:
-        path = workspace / hub['name'] / 'catalog' / 'papers.toml'
+        path = (hubs_from / hub['name'] if hubs_from else repo_path(hub['name'], 'hub')) / 'catalog' / 'papers.toml'
         if not path.exists():
             continue
         c.catalogs[hub['name']] = path

@@ -191,7 +191,7 @@ def check(c: col.Collection) -> int:
         targets.setdefault(p.repo, []).append(p)
     scanned: dict[str, dict] = {}
     for name, entries in targets.items():
-        path = col.WORKSPACE / name
+        path = c.path(name)
         if not path.is_dir():
             if not entries or any(p.status == 'in-progress' or (p.status == 'formalized' and p.commit)
                                   for p in entries):
@@ -471,7 +471,7 @@ def readme(c: col.Collection, write: bool, check_only: bool, only: list[str]) ->
     targets = [(col.ROOT / 'README.md', ROOT_BLOCKS, (c,), 'lean4-phylogenetics')]
     for hub in c.hubs:
         if hub['name'] in c.catalogs:
-            targets.append((col.WORKSPACE / hub['name'] / 'README.md', HUB_BLOCKS, (c, hub['name']), hub['name']))
+            targets.append((c.path(hub['name']) / 'README.md', HUB_BLOCKS, (c, hub['name']), hub['name']))
     status = 0
     for path, blocks, args, name in targets:
         if only and name not in only:
@@ -514,8 +514,9 @@ def next_papers(c: col.Collection) -> int:
 def fetch_hubs() -> None:
     """Clone, shallowly, every hub of the registry that is not in the workspace."""
     for hub in col.load(private=False).hubs:
-        path = col.WORKSPACE / hub['name']
+        path = col.repo_path(hub['name'], 'hub')
         if not path.exists():
+            path.parent.mkdir(parents=True, exist_ok=True)
             subprocess.run(['git', 'clone', '--quiet', '--depth', '1', hub['url'], str(path)], check=True)
             print(f'cloned {hub["name"]}')
 

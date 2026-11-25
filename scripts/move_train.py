@@ -88,7 +88,7 @@ def move(c: col.Collection, p: col.Paper, reqs: list[dict], cannot: list[str]) -
     lf.write_text(text[:start] + np.requires_block(c, reqs) + text[end:])
     (repo / 'lean-toolchain').write_text(c.train['lean'] + '\n')
     shutil.rmtree(repo / '.lake' / 'packages', ignore_errors=True)
-    inherited = np.seed_packages(c, p.root, reqs, (col.WORKSPACE / p.hub).resolve(), repo)
+    inherited = np.seed_packages(c, p.root, reqs, c.path(p.hub).resolve(), repo)
     stale = [r['name'] for r in reqs + inherited
              if sh(['lake', 'build', '--no-build',
                     '+Phylogenetics.Network.Defs:olean' if r['local'] is None else f'@{r["name"]}'],
