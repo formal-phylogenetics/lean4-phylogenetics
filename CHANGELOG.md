@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1
+
+`RootedNetwork.isGenericNull_nmscCF_eq` takes the instance `[DecidableEq X]` of its context, as `nmscCF` does,
+instead of the classical one: a repository that applies it under its own instance needs no conversion. Its
+statement is otherwise the same.
+
 ## 0.6.0
 
 Null sets of numerical parameters, and the analytic argument for generic parameters, which the papers of

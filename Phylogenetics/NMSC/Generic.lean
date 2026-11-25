@@ -137,8 +137,8 @@ theorem isGenericNull_of_analyticOnNhd {F : MetricData E → ℝ}
   exact hzero
 
 /-- Two concordance factors that differ at some normalized parameters differ at generic parameters. -/
-theorem isGenericNull_nmscCF_eq [Fintype V] [Fintype X] {r r' : QuartetTree X} {θ₀ : MetricData E}
-    (hθ₀ : N.IsNormalized θ₀) (h : nmscCF N θ₀ 0 r ≠ nmscCF N θ₀ 0 r') :
+theorem isGenericNull_nmscCF_eq [Fintype V] [Fintype X] [DecidableEq X] {r r' : QuartetTree X}
+    {θ₀ : MetricData E} (hθ₀ : N.IsNormalized θ₀) (h : nmscCF N θ₀ 0 r ≠ nmscCF N θ₀ 0 r') :
     IsGenericNull N {θ | N.IsMetric θ ∧ nmscCF N θ 0 r = nmscCF N θ 0 r'} :=
   (isGenericNull_of_analyticOnNhd (F := fun θ => nmscCF N θ 0 r - nmscCF N θ 0 r')
     (fun d => (analyticOnNhd_nmscCF_coordMetric N d 0 r).sub
