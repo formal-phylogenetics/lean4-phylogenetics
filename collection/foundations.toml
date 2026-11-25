@@ -102,7 +102,7 @@ id = "network-classes"
 name = "Classes of networks: level-k, galled trees and galled networks, tree-child, orchard, tree-based"
 status = "partial"
 home = "lean4-phylogenetics"
-where = "level-1 (RootedNetwork.IsLevelOne); tree-basedness of level-1 networks in lean4-camus, off the train"
+where = "level-1 (RootedNetwork.IsLevelOne); tree-basedness of level-1 networks in lean4-camus"
 needed_by = ["lean4-phylo-network: 2-4"]
 
 [[foundation]]
@@ -118,7 +118,7 @@ id = "multi-tree"
 name = "Networks from several trees: displayed trees, hybridization number, cherry-picking sequences, agreement forests, Robinson–Foulds distances to networks"
 status = "partial"
 home = "lean4-phylo-network"
-where = "the displayed tree model (Phylogenetics/NMSC/DisplayedTreeModel.lean); the trees contained in a level-1 network in lean4-camus, off the train"
+where = "the displayed tree model (Phylogenetics/NMSC/DisplayedTreeModel.lean); the trees contained in a level-1 network in lean4-camus"
 needed_by = ["lean4-phylo-network: 4"]
 
 [[foundation]]
@@ -126,7 +126,7 @@ id = "sequence-models"
 name = "Sequence evolution on networks: the CFN, Jukes–Cantor and GTR models, site-pattern probabilities, bi-allelic markers and SNPs, the logDet distance"
 status = "partial"
 home = "lean4-phylogenetics"
-where = "the logDet distance in lean4-ectoblob (ECToBlob/LogDet.lean); the SNP site model of Warnow et al. 2025 in lean4-camus, off the train"
+where = "the logDet distance in lean4-ectoblob (ECToBlob/LogDet.lean); the SNP site model of Warnow et al. 2025 in lean4-camus"
 needed_by = ["lean4-phylo-network: 1, 5"]
 
 [[foundation]]
