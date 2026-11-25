@@ -6,7 +6,8 @@ everything shares, the registry of the repositories (collection/repos.toml), the
 papers share, and a catalog of its papers (catalog/papers.toml). A hub's parent is the root or another
 hub, of which it is a sub-hub: lean4-phylo-tree-of-blobs is a sub-hub of lean4-phylo-network. The repositories are
 in one directory, the workspace: this one and the private repository at its top, the hubs in hubs/, the
-repositories of papers in papers/ (`repo_path`).
+repositories of papers in papers/<hub>/ (`repo_path`). The private files of each repository are kept at
+the same place in the private repository (docs/CONVENTIONS.md, Section 7).
 
 Imported by scripts/status.py and scripts/new_paper.py. Python 3.11 or later.
 """
@@ -23,9 +24,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent      # this repository
 COLLECTION = ROOT / 'collection'
 WORKSPACE = ROOT.parent
-# Where the repositories are in the workspace, by role; the root, the tools and the private repository
-# are at its top.
-LAYOUT = {'hub': 'hubs', 'paper': 'papers', 'background': 'papers'}
 GITHUB_OWNER = 'vltanh'
 
 STATUSES = ('formalized', 'in-progress', 'partial', 'todo')
@@ -69,7 +67,7 @@ class Paper:
 
     @property
     def path(self) -> Path:
-        return repo_path(self.repo, 'paper')
+        return repo_path(self.repo, 'paper', self.hub)
 
     @property
     def github(self) -> str:
@@ -108,11 +106,22 @@ class Collection:
     def repo(self, name: str) -> dict | None:
         return next((r for r in self.repos if r['name'] == name), None)
 
+    def place(self, name: str) -> tuple[str, str]:
+        """The role of the repository `name` and the hub it is under, from the registry or the catalogs."""
+        r = self.repo(name)
+        hub = next((p.hub for p in self.papers if p.repo == name), '')
+        if r:
+            parent = self.repo(r.get('parent', ''))
+            return r.get('role', ''), hub or (parent['name'] if parent and parent.get('role') == 'hub' else '')
+        return ('paper', hub) if hub else ('', '')
+
     def path(self, name: str) -> Path:
         """Where the repository `name` is, or goes, in the workspace (`repo_path`)."""
-        r = self.repo(name)
-        role = r.get('role', '') if r else ('paper' if any(p.repo == name for p in self.papers) else '')
-        return repo_path(name, role)
+        return repo_path(name, *self.place(name))
+
+    def home(self, name: str) -> Path:
+        """Where the repository `name` belongs in the workspace (`repo_home`)."""
+        return repo_home(name, *self.place(name))
 
     def in_family(self, hub: str, fid: int) -> list[Paper]:
         return sorted((p for p in self.papers if p.hub == hub and p.family == fid), key=lambda p: p.order)
@@ -289,15 +298,29 @@ class Collection:
         return errors
 
 
-def repo_path(name: str, role: str = '') -> Path:
-    """Where the repository `name` is in the workspace: in the folder of its role (`LAYOUT`), or found
-    in hubs/, in papers/ or at the top, as in CI, where a hub is checked out beside the root. One that
-    is nowhere goes in the folder of its role."""
-    home = WORKSPACE / LAYOUT[role] / name if role in LAYOUT else WORKSPACE / name
-    for path in (home, WORKSPACE / 'hubs' / name, WORKSPACE / 'papers' / name, WORKSPACE / name):
-        if path.exists():
-            return path
-    return home
+def paper_folder(hub: str) -> str:
+    """The folder of papers/ that holds the repositories of the papers of `hub`: the hub's name without
+    `lean4-phylo-` (network, tree-of-blobs, ...), or background for a paper under no hub."""
+    return hub.removeprefix('lean4-phylo-') if hub.startswith('lean4-phylo-') else 'background'
+
+
+def repo_home(name: str, role: str = '', hub: str = '') -> Path:
+    """Where the repository `name` belongs in the workspace: a hub in hubs/, a paper's repository in
+    papers/<the folder of its hub>/, the root and the others at the top."""
+    if role == 'hub':
+        return WORKSPACE / 'hubs' / name
+    if role in ('paper', 'background'):
+        return WORKSPACE / 'papers' / paper_folder(hub) / name
+    return WORKSPACE / name
+
+
+def repo_path(name: str, role: str = '', hub: str = '') -> Path:
+    """Where the repository `name` is in the workspace: at its home (`repo_home`), or found in hubs/,
+    in a folder of papers/ or at the top, as in CI, where a hub is checked out beside the root. One that
+    is nowhere goes to its home."""
+    home = repo_home(name, role, hub)
+    found = [home, WORKSPACE / 'hubs' / name, *sorted((WORKSPACE / 'papers').glob(f'*/{name}')), WORKSPACE / name]
+    return next((path for path in found if path.exists()), home)
 
 
 def fold(text: str) -> str:

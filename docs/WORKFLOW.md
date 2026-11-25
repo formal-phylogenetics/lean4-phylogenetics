@@ -2,8 +2,11 @@
 
 How a paper of a hub's catalog becomes a finished formalization, and how the collection is kept
 together. The rules are in [CONVENTIONS.md](CONVENTIONS.md). The repositories are in one directory,
-the workspace: this one and the private repository at its top, the hubs in `hubs/`, the
-repositories of papers in `papers/`. The commands run from this repository.
+the workspace: this one and the private repository at its top, the hubs in `hubs/`, and the
+repositories of papers in `papers/`, one folder per hub (`papers/network/`, `papers/tree-of-blobs/`,
+…, and `papers/background/` for those under no hub). The private files of each repository are at
+the same place in the private repository (CONVENTIONS, Section 7). The commands run from this
+repository.
 
 ## Contents
 

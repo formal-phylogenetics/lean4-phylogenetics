@@ -197,6 +197,9 @@ def check(c: col.Collection) -> int:
                                   for p in entries):
                 warnings.append(f'{name}: not found at {path}')
             continue
+        if path.resolve() != c.home(name).resolve():
+            warnings.append(f'{name}: at {path.relative_to(col.WORKSPACE)}, its place is '
+                            f'{c.home(name).relative_to(col.WORKSPACE)}: move it, and relink its private files')
         info = scan(path)
         if info is None:
             warnings.append(f'{name}: no lakefile.toml; not scanned')

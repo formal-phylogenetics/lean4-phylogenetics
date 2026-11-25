@@ -7,7 +7,7 @@
 Run it when the paper's formalization starts, one paper at a time, not ahead of it: a repository
 that waits moves with every train with nothing in it (docs/WORKFLOW.md, Section 2).
 
-It creates lean4-<id> in the workspace's papers/, on the train, under the paper's hub, in the layout of
+It creates lean4-<id> in the workspace's papers/<hub>/, on the train, under the paper's hub, in the layout of
 docs/CONVENTIONS.md, Section 3, with <Root> the catalog's root and <Paper> the paper's name (the
 root, unless the entry gives `paper`):
 
@@ -269,9 +269,9 @@ def main() -> None:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('id', help="the paper's id in its hub's catalog/papers.toml")
     ap.add_argument('--workspace', type=Path, default=col.WORKSPACE,
-                    help='the workspace, whose papers/ gets the repository (default: the one this repository is in)')
+                    help='the workspace, whose papers/<hub>/ gets the repository (default: the one this repository is in)')
     ap.add_argument('--private-root', type=Path, default=None,
-                    help='the private repository, with one folder per repository (default: the one '
+                    help='the private repository, with one folder per repository, as the workspace has them (default: the one '
                          "that this repository's `notes` link points into)")
     ap.add_argument('--seed', type=Path, default=None,
                     help='a local repository on the train whose compiled Mathlib to hard-link '
@@ -298,9 +298,9 @@ def main() -> None:
         raise SystemExit("this repository has no `notes` link to its private folder, which holds the "
                          'templates of the private files')
     workspace = args.workspace.resolve()
-    repo = workspace / col.LAYOUT['paper'] / p.repo
+    repo = workspace / 'papers' / col.paper_folder(p.hub) / p.repo
     private_root = (args.private_root or folder.parent).resolve()
-    notes = private_root / p.repo
+    notes = private_root / 'papers' / col.paper_folder(p.hub) / p.repo
     if repo.exists() or repo.is_symlink():
         raise SystemExit(f'{repo} exists already. To add {p.id} to it, follow formalize-math-paper\'s '
                          'references/multi-paper.md by hand (CONVENTIONS, Section 3): this script only '
@@ -334,7 +334,7 @@ def main() -> None:
 
     hub = c.repo(p.hub)
     values = {
-        'id': p.id, 'repo': p.repo, 'root': p.root, 'paper': p.paper, 'cite': p.cite,
+        'id': p.id, 'repo': p.repo, 'notes_folder': f'papers/{col.paper_folder(p.hub)}/{p.repo}', 'root': p.root, 'paper': p.paper, 'cite': p.cite,
         'authors': p.authors, 'title': p.title, 'year': p.year, 'url': p.url, 'lean': c.train['lean'],
         'mathlib': c.train['mathlib'], 'date': datetime.date.today().isoformat(),
         'hub': p.hub, 'hub_url': hub['url'], 'hub_title': hub.get('title', p.hub),
