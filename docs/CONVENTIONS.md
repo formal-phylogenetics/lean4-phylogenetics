@@ -226,6 +226,9 @@ release, and in `[train.pins]` the commit of each library (`Phylogenetics`, `Phy
 
 - A new repository uses the train, not the newest Lean release (which the skill's Phase 0 would
   otherwise choose). It gets the train from `scripts/new_paper.py`.
+- A paper's repository is created when its formalization starts, not before
+  (docs/WORKFLOW.md, Section 2): every repository moves with the train, and one that waits for its
+  turn would move each time with nothing in it.
 - Requirements are pinned by full commit hash (Mathlib by its release tag). To move one pin, run
   `lake update <Package>` alone, so that Mathlib's pin does not move.
 - A library's commits that change no Lean file (its catalog, its documents) do not move its pin.

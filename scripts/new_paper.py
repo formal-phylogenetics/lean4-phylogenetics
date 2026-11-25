@@ -4,6 +4,9 @@
     python3 scripts/new_paper.py ID              # e.g. snaq, nanuq-plus
     python3 scripts/new_paper.py ID --dry-run    # show what it would do
 
+Run it when the paper's formalization starts, one paper at a time, not ahead of it: a repository
+that waits moves with every train with nothing in it (docs/WORKFLOW.md, Section 2).
+
 It creates lean4-<id> in the workspace, on the train, under the paper's hub, in the layout of
 docs/CONVENTIONS.md, Section 3, with <Root> the catalog's root and <Paper> the paper's name (the
 root, unless the entry gives `paper`):

@@ -35,6 +35,11 @@ python3 scripts/new_paper.py <id> --dry-run   # the plan: hub, root, paper, requ
 python3 scripts/new_paper.py <id>
 ```
 
+Start it when its formalization starts, and start one paper at a time: a repository that waits for
+its turn has to move with every train (Section 7) with nothing in it. A paper of a catalog that has
+no repository loses nothing: its entry keeps its place, its `builds_on` and its `covered_by`, and
+`scripts/new_paper.py` creates the repository on the train of the day it starts.
+
 It creates `../lean4-<id>` (or the entry's `repo`) in the layout of CONVENTIONS, Section 3, and its
 private files (Section 7). It requires the root library, the libraries of the hubs above the paper
 (its hub, and the hubs above a sub-hub), the hubs it `uses`, and the formalized papers it builds
