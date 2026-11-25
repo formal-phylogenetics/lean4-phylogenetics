@@ -67,9 +67,9 @@ root = "Camus"
 url = "https://github.com/vltanh/lean4-camus"
 lean = "v4.37.0-rc1"
 require = "when-needed"
-commit = "6cfd30785ca9ea415e91d45e59ade708b94921c5"
+commit = "2cc92c267854263ffa3a071dbc91a109ed0d40b3"
 summary = "Willson, Warnow 2026 (CAMUS), with Observation 2 and the site model of Warnow, Tabatabaee, Evans 2025"
-note = "Requires lean4-phylogenetics and lean4-phylo-network at the train's pins, and lean4-allman2011 at cd1c7b0 for the distributions of the gene trees on four taxa; has the layout of a paper's repository (root and paper Camus)"
+note = "Requires lean4-phylogenetics and lean4-phylo-network at the train's pins, and lean4-allman2011 at d4ada2c for the distributions of the gene trees on four taxa; has the layout of a paper's repository (root and paper Camus)"
 
 [[repo]]
 name = "lean4-allman2011"
