@@ -20,8 +20,9 @@ assumption cannot be dropped: when the atoms have positive mass and the other fa
 the face has positive measure.
 
 The formalizations of the collection use it for properties of generic numerical parameters of a
-network (`Phylogenetics.NMSC.Generic`). It comes from lean4-tob
-(`TreeOfBlobs/ForMathlib/Analysis/AnalyticZeroSet.lean`, <https://github.com/vltanh/lean4-tob>).
+network (`Phylogenetics.NMSC.Generic`). It comes from lean4-phylo-tree-of-blobs
+(`TreeOfBlobs/ForMathlib/Analysis/AnalyticZeroSet.lean`,
+<https://github.com/vltanh/lean4-phylo-tree-of-blobs>).
 
 ## Main results
 
