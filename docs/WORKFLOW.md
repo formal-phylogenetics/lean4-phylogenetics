@@ -131,10 +131,16 @@ To a new Lean and Mathlib release, or to new commits of the libraries:
 1. This repository: move its toolchain and Mathlib, build, audit, commit.
 2. Each hub, in the order of their requirements, a hub before its sub-hubs: move Mathlib and the
    pins (`lake update Phylogenetics`, and the other libraries it requires), build, audit, commit.
-3. Each paper's repository, upstream first (`builds_on` order): the same, then its Comparator.
-4. Edit `[train]` in `collection/repos.toml`, and the `commit` of each moved paper in its hub's
-   catalog; run `python3 scripts/status.py check`, which must report no repository off the train
-   apart from the known ones.
+3. Edit `[train]` in `collection/repos.toml`.
+4. Each formalized paper's repository, upstream first (`builds_on` order): the same as a hub, then
+   its Comparator; and the `commit` of its entry in its hub's catalog.
+5. The repositories of the papers in progress: `python3 scripts/move_train.py` lists those behind
+   the train, and `python3 scripts/move_train.py --behind` moves each one with a clean working tree,
+   in one commit: the toolchain, the requirements that `scripts/new_paper.py` would write today, the
+   packages hard-linked from its hub's checkout, a build, and its private configuration. One with
+   uncommitted work moves in the session that owns it, with `python3 scripts/move_train.py <id>`.
+6. Run `python3 scripts/status.py check`, which must report no repository off the train apart from
+   the known ones.
 
 A Palomar entry stays pinned to the commit it was submitted at: moving the train does not change
 it, and resubmitting is the maintainer's decision. A repository that is off the train joins it the
