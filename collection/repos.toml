@@ -27,6 +27,7 @@ TreeOfBlobs = "265ba443cb147a33ff2478cbc311a5597db1c1c7"       # lean4-phylo-tre
 PhyloCombinatorics = "bddec85abf133072b9fb021b4a7cd368e5a3c9dc" # lean4-phylo-combinatorics 0.1.0
 PhyloAlgebraic = "5364da35c794493d7d944cb3a7f0233d62b7813a"    # lean4-phylo-algebraic 0.1.0
 PhyloStatistics = "2773170a6cd95bbb593a45656b018147b3d477f6"   # lean4-phylo-statistics 0.1.0
+PhyloGeometry = "550137e16c4227bad8d520e1d03506d732cbe166"     # lean4-phylo-geometry 0.1.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it (a hub under a hub is a sub-hub)
@@ -129,6 +130,17 @@ lean = "v4.37.0-rc1"
 require = "always"
 title = "Statistical theory of phylogenetic inference"
 summary = "What the papers on the statistical theory of phylogenetic inference share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on fast convergence and sample complexity, consistency and model misspecification, gene-tree discordance and the limits of species-tree inference, the identifiability and consistency of indel models, and tests near singularities and boundaries"
+
+[[repo]]
+name = "lean4-phylo-geometry"
+role = "hub"
+parent = "lean4-phylogenetics"
+package = "PhyloGeometry"
+url = "https://github.com/vltanh/lean4-phylo-geometry"
+lean = "v4.37.0-rc1"
+require = "always"
+title = "Phylogenetic geometry"
+summary = "What the papers on the geometry of spaces of phylogenetic trees share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on the metric geometry of tree spaces and their geodesics, statistics and optimization in tree spaces, principal components, tropical geometry, information geometry, ranked trees and trees on different leaf sets, and the discrete metrics of tree moves and spaces of networks"
 
 [[repo]]
 name = "lean4-camus"

@@ -15,7 +15,7 @@ name = "Rooted phylogenetic networks: directed multigraphs, cuts and cut edges, 
 status = "available"
 home = "lean4-phylogenetics"
 where = "Phylogenetics/Graph/, Phylogenetics/Network/"
-needed_by = ["lean4-phylo-tree-of-blobs", "lean4-phylo-network: 1-5"]
+needed_by = ["lean4-phylo-tree-of-blobs", "lean4-phylo-network: 1-5", "lean4-phylo-geometry: 7"]
 
 [[foundation]]
 id = "level1-rooted"
@@ -31,7 +31,7 @@ name = "Rooted trees as hierarchies, unrooted trees as split families, quartets,
 status = "available"
 home = "lean4-phylogenetics"
 where = "Phylogenetics/Hierarchy/, Phylogenetics/Tree/"
-needed_by = ["lean4-phylo-tree-of-blobs", "lean4-phylo-network: 1-5", "lean4-phylo-gene-tree: 1-8", "lean4-phylo-species-tree: 1-9", "lean4-phylo-alignment: 1, 3-5, 8, 10", "lean4-phylo-combinatorics: 1-3", "lean4-phylo-algebraic: 1-4", "lean4-phylo-statistics: 1-5"]
+needed_by = ["lean4-phylo-tree-of-blobs", "lean4-phylo-network: 1-5", "lean4-phylo-gene-tree: 1-8", "lean4-phylo-species-tree: 1-9", "lean4-phylo-alignment: 1, 3-5, 8, 10", "lean4-phylo-combinatorics: 1-3", "lean4-phylo-algebraic: 1-4", "lean4-phylo-statistics: 1-5", "lean4-phylo-geometry: 1-7"]
 
 [[foundation]]
 id = "coalescent"
@@ -111,7 +111,7 @@ name = "Classes of networks: level-k, galled trees and galled networks, tree-chi
 status = "partial"
 home = "lean4-phylogenetics"
 where = "level-1 (RootedNetwork.IsLevelOne); tree-basedness of level-1 networks in lean4-camus"
-needed_by = ["lean4-phylo-network: 2-4"]
+needed_by = ["lean4-phylo-network: 2-4", "lean4-phylo-geometry: 7"]
 
 [[foundation]]
 id = "triplets-trinets"
@@ -135,7 +135,7 @@ name = "Sequence evolution on trees and networks: continuous-time Markov chains 
 status = "partial"
 home = "lean4-phylogenetics"
 where = "the SNP site model of Warnow et al. 2025 in lean4-camus"
-needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-gene-tree: 1-7", "lean4-phylo-species-tree: 4, 5, 8", "lean4-phylo-alignment: 3, 4, 10", "lean4-phylo-algebraic: 1-4", "lean4-phylo-statistics: 1, 2, 4"]
+needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-gene-tree: 1-7", "lean4-phylo-species-tree: 4, 5, 8", "lean4-phylo-alignment: 3, 4, 10", "lean4-phylo-algebraic: 1-4", "lean4-phylo-statistics: 1, 2, 4", "lean4-phylo-geometry: 5"]
 
 [[foundation]]
 id = "likelihood"
@@ -191,7 +191,7 @@ name = "Phylogenetic invariants and the algebraic varieties of tree models: grou
 status = "missing"
 home = "lean4-phylogenetics"
 where = ""
-needed_by = ["lean4-phylo-algebraic: 1-4", "lean4-phylo-species-tree: 4", "lean4-phylo-network: 5"]
+needed_by = ["lean4-phylo-algebraic: 1-4", "lean4-phylo-species-tree: 4", "lean4-phylo-network: 5", "lean4-phylo-geometry: 4"]
 
 [[foundation]]
 id = "statistical-consistency"
@@ -199,15 +199,15 @@ name = "Consistency and sample complexity of tree estimators: concentration ineq
 status = "partial"
 home = "lean4-phylogenetics"
 where = "generic identifiability: the foundation generic-parameters"
-needed_by = ["lean4-phylo-statistics: 1-5", "lean4-phylo-gene-tree: 1, 2", "lean4-phylo-algebraic: 2", "lean4-phylo-species-tree: 1, 8", "lean4-phylo-network: 1", "lean4-phylo-alignment: 3, 10"]
+needed_by = ["lean4-phylo-statistics: 1-5", "lean4-phylo-gene-tree: 1, 2", "lean4-phylo-algebraic: 2", "lean4-phylo-species-tree: 1, 8", "lean4-phylo-network: 1", "lean4-phylo-alignment: 3, 10", "lean4-phylo-geometry: 2"]
 
 [[foundation]]
 id = "tree-search"
-name = "Tree space and its moves: NNI, SPR and TBR, their neighborhoods, and the distances they define"
+name = "Tree space and its moves: NNI, SPR and TBR, their neighborhoods, and the distances they define, on unranked and ranked trees"
 status = "missing"
 home = "lean4-phylogenetics"
 where = ""
-needed_by = ["lean4-phylo-gene-tree: 1, 6", "lean4-phylo-species-tree: 5", "lean4-phylo-network: 5"]
+needed_by = ["lean4-phylo-gene-tree: 1, 6", "lean4-phylo-species-tree: 5", "lean4-phylo-network: 5", "lean4-phylo-geometry: 6, 7"]
 
 [[foundation]]
 id = "phylogenetic-tests"
@@ -312,3 +312,19 @@ status = "missing"
 home = "lean4-phylo-species-tree"
 where = ""
 needed_by = ["lean4-phylo-species-tree: 6"]
+
+[[foundation]]
+id = "tree-spaces"
+name = "Continuous spaces of trees: the tree space of Billera, Holmes and Vogtmann and its CAT(0) geometry, geodesics, convexity, Hadamard spaces and the probability measures on them (Fréchet means and medians, their limit theorems), the spaces of ultrametric and ranked trees, of trees on different leaf sets, and Wald space"
+status = "missing"
+home = "lean4-phylo-geometry"
+where = ""
+needed_by = ["lean4-phylo-geometry: 1-3, 5, 6"]
+
+[[foundation]]
+id = "tropical-geometry"
+name = "Tropical geometry of trees: the tropical Grassmannian and tree space as a tropical variety, tropical convexity, Fermat–Weber points, medians and principal components"
+status = "missing"
+home = "lean4-phylo-geometry"
+where = ""
+needed_by = ["lean4-phylo-geometry: 4"]

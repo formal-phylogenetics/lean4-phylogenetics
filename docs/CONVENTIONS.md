@@ -33,15 +33,19 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 | Hub of theory | [lean4-phylo-combinatorics](https://github.com/vltanh/lean4-phylo-combinatorics) | `PhyloCombinatorics` | what the papers on the combinatorics of trees, compatibility and complexity share; their catalog |
 | Hub of theory | [lean4-phylo-algebraic](https://github.com/vltanh/lean4-phylo-algebraic) | `PhyloAlgebraic` | what the papers on invariants, identifiability and mixtures share; their catalog |
 | Hub of theory | [lean4-phylo-statistics](https://github.com/vltanh/lean4-phylo-statistics) | `PhyloStatistics` | what the papers on consistency, sample complexity and the limits of inference share; their catalog |
+| Hub of theory | [lean4-phylo-geometry](https://github.com/vltanh/lean4-phylo-geometry) | `PhyloGeometry` | what the papers on spaces of trees, their geodesics and the statistics in them share; their catalog |
 | Paper | `lean4-<id>` | `<Root>` (Section 3) | one paper of a hub's catalog, or several on one topic (Section 2) |
 
 The hubs under the root are of two kinds. Four are hubs of inference, one for each object that
-is estimated: alignments, trees from sequences, species trees, and networks. Three are hubs of
-theory: the combinatorics of trees, algebraic phylogenetics, and the statistical theory of
-inference. A paper is in the hub of the estimator it is about, with the theory of that estimator
-(the sample complexity of ASTRAL is with ASTRAL); a general result that serves several methods (an
-identifiability theorem for a model, the sequence length that every method needs, the complexity of
-a problem on trees) is in the hub of theory of its kind. Each paper has one entry in all the
+is estimated: alignments, trees from sequences, species trees, and networks. Four are hubs of
+theory, each for a kind of result: combinatorics, for the discrete characterization of trees, their
+compatibility and the complexity of problems on them; algebraic phylogenetics, for invariants and
+algebraic identifiability; statistics, for consistency and the limits of information; geometry, for
+the structure of spaces of phylogenetic objects and the analysis in them. A paper is in the hub of
+the estimator it is about, with the theory of that estimator (the sample complexity of ASTRAL is
+with ASTRAL); a general result that serves several methods (an identifiability theorem for a model,
+the sequence length that every method needs, the complexity of a problem on trees, the geodesics of
+tree space) is in the hub of theory of its kind. Each paper has one entry in all the
 catalogs, whichever hubs use its results.
 
 A hub may have sub-hubs: hubs under it, each for a part of its field whose papers share more than
