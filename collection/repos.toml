@@ -24,6 +24,9 @@ PhyloGeneTree = "45e6d3da4499b207b8ea5c5e5a3e8f682ad6e4fd"     # lean4-phylo-gen
 PhyloSpeciesTree = "cf452409ed970ce8b219a2ca2bea3423d06a6030"  # lean4-phylo-species-tree 0.1.0
 PhyloNetwork = "4ed2bb0f7085acbf1326f43e2a5c582ba4566125"      # lean4-phylo-network 0.2.0
 TreeOfBlobs = "265ba443cb147a33ff2478cbc311a5597db1c1c7"       # lean4-phylo-tree-of-blobs 0.3.1
+PhyloCombinatorics = "bddec85abf133072b9fb021b4a7cd368e5a3c9dc" # lean4-phylo-combinatorics 0.1.0
+PhyloAlgebraic = "5364da35c794493d7d944cb3a7f0233d62b7813a"    # lean4-phylo-algebraic 0.1.0
+PhyloStatistics = "2773170a6cd95bbb593a45656b018147b3d477f6"   # lean4-phylo-statistics 0.1.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it (a hub under a hub is a sub-hub)
@@ -59,7 +62,7 @@ url = "https://github.com/vltanh/lean4-phylo-gene-tree"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Gene tree estimation"
-summary = "What the papers on estimating a tree from sequences share and the root library does not hold: nothing yet. Its catalog has the papers on maximum likelihood and its optimization, distance methods and minimum evolution, parsimony and perfect phylogeny, Bayesian inference and MCMC, branch support, rooting and tests, the combinatorial results that tree reconstruction rests on, fast-converging methods, substitution models, algebraic phylogenetics and identifiability, consistency under misspecified models, model selection, and divide-and-conquer reconstruction"
+summary = "What the papers on estimating a tree from sequences share and the root library does not hold: nothing yet. Its catalog has the papers on maximum likelihood and tree search, distance methods and minimum evolution, substitution models and their selection, parsimony, Bayesian inference and MCMC, branch support, rooting and tests, and divide-and-conquer reconstruction"
 
 [[repo]]
 name = "lean4-phylo-species-tree"
@@ -70,7 +73,7 @@ url = "https://github.com/vltanh/lean4-phylo-species-tree"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Species tree estimation"
-summary = "What the papers on estimating species trees share and the root library does not hold: nothing yet. Its catalog has the papers on species trees from gene trees (quartets, rooted triplets and clades, distances), from sequences directly, by full likelihood and Bayesian inference, and under duplication, loss and transfer; on rooting, branch lengths and tests, on consistency and its limits, and on divide-and-conquer pipelines"
+summary = "What the papers on estimating species trees share and the root library does not hold: nothing yet. Its catalog has the papers on species trees from gene trees (quartets, rooted triplets and clades, distances), from sequences directly, by full likelihood and Bayesian inference, and under duplication, loss and transfer; on rooting, branch lengths and tests, on the coalescent and the limits of particular estimators, and on divide-and-conquer pipelines"
 
 [[repo]]
 name = "lean4-phylo-network"
@@ -93,6 +96,39 @@ lean = "v4.37.0-rc1"
 require = "when-needed"
 title = "The tree of blobs"
 summary = "What only the papers on inferring the tree of blobs share: the algorithms and standing assumptions of TINNiK, TOB-QMC and ECToBlob, networks given by tables, lowest common ancestors, the local objective of a multifurcation, counts of tree edges, and the analysis that only they use"
+
+[[repo]]
+name = "lean4-phylo-combinatorics"
+role = "hub"
+parent = "lean4-phylogenetics"
+package = "PhyloCombinatorics"
+url = "https://github.com/vltanh/lean4-phylo-combinatorics"
+lean = "v4.37.0-rc1"
+require = "always"
+title = "Combinatorics of phylogenetic trees"
+summary = "What the papers on the combinatorics of trees share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on the characterization, comparison and reconstruction of trees, perfect phylogeny and the compatibility of characters, and the amalgamation of quartets, with the computational complexity of these problems"
+
+[[repo]]
+name = "lean4-phylo-algebraic"
+role = "hub"
+parent = "lean4-phylogenetics"
+package = "PhyloAlgebraic"
+url = "https://github.com/vltanh/lean4-phylo-algebraic"
+lean = "v4.37.0-rc1"
+require = "always"
+title = "Algebraic phylogenetics"
+summary = "What the papers on algebraic phylogenetics share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on phylogenetic invariants and Fourier methods, the identifiability of trees and parameters, mixture models and their nonidentifiability, and spectral and algebraic reconstruction"
+
+[[repo]]
+name = "lean4-phylo-statistics"
+role = "hub"
+parent = "lean4-phylogenetics"
+package = "PhyloStatistics"
+url = "https://github.com/vltanh/lean4-phylo-statistics"
+lean = "v4.37.0-rc1"
+require = "always"
+title = "Statistical theory of phylogenetic inference"
+summary = "What the papers on the statistical theory of phylogenetic inference share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on fast convergence and sample complexity, consistency and model misspecification, gene-tree discordance and the limits of species-tree inference, the identifiability and consistency of indel models, and tests near singularities and boundaries"
 
 [[repo]]
 name = "lean4-camus"

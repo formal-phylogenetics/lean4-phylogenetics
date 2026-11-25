@@ -160,8 +160,9 @@ same way.
   the workspace: versions against the train, the libraries of the hubs above each repository that
   its lakefile must require, module names that two repositories share (which prevents requiring
   both), cited sources that two repositories formalize, and papers that two entries of the catalogs
-  list. A paper has one entry in all the catalogs, in the hub of its method, and the other hubs refer
-  to it by `builds_on`: two entries that share a DOI, an arXiv, PubMed or PubMed Central identifier,
+  list. A paper has one entry in all the catalogs, in the hub of its estimator or, for a general
+  result, in the hub of theory of its kind (CONVENTIONS, Section 1), and the other hubs refer to it
+  by `builds_on`: two entries that share a DOI, an arXiv, PubMed or PubMed Central identifier,
   or a title and a first author are an error. Two entries by one first author with nearly the same
   title are a warning, since a preprint, a proceedings paper and a journal paper are one paper unless
   their results differ; an entry that builds on the other is not reported. It fails only on
