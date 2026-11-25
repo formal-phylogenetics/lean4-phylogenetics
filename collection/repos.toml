@@ -83,11 +83,12 @@ name = "lean4-gusfield2007"
 role = "background"
 parent = "lean4-phylogenetics"
 package = "Gusfield2007"
+root = "Gusfield2007"
 url = "https://github.com/vltanh/lean4-gusfield2007"
 lean = "v4.37.0-rc1"
 require = "when-needed"
+commit = "70f60ac84040bb3c7f1e05eaeb00e3198ec2ee88"
 summary = "Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination"
-note = "Its modules use the generic roots External and MainResults, which no other repository may use"
 
 [[repo]]
 name = "formalize-math-paper"

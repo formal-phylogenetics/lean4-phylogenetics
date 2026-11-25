@@ -44,10 +44,9 @@ What may require what:
 - Requirements never form a cycle. `scripts/status.py check` checks the pins and the module names.
 
 Older repositories have restrictions, recorded in the registry and checked by
-`scripts/status.py check`: lean4-camus and lean4-gusfield2007 use generic top-level modules
-(`Challenge`, `Solution`, `External`, `MainResults`), which no other repository may use, and
-lean4-camus requires an older commit of lean4-allman2011 (its package `ADR11`) rather than the root
-library.
+`scripts/status.py check`: lean4-camus uses generic top-level modules (`Challenge`, `Solution`),
+which no other repository may use, and requires an older commit of lean4-allman2011 (its package
+`ADR11`) rather than the root library.
 
 ## 2. Names
 
@@ -171,8 +170,8 @@ The repositories started before this layout keep theirs, and `scripts/status.py 
 lean4-allman2023, lean4-tinnik, lean4-tob-qmc, lean4-nanuq and lean4-ectoblob have every module
 under `<Root>/` (their layout allowed the top-level modules `<Root>Challenge` and `<Root>Solution`
 too), and their Palomar files and documents at the top, with the routes in `docs/`. lean4-camus
-and lean4-gusfield2007 have generic top-level modules (Section 1). Moving one to this layout is a
-change of its own (the skill's `references/multi-paper.md`, Section 9).
+has generic top-level modules (Section 1). Moving one to this layout is a change of its own (the
+skill's `references/multi-paper.md`, Section 9).
 
 A hub has its library under `<Package>/` (with a README that says what is there and why), its
 catalog `catalog/papers.toml`, its README (whose tables `scripts/status.py` generates from the
