@@ -23,7 +23,7 @@ WORKSPACE = ROOT.parent
 GITHUB_OWNER = 'vltanh'
 
 STATUSES = ('formalized', 'in-progress', 'partial', 'todo')
-KINDS = ('theory', 'theory+algorithm', 'method')
+KINDS = ('theory', 'theory+algorithm', 'method', 'evaluation', 'method+evaluation', 'theory+evaluation')
 ROLES = ('root', 'hub', 'paper', 'background', 'tool')
 # Generic module roots that older repositories use and that no new repository may use: Lean module
 # names are global, and the repositories of the collection import one another.

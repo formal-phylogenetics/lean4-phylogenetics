@@ -19,6 +19,7 @@ mathlib = "v4.37.0-rc1"
 
 [train.pins]
 Phylogenetics = "3fcabfd7d191990dda268b0b3968d945b65eb59a"     # lean4-phylogenetics 0.6.1
+PhyloAlignment = "472b16469a71b216b4c2b08e3aa7d23e2dc580b5"    # lean4-phylo-alignment 0.1.0
 PhyloGeneTree = "45e6d3da4499b207b8ea5c5e5a3e8f682ad6e4fd"     # lean4-phylo-gene-tree 0.1.0
 PhyloSpeciesTree = "cf452409ed970ce8b219a2ca2bea3423d06a6030"  # lean4-phylo-species-tree 0.1.0
 PhyloNetwork = "4ed2bb0f7085acbf1326f43e2a5c582ba4566125"      # lean4-phylo-network 0.2.0
@@ -37,6 +38,17 @@ lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetics"
 summary = "General phylogenetics, which every repository shares: rooted networks (cuts, blobs, induced networks, the tree of blobs, level-1 networks) and semidirected networks, trees and quartets, neighbor joining and ASTRAL's dynamic program, Kingman's coalescent, the multispecies coalescent and the network multispecies coalescent with quartet concordance factors and generic parameters"
+
+[[repo]]
+name = "lean4-phylo-alignment"
+role = "hub"
+parent = "lean4-phylogenetics"
+package = "PhyloAlignment"
+url = "https://github.com/vltanh/lean4-phylo-alignment"
+lean = "v4.37.0-rc1"
+require = "always"
+title = "Sequence alignment"
+summary = "What the papers on sequence alignment share and the root library does not hold: nothing yet. Its catalog has the papers on divide-and-conquer alignment and the co-estimation of alignments and trees, profile hidden Markov models and fragmentary sequences, statistical alignment under indel models, phylogeny-aware, progressive, consistency-based and graph-based alignment, pairwise alignment by dynamic programming, the complexity of multiple alignment, alignment uncertainty and its effect on tree estimation, the alignment of RNA, coding sequences and structures, and learned alignment models"
 
 [[repo]]
 name = "lean4-phylo-gene-tree"

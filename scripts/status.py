@@ -347,7 +347,9 @@ def cell(text: str) -> str:
 
 
 STATUS_WORDS = {'formalized': 'formalized', 'in-progress': 'in progress', 'partial': 'partly covered', 'todo': 'to do'}
-KIND_WORDS = {'theory': 'theory', 'method': 'method', 'theory+algorithm': 'theory and algorithm'}
+KIND_WORDS = {'theory': 'theory', 'method': 'method', 'theory+algorithm': 'theory and algorithm',
+              'evaluation': 'evaluation', 'method+evaluation': 'method and evaluation',
+              'theory+evaluation': 'theory and evaluation'}
 
 
 def anchor(fid: int, title: str) -> str:
