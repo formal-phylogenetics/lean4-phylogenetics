@@ -158,5 +158,5 @@ id = "network-distances"
 name = "Distances between networks (the μ-distance) and inter-taxon quartet distances"
 status = "partial"
 home = "lean4-phylo-network"
-where = "quartet distances of trees and of level-1 networks: lean4-phylo-network (PhyloNetwork/External/Rhodes2020/) and lean4-nanuq (Nanuq/NANUQ.lean)"
+where = "quartet distances of trees and of level-1 networks: lean4-phylo-network (PhyloNetwork/External/Rhodes2020/) and lean4-nanuq (Nanuq/Algorithm/Consistency.lean)"
 needed_by = ["lean4-phylo-network: 2"]
