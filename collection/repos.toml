@@ -31,6 +31,9 @@ PhyloGeometry = "550137e16c4227bad8d520e1d03506d732cbe166"     # lean4-phylo-geo
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it (a hub under a hub is a sub-hub)
+# kind: for a hub under the root, "inference" (the papers on estimating one object, with the theory
+#   of each estimator) or "theory" (the papers of one kind of general result); docs/CONVENTIONS.md,
+#   Section 1. A sub-hub is of its hub's kind
 # require: whether new repositories may require it: "always", "when-needed", or "no" (see `note`)
 
 [[repo]]
@@ -47,6 +50,7 @@ summary = "General phylogenetics, which every repository shares: rooted networks
 name = "lean4-phylo-alignment"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "inference"
 package = "PhyloAlignment"
 url = "https://github.com/vltanh/lean4-phylo-alignment"
 lean = "v4.37.0-rc1"
@@ -58,6 +62,7 @@ summary = "What the papers on sequence alignment share and the root library does
 name = "lean4-phylo-gene-tree"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "inference"
 package = "PhyloGeneTree"
 url = "https://github.com/vltanh/lean4-phylo-gene-tree"
 lean = "v4.37.0-rc1"
@@ -69,6 +74,7 @@ summary = "What the papers on estimating a tree from sequences share and the roo
 name = "lean4-phylo-species-tree"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "inference"
 package = "PhyloSpeciesTree"
 url = "https://github.com/vltanh/lean4-phylo-species-tree"
 lean = "v4.37.0-rc1"
@@ -80,6 +86,7 @@ summary = "What the papers on estimating species trees share and the root librar
 name = "lean4-phylo-network"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "inference"
 package = "PhyloNetwork"
 url = "https://github.com/vltanh/lean4-phylo-network"
 lean = "v4.37.0-rc1"
@@ -102,45 +109,49 @@ summary = "What only the papers on inferring the tree of blobs share: the algori
 name = "lean4-phylo-combinatorics"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "theory"
 package = "PhyloCombinatorics"
 url = "https://github.com/vltanh/lean4-phylo-combinatorics"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Combinatorics of phylogenetic trees"
-summary = "What the papers on the combinatorics of trees share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on the characterization, comparison and reconstruction of trees, perfect phylogeny and the compatibility of characters, and the amalgamation of quartets, with the computational complexity of these problems"
+summary = "What the papers on the combinatorics of trees share and the root library does not hold: nothing yet. Its catalog has the papers on the characterization, comparison and reconstruction of trees, perfect phylogeny and the compatibility of characters, and the amalgamation of quartets, with the computational complexity of these problems"
 
 [[repo]]
 name = "lean4-phylo-algebraic"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "theory"
 package = "PhyloAlgebraic"
 url = "https://github.com/vltanh/lean4-phylo-algebraic"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Algebraic phylogenetics"
-summary = "What the papers on algebraic phylogenetics share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on phylogenetic invariants and Fourier methods, the identifiability of trees and parameters, mixture models and their nonidentifiability, and spectral and algebraic reconstruction"
+summary = "What the papers on algebraic phylogenetics share and the root library does not hold: nothing yet. Its catalog has the papers on phylogenetic invariants and Fourier methods, the identifiability of trees and parameters, mixture models and their nonidentifiability, and spectral and algebraic reconstruction"
 
 [[repo]]
 name = "lean4-phylo-statistics"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "theory"
 package = "PhyloStatistics"
 url = "https://github.com/vltanh/lean4-phylo-statistics"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Statistical theory of phylogenetic inference"
-summary = "What the papers on the statistical theory of phylogenetic inference share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on fast convergence and sample complexity, consistency and model misspecification, gene-tree discordance and the limits of species-tree inference, the identifiability and consistency of indel models, and tests near singularities and boundaries"
+summary = "What the papers on the statistical theory of phylogenetic inference share and the root library does not hold: nothing yet. Its catalog has the papers on fast convergence and sample complexity, consistency and model misspecification, gene-tree discordance and the limits of species-tree inference, the identifiability and consistency of indel models, and tests near singularities and boundaries"
 
 [[repo]]
 name = "lean4-phylo-geometry"
 role = "hub"
 parent = "lean4-phylogenetics"
+kind = "theory"
 package = "PhyloGeometry"
 url = "https://github.com/vltanh/lean4-phylo-geometry"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetic geometry"
-summary = "What the papers on the geometry of spaces of phylogenetic trees share and the root library does not hold: nothing yet. A hub of theory. Its catalog has the papers on the metric geometry of tree spaces and their geodesics, statistics and optimization in tree spaces, principal components, tropical geometry, information geometry, ranked trees and trees on different leaf sets, and the discrete metrics of tree moves and spaces of networks"
+summary = "What the papers on the geometry of spaces of phylogenetic trees share and the root library does not hold: nothing yet. Its catalog has the papers on the metric geometry of tree spaces and their geodesics, statistics and optimization in tree spaces, principal components, tropical geometry, information geometry, ranked trees and trees on different leaf sets, and the discrete metrics of tree moves and spaces of networks"
 
 [[repo]]
 name = "lean4-camus"

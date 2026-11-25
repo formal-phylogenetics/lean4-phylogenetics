@@ -410,7 +410,7 @@ def block_tree(c: col.Collection) -> str:
         if r['role'] == 'root':
             node = 'root'
         elif c.depth(r) == 0:
-            node = f'hub: {r.get("title", "")}'
+            node = f'hub of {c.kind(r)}: {r.get("title", "")}'
         else:
             node = f'sub-hub of {r.get("parent", "")}: {r.get("title", "")}'
         rows.append(f'| {cell(node)} | [{r["name"]}]({r["url"]}) | `{r["package"]}` | {cell(r.get("summary", ""))} |')

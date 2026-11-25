@@ -28,6 +28,7 @@ STATUSES = ('formalized', 'in-progress', 'partial', 'todo')
 KINDS = ('theory', 'theory+algorithm', 'method', 'evaluation', 'method+evaluation', 'theory+evaluation',
          'theory+method')
 ROLES = ('root', 'hub', 'paper', 'background', 'tool')
+HUB_KINDS = ('inference', 'theory')   # of a hub under the root (docs/CONVENTIONS.md, Section 1)
 # Generic module roots that older repositories use and that no new repository may use: Lean module
 # names are global, and the repositories of the collection import one another.
 RESERVED_ROOTS = {'Basic', 'External', 'Challenge', 'Solution', 'MainResults', 'Main', 'Defs'}
@@ -140,6 +141,10 @@ class Collection:
             r = self.repo(r.get('parent', ''))
         return chain[::-1]
 
+    def kind(self, hub: dict) -> str:
+        """"inference" or "theory": the kind of the hub under the root that `hub` is, or is under."""
+        return (self.hubs_above(hub['name'])[0] if self.hubs_above(hub['name']) else hub).get('kind', '')
+
     def depth(self, hub: dict) -> int:
         """0 for a hub under the root, 1 for its sub-hubs, and so on."""
         return len(self.hubs_above(hub['name'])) - 1
@@ -164,6 +169,12 @@ class Collection:
                         break
                     seen_up.add(up['name'])
                     up = self.repo(up.get('parent', ''))
+            if r.get('role') == 'hub':
+                under_root = (self.repo(r.get('parent', '')) or {}).get('role') == 'root'
+                if under_root and r.get('kind') not in HUB_KINDS:
+                    errors.append(f"{where}: a hub under the root has a `kind`, one of {HUB_KINDS}")
+                if not under_root and 'kind' in r:
+                    errors.append(f"{where}: a sub-hub is of its hub's kind and states none")
             if r.get('role') in ('root', 'hub') and r.get('package') not in self.train.get('pins', {}):
                 errors.append(f"{where}: [train.pins] has no commit of its library {r.get('package')!r}")
         if len(set(names)) != len(names):
