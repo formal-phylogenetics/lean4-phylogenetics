@@ -30,7 +30,7 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 | Hub of inference | [lean4-phylo-species-tree](https://github.com/vltanh/lean4-phylo-species-tree) | `PhyloSpeciesTree` | what the papers on species tree estimation share; their catalog |
 | Hub of inference | [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share, those of its sub-hub included; their catalog |
 | Sub-hub of lean4-phylo-network | [lean4-phylo-tree-of-blobs](https://github.com/vltanh/lean4-phylo-tree-of-blobs) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
-| Hub of theory | [lean4-phylo-combinatorics](https://github.com/vltanh/lean4-phylo-combinatorics) | `PhyloCombinatorics` | what the papers on the combinatorics of trees, compatibility and complexity share; their catalog |
+| Hub of theory | [lean4-phylo-combinatorics](https://github.com/vltanh/lean4-phylo-combinatorics) | `PhyloCombinatorics` | what the papers on the combinatorics of trees and networks, compatibility and complexity share; their catalog |
 | Hub of theory | [lean4-phylo-algebraic](https://github.com/vltanh/lean4-phylo-algebraic) | `PhyloAlgebraic` | what the papers on invariants, identifiability and mixtures share; their catalog |
 | Hub of theory | [lean4-phylo-statistics](https://github.com/vltanh/lean4-phylo-statistics) | `PhyloStatistics` | what the papers on consistency, sample complexity and the limits of inference share; their catalog |
 | Hub of theory | [lean4-phylo-geometry](https://github.com/vltanh/lean4-phylo-geometry) | `PhyloGeometry` | what the papers on spaces of trees, their geodesics and the statistics in them share; their catalog |
@@ -38,7 +38,7 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 
 The hubs under the root are of two kinds: hubs of inference, one for each object that is estimated
 (alignments, trees from sequences, species trees, networks), and hubs of theory, each for a kind of
-result: combinatorics, for the discrete characterization of trees, their compatibility and the
+result: combinatorics, for the discrete characterization of trees and networks, their compatibility and the
 complexity of problems on them; algebraic phylogenetics, for invariants and algebraic
 identifiability; statistics, for consistency and the limits of information; geometry, for the
 structure of spaces of phylogenetic objects and the analysis in them. A paper is in the hub of the

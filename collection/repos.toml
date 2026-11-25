@@ -19,15 +19,15 @@ mathlib = "v4.37.0-rc1"
 
 [train.pins]
 Phylogenetics = "3fcabfd7d191990dda268b0b3968d945b65eb59a"     # lean4-phylogenetics 0.6.1
-PhyloAlignment = "472b16469a71b216b4c2b08e3aa7d23e2dc580b5"    # lean4-phylo-alignment 0.1.0
-PhyloGeneTree = "45e6d3da4499b207b8ea5c5e5a3e8f682ad6e4fd"     # lean4-phylo-gene-tree 0.1.0
-PhyloSpeciesTree = "cf452409ed970ce8b219a2ca2bea3423d06a6030"  # lean4-phylo-species-tree 0.1.0
+PhyloAlignment = "26847fddc7893195381672c74c14299035d72435"    # lean4-phylo-alignment 0.1.0
+PhyloGeneTree = "761f89ff51d52a39c9947f190eb5cd3cb2215707"     # lean4-phylo-gene-tree 0.1.0
+PhyloSpeciesTree = "c32a1e4224166fe645dc0f034291169ad5df224b"  # lean4-phylo-species-tree 0.1.0
 PhyloNetwork = "4ed2bb0f7085acbf1326f43e2a5c582ba4566125"      # lean4-phylo-network 0.2.0
 TreeOfBlobs = "265ba443cb147a33ff2478cbc311a5597db1c1c7"       # lean4-phylo-tree-of-blobs 0.3.1
-PhyloCombinatorics = "bddec85abf133072b9fb021b4a7cd368e5a3c9dc" # lean4-phylo-combinatorics 0.1.0
-PhyloAlgebraic = "5364da35c794493d7d944cb3a7f0233d62b7813a"    # lean4-phylo-algebraic 0.1.0
-PhyloStatistics = "2773170a6cd95bbb593a45656b018147b3d477f6"   # lean4-phylo-statistics 0.1.0
-PhyloGeometry = "550137e16c4227bad8d520e1d03506d732cbe166"     # lean4-phylo-geometry 0.1.0
+PhyloCombinatorics = "8a4fe61016489eaa2892826a2309d619df73d342" # lean4-phylo-combinatorics 0.1.0
+PhyloAlgebraic = "c730cde00d9ab76e54a641c20e53ec7bdb417a0b"    # lean4-phylo-algebraic 0.1.0
+PhyloStatistics = "d54794c6e5ce99fe96da232ec169dcaa2a5e34dd"   # lean4-phylo-statistics 0.1.0
+PhyloGeometry = "af37fc2c7f94f62f85788f981601424833a47485"     # lean4-phylo-geometry 0.1.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it (a hub under a hub is a sub-hub)
@@ -114,8 +114,8 @@ package = "PhyloCombinatorics"
 url = "https://github.com/vltanh/lean4-phylo-combinatorics"
 lean = "v4.37.0-rc1"
 require = "always"
-title = "The combinatorics of phylogenetic trees"
-summary = "What the papers on the combinatorics of trees share and the root library does not hold: nothing yet. Its catalog has the papers on the characterization, comparison and reconstruction of trees, perfect phylogeny and the compatibility of characters, and the amalgamation of quartets, with the computational complexity of these problems"
+title = "The combinatorics of phylogenetic trees and networks"
+summary = "What the papers on the combinatorics of trees share and the root library does not hold: nothing yet. Its catalog has the papers on the characterization, comparison and reconstruction of trees, perfect phylogeny and the compatibility of characters, the decomposition of networks with recombination, and the amalgamation of quartets, with the computational complexity of these problems"
 
 [[repo]]
 name = "lean4-phylo-algebraic"
@@ -181,8 +181,8 @@ note = "Requires lean4-phylogenetics at the train's pin, which holds its general
 
 [[repo]]
 name = "lean4-gusfield2007"
-role = "background"
-parent = "lean4-phylogenetics"
+role = "paper"
+parent = "lean4-phylo-combinatorics"
 package = "Gusfield2007"
 root = "Gusfield2007"
 url = "https://github.com/vltanh/lean4-gusfield2007"
@@ -190,6 +190,7 @@ lean = "v4.37.0-rc1"
 require = "when-needed"
 commit = "bd3940001c6f030816f13191b348596763b1f146"
 summary = "Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination"
+note = "Requires lean4-phylogenetics at the train's pin, and not PhyloCombinatorics, the library of its hub, which it predates; has the layout of a paper's repository (root and paper Gusfield2007)"
 
 [[repo]]
 name = "formalize-math-paper"
