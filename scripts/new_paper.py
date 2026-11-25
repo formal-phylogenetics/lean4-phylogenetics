@@ -18,7 +18,7 @@ root, unless the entry gives `paper`):
   - <Root>/Basic/ and <Root>/External/, each with a README, and <Root>/Defs.lean,
     palomar/<Paper>/Challenge.lean and palomar/<Paper>/Solution.lean as placeholder modules;
   - .gitignore, LICENSE, a stub README.md, and CI that builds;
-  - its private files (notes/, docs/<Paper>/NEXT.md, .vscode/, CLAUDE.md), kept outside the
+  - its private files (notes/, .vscode/, CLAUDE.md), kept outside the
     repository and linked into it by gitignored symbolic links, from templates kept with this
     repository's own private files (where its gitignored `notes` link points);
 
@@ -374,11 +374,10 @@ def main() -> None:
     (notes / 'notes').mkdir(parents=True)
     (notes / '.vscode').mkdir()
     (notes / 'notes' / 'config.md').write_text(render(templates / 'config.md.in', values))
-    (notes / 'NEXT.md').write_text(render(templates / 'NEXT.md.in', values))
+    (notes / 'notes' / 'follow-up-papers.md').write_text(render(templates / 'follow-up-papers.md.in', values))
     (notes / 'CLAUDE.md').write_text(render(templates / 'CLAUDE.md.in', values))
     shutil.copyfile(templates / 'vscode-settings.json', notes / '.vscode' / 'settings.json')
-    links = {'notes': 'notes', f'docs/{p.paper}/NEXT.md': 'NEXT.md', '.vscode': '.vscode',
-             'CLAUDE.md': 'CLAUDE.md'}
+    links = {'notes': 'notes', '.vscode': '.vscode', 'CLAUDE.md': 'CLAUDE.md'}
     for at, name in links.items():
         os.symlink(os.path.relpath(notes / name, (repo / at).parent), repo / at)
 

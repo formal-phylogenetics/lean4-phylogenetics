@@ -139,7 +139,7 @@ palomar/<Paper>/comparator.json   "challenge_module": "<Paper>.Challenge",
                                   "solution_module": "<Paper>.Solution"
 palomar/<Paper>/formalization.yaml
 docs/<Paper>/                     REPORT.md, CREDITS.md, paper_routes.tsv, route_differences.tsv,
-                                  numerics/ if any; NEXT.md, private (Section 7)
+                                  numerics/ if any
 scripts/                          Audit.lean and the skill's other tools
 .github/workflows/                lean_action_ci.yml (scaffold: it builds; the skill adds its
                                   checks); palomar_preflight_<paper>.yml (the skill's Phase 9)
@@ -274,20 +274,17 @@ skill keeps out of git is private, and stays outside the repository:
 
 | Path in the repository | Holds |
 | --- | --- |
-| `notes/` | the working notes: the Phase 0 configuration, the inventory, the run log, the TeX source, drafts and scratch |
-| `docs/<Paper>/NEXT.md` | the follow-up papers (the skill's Phase 8) |
+| `notes/` | the working notes: the Phase 0 configuration, the inventory, the run log, the TeX source, the follow-up papers (the skill's Phase 8), drafts and scratch |
 | `.vscode/` | the editor's settings |
 | `CLAUDE.md` | the agent's instructions for the repository |
 
 Each is a symbolic link to a private location, ignored by the repository's `.gitignore` with no
-trailing slash (`/notes`, not `/notes/`: a pattern with one does not match a link). The line
-`NEXT.md` has no leading slash, so that it matches the file in `docs/<Paper>/` and in the
-directory of every other paper of the repository. The skill's "untracked `notes/`" is this folder.
+trailing slash (`/notes`, not `/notes/`: a pattern with one does not match a link). The skill's
+untracked `notes/` is this folder.
 
 - Never commit them, and never put notes on a branch: visibility applies to every branch.
 - Nothing committed (code, comments, documents, commit messages, pull request descriptions) says
-  where the private files are kept, or quotes them. The public report says only that `NEXT.md`
-  exists (the skill's Phase 8).
+  where the private files are kept, says what they hold, or quotes them.
 - Plans and decisions that are not public yet, and repositories that are private, belong with the
   private files, not in the registry or a catalog. The tools merge a private overlay for local
   checks; the READMEs, which are public, are generated without it.
