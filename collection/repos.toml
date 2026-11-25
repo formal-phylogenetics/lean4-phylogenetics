@@ -16,9 +16,9 @@ lean = "leanprover/lean4:v4.37.0-rc1"
 mathlib = "v4.37.0-rc1"
 
 [train.pins]
-Phylogenetics = "4daee158d74436ce6ed6f52e337ba00f1b43ea32"     # lean4-phylogenetics 0.4.1
-TreeOfBlobs = "b2dadbda0c992091dd6e9105e1394c5b7557602c"       # lean4-tob 0.2.0
-PhyloNetwork = "51d53ffd885195694fd0ce91090f07efa620db7a"      # lean4-phylo-network 0.1.0
+Phylogenetics = "b56ce531644230622f069aaa8aa51a5143c1411e"     # lean4-phylogenetics 0.5.0
+TreeOfBlobs = "f3e570dec6a32e57ae5b189806d3d02a8658fd32"       # lean4-tob 0.2.0
+PhyloNetwork = "d069aaa85c4d9ee9d2a8746b71170f27c92a8633"      # lean4-phylo-network 0.1.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it

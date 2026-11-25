@@ -56,9 +56,9 @@ the tree at one commit, the train:
 | --- | --- |
 | Lean | `leanprover/lean4:v4.37.0-rc1` |
 | Mathlib | `v4.37.0-rc1` |
-| Phylogenetics | [`4daee15`](https://github.com/vltanh/lean4-phylogenetics/commit/4daee158d74436ce6ed6f52e337ba00f1b43ea32) |
-| TreeOfBlobs | [`b2dadbd`](https://github.com/vltanh/lean4-tob/commit/b2dadbda0c992091dd6e9105e1394c5b7557602c) |
-| PhyloNetwork | [`51d53ff`](https://github.com/vltanh/lean4-phylo-network/commit/51d53ffd885195694fd0ce91090f07efa620db7a) |
+| Phylogenetics | [`b56ce53`](https://github.com/vltanh/lean4-phylogenetics/commit/b56ce531644230622f069aaa8aa51a5143c1411e) |
+| TreeOfBlobs | [`f3e570d`](https://github.com/vltanh/lean4-tob/commit/f3e570dec6a32e57ae5b189806d3d02a8658fd32) |
+| PhyloNetwork | [`d069aaa`](https://github.com/vltanh/lean4-phylo-network/commit/d069aaa85c4d9ee9d2a8746b71170f27c92a8633) |
 
 <!-- END collection:train -->
 
@@ -187,13 +187,13 @@ several hubs need it, in a hub's library when only that hub's papers do.
 | Hypothesis tests on quartet concordance factors: the T1, T3 and star tests and their limit laws (Mitchell et al. 2019), combining p-values, missing taxa | available | lean4-tob | TreeOfBlobs/Testing/, TreeOfBlobs/External/MitchellAllmanRhodes2019/. Papers of lean4-phylo-network use them too (NANUQ), so they belong in lean4-phylogenetics | lean4-tob, lean4-phylo-network: 1 |
 | Blobs of level-1 networks in the language of domination: bridges, the reticulation and the cycle of a blob, blocks, treelike sets of four taxa, the strict dominance of an induced cut-edge split | available | lean4-tob | TreeOfBlobs/Level1Blobs.lean, TreeOfBlobs/Wedge.lean, TreeOfBlobs/Level1Blocks.lean, TreeOfBlobs/Level1CF.lean. NANUQ uses them too, so they belong in lean4-phylogenetics | lean4-tob, lean4-phylo-network: 1 |
 | Identifiability and consistent inference of the tree of blobs from quartet concordance factors, and B-quartets | available | lean4-tob | the papers of lean4-tob: lean4-allman2023, lean4-tinnik, lean4-tob-qmc, lean4-ectoblob | lean4-phylo-network: 1 |
+| Semi-directed networks: the semi-directed network of a rooted one, rootability and multi-rootability, level-k and galled semi-directed networks; the NMSC's concordance factors as a function of the semi-directed network | partial | lean4-phylogenetics | Phylogenetics/Network/Semidirected.lean: the structure and the semidirected network of a binary rooted network. Rootability, level-k semidirected networks and the CFs as a function of the semidirected network are missing; Huber et al. 2025, Theorem 5.1, is proved on rooted networks instead (TreeOfBlobs/External/HuberEtAl2025/) | lean4-phylo-network: 1, 2 |
 | Quarnets and quinnets: restricting a (semi-directed) network to four or five taxa, and the networks they encode | partial | lean4-phylogenetics | induced rooted networks (inducedNetwork) and level-1 quarnet concordance factors exist; semi-directed quarnets and quinnets do not | lean4-phylo-network: 1, 2 |
 | Classes of networks: level-k, galled trees and galled networks, tree-child, orchard, tree-based | partial | lean4-phylogenetics | level-1 (RootedNetwork.IsLevelOne); tree-basedness of level-1 networks in lean4-camus, off the train | lean4-phylo-network: 2-4 |
 | Rooted triplets, binets, trinets and clusters displayed by a network; least common ancestors and LCA constraints | partial | lean4-phylo-network | least common ancestors in lean4-tob (TreeOfBlobs/LCA.lean) | lean4-phylo-network: 3 |
 | Networks from several trees: displayed trees, hybridization number, cherry-picking sequences, agreement forests, Robinson–Foulds distances to networks | partial | lean4-phylo-network | the displayed tree model (Phylogenetics/NMSC/DisplayedTreeModel.lean); the trees contained in a level-1 network in lean4-camus, off the train | lean4-phylo-network: 4 |
 | Sequence evolution on networks: the CFN, Jukes–Cantor and GTR models, site-pattern probabilities, bi-allelic markers and SNPs, the logDet distance | partial | lean4-phylogenetics | the logDet distance in lean4-ectoblob (ECToBlob/LogDet.lean); the SNP site model of Warnow et al. 2025 in lean4-camus, off the train | lean4-phylo-network: 1, 5 |
 | Distances between networks (the μ-distance) and inter-taxon quartet distances | partial | lean4-phylo-network | quartet distances of trees and of level-1 networks: lean4-tob (TreeOfBlobs/External/Rhodes2020/) and lean4-nanuq (Nanuq/NANUQ.lean) | lean4-phylo-network: 2 |
-| Semi-directed networks: the semi-directed network of a rooted one, rootability and multi-rootability, level-k and galled semi-directed networks; the NMSC's concordance factors as a function of the semi-directed network | missing | lean4-phylogenetics | Huber et al. 2025, Theorem 5.1, is proved on rooted networks instead (TreeOfBlobs/External/HuberEtAl2025/) | lean4-phylo-network: 1, 2 |
 | Quintet concordance factors under the NMSC | missing | lean4-phylo-network | - | lean4-phylo-network: 1 |
 | Likelihood, pseudolikelihood and composite likelihood of networks, and the consistency of their maximizers | missing | lean4-phylogenetics | - | lean4-phylo-network: 1, 5 |
 | Priors on networks, posteriors, and the Markov chains that sample them | missing | lean4-phylo-network | - | lean4-phylo-network: 5 |
