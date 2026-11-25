@@ -14,6 +14,8 @@ from __future__ import annotations
 
 import re
 import tomllib
+import unicodedata
+import urllib.parse
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -23,7 +25,8 @@ WORKSPACE = ROOT.parent
 GITHUB_OWNER = 'vltanh'
 
 STATUSES = ('formalized', 'in-progress', 'partial', 'todo')
-KINDS = ('theory', 'theory+algorithm', 'method', 'evaluation', 'method+evaluation', 'theory+evaluation')
+KINDS = ('theory', 'theory+algorithm', 'method', 'evaluation', 'method+evaluation', 'theory+evaluation',
+         'theory+method')
 ROLES = ('root', 'hub', 'paper', 'background', 'tool')
 # Generic module roots that older repositories use and that no new repository may use: Lean module
 # names are global, and the repositories of the collection import one another.
@@ -242,6 +245,17 @@ class Collection:
                 errors.append(f'catalog of {hub}: lists the sub-hub {x!r}, whose parent in the registry is not {hub}')
             for x in sorted(below - names_listed):
                 errors.append(f'catalog of {hub}: does not list its sub-hub {x!r} ([[subhub]])')
+        # A paper has one entry in all the catalogs: no two entries share a DOI, an arXiv, PubMed or
+        # PubMed Central identifier, or a title and a first author.
+        seen_link: dict[tuple[str, str], Paper] = {}
+        seen_title: dict[tuple[str, str], Paper] = {}
+        for p in self.papers:
+            for key, seen, what in ((link_key(p.url), seen_link, 'link'),
+                                    ((first_author(p.authors), fold(p.title)), seen_title, 'title and first author')):
+                other = seen.setdefault(key, p)
+                if other is not p:
+                    errors.append(f'paper {p.id!r} ({p.hub}) has the {what} of {other.id!r} ({other.hub}): '
+                                  'a paper has one entry in all the catalogs')
         cycle = find_cycle({p.id: p.builds_on for p in self.papers})
         if cycle:
             errors.append('builds_on has a cycle: ' + ' -> '.join(cycle))
@@ -252,6 +266,50 @@ class Collection:
             if key not in self.train:
                 errors.append(f'[train] has no {key!r}')
         return errors
+
+
+def fold(text: str) -> str:
+    """Lower case ASCII words: titles and names compared up to case, accents and punctuation."""
+    text = unicodedata.normalize('NFKD', text).encode('ascii', 'ignore').decode().lower()
+    return ' '.join(re.sub(r'[^a-z0-9]+', ' ', text).split())
+
+
+def first_author(authors: str) -> str:
+    return fold(re.split(r',| et al\.', authors)[0])
+
+
+def link_key(url: str) -> tuple[str, str]:
+    """What identifies the publication that a catalog's link points to: its DOI, arXiv, PubMed or
+    PubMed Central identifier, or else the link itself."""
+    u = urllib.parse.unquote(url).strip()
+    for kind, pattern in (('doi', r'doi\.org/(10\..+)'), ('arxiv', r'arxiv\.org/(?:abs|pdf)/([^?#]+?)(?:v\d+)?(?:\.pdf)?/?$'),
+                          ('pmid', r'pubmed\.ncbi\.nlm\.nih\.gov/(\d+)'), ('pmc', r'/articles/(PMC\d+)')):
+        m = re.search(pattern, u, flags=re.I)
+        if m:
+            return kind, m.group(1).rstrip('/').lower()
+    return 'url', re.sub(r'^https?://(www\.)?', '', u).rstrip('/').lower()
+
+
+def near_duplicates(c: Collection, ratio: float = 0.9) -> list[str]:
+    """Entries by one first author whose titles are nearly the same: often a preprint, a proceedings
+    paper and a journal paper, which are one paper unless their results differ. Entries of which one
+    builds on the other are not reported."""
+    from difflib import SequenceMatcher
+    by_author: dict[str, list[Paper]] = {}
+    for p in c.papers:
+        by_author.setdefault(first_author(p.authors), []).append(p)
+    out = []
+    for ps in by_author.values():
+        for i, p in enumerate(ps):
+            for q in ps[i + 1:]:
+                a, b = fold(p.title), fold(q.title)
+                # One that builds on the other is known to be another paper.
+                if q.id in p.builds_on or p.id in q.builds_on:
+                    continue
+                if a != b and SequenceMatcher(None, a, b).ratio() >= ratio:
+                    out.append(f'papers {p.id!r} ({p.hub}) and {q.id!r} ({q.hub}) have nearly the same title and '
+                               'first author: one paper, unless their results differ')
+    return out
 
 
 def find_cycle(graph: dict[str, list[str]]) -> list[str]:

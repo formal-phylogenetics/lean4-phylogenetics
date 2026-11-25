@@ -159,11 +159,16 @@ same way.
 - `python3 scripts/status.py check` compares the registry and the catalogs with the repositories in
   the workspace: versions against the train, the libraries of the hubs above each repository that
   its lakefile must require, module names that two repositories share (which prevents requiring
-  both), and cited sources that two repositories formalize. It fails only on
+  both), cited sources that two repositories formalize, and papers that two entries of the catalogs
+  list. A paper has one entry in all the catalogs, in the hub of its method, and the other hubs refer
+  to it by `builds_on`: two entries that share a DOI, an arXiv, PubMed or PubMed Central identifier,
+  or a title and a first author are an error. Two entries by one first author with nearly the same
+  title are a warning, since a preprint, a proceedings paper and a journal paper are one paper unless
+  their results differ; an entry that builds on the other is not reported. It fails only on
   errors: a bad registry or catalog, or a repository of a catalog, the root or a hub that breaks the
   conventions.
-- To add a paper: add its `[[paper]]` entry to its hub's catalog (an id unused in every hub, and a
-  root unused by the other repositories; for a shared repository, its `repo`, its root and a
-  `paper`), then `python3 scripts/status.py readme --write`. To add a hub: add it to the registry
+- To add a paper: add its `[[paper]]` entry to its hub's catalog (a paper in no catalog yet, an id
+  unused in every hub, and a root unused by the other repositories; for a shared repository, its
+  `repo`, its root and a `paper`), then `python3 scripts/status.py readme --write`. To add a hub: add it to the registry
   with its `parent` (the root, or the hub it is a sub-hub of) and its library's pin, give it a
   library that requires the libraries above it, a catalog and a README with the generated blocks.

@@ -59,7 +59,7 @@ url = "https://github.com/vltanh/lean4-phylo-gene-tree"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Gene tree estimation"
-summary = "What the papers on estimating a tree from sequences share and the root library does not hold: nothing yet. Its catalog has the papers on maximum likelihood and the identifiability of substitution models, distance methods and minimum evolution, parsimony, Bayesian inference, branch support and tests, and the combinatorial results that tree reconstruction rests on"
+summary = "What the papers on estimating a tree from sequences share and the root library does not hold: nothing yet. Its catalog has the papers on maximum likelihood and its optimization, distance methods and minimum evolution, parsimony and perfect phylogeny, Bayesian inference and MCMC, branch support, rooting and tests, the combinatorial results that tree reconstruction rests on, fast-converging methods, substitution models, algebraic phylogenetics and identifiability, consistency under misspecified models, model selection, and divide-and-conquer reconstruction"
 
 [[repo]]
 name = "lean4-phylo-species-tree"

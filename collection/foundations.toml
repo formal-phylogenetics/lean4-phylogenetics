@@ -31,7 +31,7 @@ name = "Rooted trees as hierarchies, unrooted trees as split families, quartets,
 status = "available"
 home = "lean4-phylogenetics"
 where = "Phylogenetics/Hierarchy/, Phylogenetics/Tree/"
-needed_by = ["lean4-phylo-tree-of-blobs", "lean4-phylo-network: 1-5", "lean4-phylo-gene-tree: 1-6", "lean4-phylo-species-tree: 1-9", "lean4-phylo-alignment: 1, 3-5, 8, 10"]
+needed_by = ["lean4-phylo-tree-of-blobs", "lean4-phylo-network: 1-5", "lean4-phylo-gene-tree: 1-12", "lean4-phylo-species-tree: 1-9", "lean4-phylo-alignment: 1, 3-5, 8, 10"]
 
 [[foundation]]
 id = "coalescent"
@@ -131,19 +131,19 @@ needed_by = ["lean4-phylo-network: 4"]
 
 [[foundation]]
 id = "sequence-models"
-name = "Sequence evolution on trees and networks: the CFN, Jukes–Cantor, GTR and general Markov models, site-pattern probabilities, bi-allelic markers and SNPs, the logDet distance"
+name = "Sequence evolution on trees and networks: continuous-time Markov chains of substitution, the Jukes–Cantor (Jukes, Cantor 1969), K2P, HKY, TN93, GTR, CFN and general Markov models, codon and amino-acid models, rate variation across sites, site-pattern probabilities, bi-allelic markers and SNPs"
 status = "partial"
 home = "lean4-phylogenetics"
-where = "the logDet distance in lean4-ectoblob (ECToBlob/LogDet.lean); the SNP site model of Warnow et al. 2025 in lean4-camus"
-needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-gene-tree: 1-4", "lean4-phylo-species-tree: 4, 5, 8", "lean4-phylo-alignment: 3, 4, 10"]
+where = "the SNP site model of Warnow et al. 2025 in lean4-camus"
+needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-gene-tree: 1-5, 7-11", "lean4-phylo-species-tree: 4, 5, 8", "lean4-phylo-alignment: 3, 4, 10"]
 
 [[foundation]]
 id = "likelihood"
-name = "Likelihood, pseudolikelihood and composite likelihood of trees and networks, and the consistency of their maximizers"
+name = "Likelihood of trees and networks and its computation by Felsenstein's pruning algorithm, pseudolikelihood and composite likelihood, and the consistency of their maximizers"
 status = "missing"
 home = "lean4-phylogenetics"
 where = ""
-needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-gene-tree: 1, 3, 4", "lean4-phylo-species-tree: 2, 4, 5, 8", "lean4-phylo-alignment: 3, 4, 10"]
+needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-gene-tree: 1, 3-5, 7, 10, 11", "lean4-phylo-species-tree: 2, 4, 5, 8", "lean4-phylo-alignment: 3, 4, 10"]
 
 [[foundation]]
 id = "bayesian"
@@ -151,7 +151,7 @@ name = "Priors on trees and networks, posteriors, and the Markov chains that sam
 status = "missing"
 home = "lean4-phylogenetics"
 where = ""
-needed_by = ["lean4-phylo-network: 5", "lean4-phylo-gene-tree: 4", "lean4-phylo-species-tree: 5", "lean4-phylo-alignment: 3, 4"]
+needed_by = ["lean4-phylo-network: 5", "lean4-phylo-gene-tree: 4, 11", "lean4-phylo-species-tree: 5", "lean4-phylo-alignment: 3, 4"]
 
 [[foundation]]
 id = "network-distances"
@@ -160,3 +160,155 @@ status = "partial"
 home = "lean4-phylo-network"
 where = "quartet distances of trees and of level-1 networks: lean4-phylo-network (PhyloNetwork/External/Rhodes2020/) and lean4-nanuq (Nanuq/Algorithm/Consistency.lean)"
 needed_by = ["lean4-phylo-network: 2"]
+
+[[foundation]]
+id = "sequences-alignments"
+name = "Sequences over a finite alphabet and their alignments: alignments as matrices with gaps and as order-preserving homology relations on positions, induced pairwise alignments, and the site patterns of an alignment"
+status = "missing"
+home = "lean4-phylogenetics"
+where = ""
+needed_by = ["lean4-phylo-alignment: 1-12", "lean4-phylo-gene-tree: 1-5, 7-12", "lean4-phylo-species-tree: 4, 5", "lean4-phylo-network: 5"]
+
+[[foundation]]
+id = "phylogenetic-distances"
+name = "Distances between sequences and the tree metrics they estimate: p-distances and their corrections under substitution models, the LogDet and paralinear distances, the estimation of additive metrics"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "tree metrics and the four-point condition in Phylogenetics/Tree/; the LogDet distance in lean4-ectoblob (ECToBlob/LogDet.lean)"
+needed_by = ["lean4-phylo-gene-tree: 2, 7, 8, 12", "lean4-phylo-species-tree: 3, 4", "lean4-phylo-network: 1, 5", "lean4-phylo-tree-of-blobs"]
+
+[[foundation]]
+id = "mixture-models"
+name = "Phylogenetic mixtures: the site-pattern distributions of mixtures of trees and of rate classes, rates across sites, covarion and heterotachy models, and their identifiability"
+status = "missing"
+home = "lean4-phylogenetics"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 8-10", "lean4-phylo-network: 5"]
+
+[[foundation]]
+id = "phylogenetic-invariants"
+name = "Phylogenetic invariants and the algebraic varieties of tree models: group-based models and their Fourier (Hadamard) transform, the general Markov model, flattenings and their ranks"
+status = "missing"
+home = "lean4-phylogenetics"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 9", "lean4-phylo-species-tree: 4", "lean4-phylo-network: 5"]
+
+[[foundation]]
+id = "statistical-consistency"
+name = "Consistency and sample complexity of tree estimators: concentration inequalities, sequence-length requirements, phase transitions of ancestral reconstruction, and the strict and generic identifiability of models"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "generic identifiability: the foundation generic-parameters"
+needed_by = ["lean4-phylo-gene-tree: 1, 2, 7, 9, 10", "lean4-phylo-species-tree: 8", "lean4-phylo-network: 1", "lean4-phylo-alignment: 3, 10"]
+
+[[foundation]]
+id = "tree-search"
+name = "Tree space and its moves: NNI, SPR and TBR, their neighborhoods, and the distances they define"
+status = "missing"
+home = "lean4-phylogenetics"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 1, 4", "lean4-phylo-species-tree: 5", "lean4-phylo-network: 5"]
+
+[[foundation]]
+id = "phylogenetic-tests"
+name = "Support and tests of trees: the nonparametric bootstrap, likelihood-ratio tests of topologies (KH, SH, AU) and of branches (aLRT), and their approximations"
+status = "missing"
+home = "lean4-phylogenetics"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 5, 10, 11", "lean4-phylo-species-tree: 7"]
+
+[[foundation]]
+id = "quartet-amalgamation"
+name = "Trees from quartets: quartet compatibility, the short quartet and dyadic closure methods, quartet MaxCut and weighted quartet objectives"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "quartets and ASTRAL's dynamic program in Phylogenetics/Tree/"
+needed_by = ["lean4-phylo-gene-tree: 7", "lean4-phylo-species-tree: 1", "lean4-phylo-network: 1"]
+
+[[foundation]]
+id = "concordance-data"
+name = "Concordance in data: gene and site concordance factors, and the quartet frequencies of a collection of gene trees"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "the quartet concordance factors of the MSC and NMSC (Phylogenetics/MSC/, Phylogenetics/NMSC/)"
+needed_by = ["lean4-phylo-gene-tree: 1", "lean4-phylo-species-tree: 1, 7", "lean4-phylo-network: 1"]
+
+[[foundation]]
+id = "compatibility"
+name = "Compatibility and merging: the compatibility of characters, splits and rooted triplets, restrictions of trees, BUILD, and trees from subtrees and constraints"
+status = "partial"
+home = "lean4-phylogenetics"
+where = "split compatibility and the Splits Equivalence Theorem in Phylogenetics/Tree/"
+needed_by = ["lean4-phylo-gene-tree: 3, 6, 12", "lean4-phylo-species-tree: 2, 6, 9", "lean4-phylo-network: 3, 4"]
+
+[[foundation]]
+id = "parsimony"
+name = "Parsimony on a tree: Fitch's and Sankoff's algorithms, and minimal mutation trees of sequences"
+status = "missing"
+home = "lean4-phylogenetics"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 3", "lean4-phylo-alignment: 8", "lean4-phylo-species-tree: 6"]
+
+[[foundation]]
+id = "perfect-phylogeny"
+name = "Perfect phylogeny: the perfect phylogeny problem, triangulations of colored graphs, and its algorithms for a fixed number of states"
+status = "missing"
+home = "lean4-phylo-gene-tree"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 3"]
+
+[[foundation]]
+id = "minimum-evolution"
+name = "Minimum evolution: the ordinary and balanced criteria, Pauplin's tree length, and their relation to least-squares fitting"
+status = "missing"
+home = "lean4-phylo-gene-tree"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 2"]
+
+[[foundation]]
+id = "fast-convergence"
+name = "Fast convergence: the sequence lengths that distance and quartet methods need, disk-covering methods, and absolute fast convergence"
+status = "missing"
+home = "lean4-phylo-gene-tree"
+where = ""
+needed_by = ["lean4-phylo-gene-tree: 7, 12"]
+
+[[foundation]]
+id = "pairwise-alignment"
+name = "Pairwise alignment by dynamic programming: edit distance, global and local alignment with linear and affine gap costs, alignment in linear space"
+status = "missing"
+home = "lean4-phylo-alignment"
+where = ""
+needed_by = ["lean4-phylo-alignment: 1, 2, 5-9"]
+
+[[foundation]]
+id = "profile-hmms"
+name = "Hidden Markov models of alignment: pair HMMs and profile HMMs, the forward and Viterbi algorithms, posterior decoding and maximum expected accuracy"
+status = "missing"
+home = "lean4-phylo-alignment"
+where = ""
+needed_by = ["lean4-phylo-alignment: 2, 3, 6, 12"]
+
+[[foundation]]
+id = "alignment-merging"
+name = "Merging and scoring alignments: sum-of-pairs and total-column scores and FastSP's error rates, merging alignments along a guide tree, graph-clustering merges"
+status = "missing"
+home = "lean4-phylo-alignment"
+where = ""
+needed_by = ["lean4-phylo-alignment: 1, 2, 6, 8, 9"]
+
+[[foundation]]
+id = "indel-models"
+name = "Models of insertion and deletion: TKF91, TKF92, the long indel model and the Poisson indel process, with their pairwise and tree distributions"
+status = "missing"
+home = "lean4-phylo-alignment"
+where = ""
+needed_by = ["lean4-phylo-alignment: 3, 4, 10"]
+
+[[foundation]]
+id = "duplication-loss"
+name = "Gene duplication, loss and transfer: reconciliations of gene trees with species trees, and birth–death models of gene families"
+status = "missing"
+home = "lean4-phylo-species-tree"
+where = ""
+needed_by = ["lean4-phylo-species-tree: 6"]

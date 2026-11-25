@@ -310,6 +310,8 @@ def check(c: col.Collection) -> int:
             warnings.append(f'cited source {src} is formalized in {", ".join(sorted(names))}: require one '
                             'from the other, or move it to the lowest hub above both')
 
+    warnings += col.near_duplicates(c)
+
     print(f'Train: {c.train["lean"]}, Mathlib {c.train["mathlib"]}; '
           + ', '.join(f'{k} {v[:7]}' for k, v in pins.items()) + '\n')
     rows = [('Repository', 'Package', 'Lean', 'Phylogenetics', 'HEAD', 'State')]
@@ -349,7 +351,7 @@ def cell(text: str) -> str:
 STATUS_WORDS = {'formalized': 'formalized', 'in-progress': 'in progress', 'partial': 'partly covered', 'todo': 'to do'}
 KIND_WORDS = {'theory': 'theory', 'method': 'method', 'theory+algorithm': 'theory and algorithm',
               'evaluation': 'evaluation', 'method+evaluation': 'method and evaluation',
-              'theory+evaluation': 'theory and evaluation'}
+              'theory+evaluation': 'theory and evaluation', 'theory+method': 'theory and method'}
 
 
 def anchor(fid: int, title: str) -> str:
