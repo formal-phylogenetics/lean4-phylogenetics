@@ -294,7 +294,7 @@ untracked `notes/` is this folder.
 Repositories are created in the GitHub organization
 [formal-phylogenetics](https://github.com/formal-phylogenetics), whose profile (`profile/README.md`
 in its repository `.github`) lists the root and the hubs: a new hub is added there. Its site,
-<https://formal-phylogenetics.github.io/> (repository `formal-phylogenetics.github.io`), reads the
+<https://formal-phylogenetics.vltanh.me/> (repository `formal-phylogenetics.github.io`), reads the
 registry and the hubs' catalogs from GitHub, so a change to their fields is a change to the site.
 Creating a repository, pushing, changing its visibility, opening or closing pull requests, running
 Palomar's preflight and submitting to Palomar each need the maintainer's explicit permission, and

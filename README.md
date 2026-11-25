@@ -32,7 +32,7 @@ of two kinds: hubs of inference, one for each object that is estimated (alignmen
 sequences, species trees, networks), and hubs of theory, one for each kind of general result
 (combinatorics, algebraic phylogenetics, statistics, geometry); a paper is with its estimator,
 unless its result is general ([conventions](docs/CONVENTIONS.md), Section 1). The site
-[formal-phylogenetics.github.io](https://formal-phylogenetics.github.io/) draws this tree, with
+[formal-phylogenetics.vltanh.me](https://formal-phylogenetics.vltanh.me/) draws this tree, with
 every entry of the hubs' catalogs.
 
 <!-- BEGIN collection:tree -->
