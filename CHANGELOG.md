@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.5.0
+
+Semidirected networks, in `Phylogenetics/Network/Semidirected.lean`: the structure `Phylogenetics.SemidirectedNetwork`
+(a multigraph whose hybrid edges keep their direction, with a labelling of the taxa), the suppression of the root of a
+rooted network (`RootedNetwork.unrootAt`), the renaming of taxa (`RootedNetwork.renameTaxa`), the part of a network
+below the least stable ancestor of all its taxa on the taxa themselves (`RootedNetwork.lsaPlus`), and the semidirected
+network `N⁻` of a binary phylogenetic network with its parameters (`RootedNetwork.semidirected`,
+`RootedNetwork.semidirectedMetric`; Baños 2019, Definitions 5 and 6; Allman, Baños, Mitchell, Rhodes 2023,
+Definition 5). They come from lean4-allman2023, which uses them from here.
+
+`RootedNetwork.belowNetwork_outdegree_le`, `HasPathAvoiding.suffix_of_not_hasPathAvoiding`,
+`IsStableAncestor.target_of_unique`, `lsaNetwork_outdegree_root_ne_one` and `lsaNetwork_outdegree_root` are in the new
+module, in the area of networks, instead of `Phylogenetics.NMSC.InducedParams`, which imports it. No declaration changed
+its name or its statement.
+
 ## 2026-11-21: the layout of new repositories
 
 The library does not change: it stays at 0.4.1, and the train's pin of `Phylogenetics` does not move.

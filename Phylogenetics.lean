@@ -110,6 +110,7 @@ public import Phylogenetics.Network.Level1.ToRootedNetwork
 public import Phylogenetics.Network.OfHierarchy
 public import Phylogenetics.Network.PendantCuts
 public import Phylogenetics.Network.Quartets
+public import Phylogenetics.Network.Semidirected
 public import Phylogenetics.Network.TreeOfBlobs
 public import Phylogenetics.Tree.AstralDP
 public import Phylogenetics.Tree.Defs

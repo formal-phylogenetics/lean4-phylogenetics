@@ -76,9 +76,9 @@ needed_by = ["lean4-phylo-network: 1"]
 [[foundation]]
 id = "semi-directed"
 name = "Semi-directed networks: the semi-directed network of a rooted one, rootability and multi-rootability, level-k and galled semi-directed networks; the NMSC's concordance factors as a function of the semi-directed network"
-status = "missing"
+status = "partial"
 home = "lean4-phylogenetics"
-where = "Huber et al. 2025, Theorem 5.1, is proved on rooted networks instead (TreeOfBlobs/External/HuberEtAl2025/)"
+where = "Phylogenetics/Network/Semidirected.lean: the structure and the semidirected network of a binary rooted network. Rootability, level-k semidirected networks and the CFs as a function of the semidirected network are missing; Huber et al. 2025, Theorem 5.1, is proved on rooted networks instead (TreeOfBlobs/External/HuberEtAl2025/)"
 needed_by = ["lean4-phylo-network: 1, 2"]
 
 [[foundation]]

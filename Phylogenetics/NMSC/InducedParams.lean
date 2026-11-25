@@ -3,6 +3,7 @@ module
 public import Phylogenetics.NMSC.Defs
 public import Phylogenetics.ForMathlib.MeasureTheory.HaarPreimage
 public import Phylogenetics.Network.InducedMetric
+public import Phylogenetics.Network.Semidirected
 
 /-!
 # The numerical parameters of an induced network
@@ -329,83 +330,9 @@ theorem isMetric_belowMetric [Fintype E] [Fintype (N.belowArcs l Y)] (hN : N.IsP
   refine (sum_belowArcs_target (hl := hl) (hleaf := hleaf) hN hst v hvl θ.inheritance).trans ?_
   exact hθ.2.2.2.2 v.1 (by rwa [belowNetwork_indegree hN hst v hvl] at hv)
 
-/-- Arcs below a vertex leave a vertex with at most its outdegree in the network. -/
-theorem belowNetwork_outdegree_le [Finite E] (v : N.belowVertices l Y) :
-    (N.belowNetwork l Y hl hleaf).graph.outdegree v ≤ N.graph.outdegree v.1 :=
-  Set.ncard_le_ncard_of_injOn (fun e => e.1) (fun _ he => congrArg Subtype.val he)
-    (fun _ _ _ _ h => Subtype.ext h) (Set.toFinite _)
-
 end Below
 
 /-! ### The induced network of a binary network is binary -/
-
-/-- The part from `w` on of a path avoiding `c`, when the path cannot avoid `w`. -/
-theorem HasPathAvoiding.suffix_of_not_hasPathAvoiding {u t c w : V} (h : N.HasPathAvoiding u t c)
-    (hw : ¬ N.HasPathAvoiding u t w) : N.HasPathAvoiding w t c := by
-  obtain ⟨-, ht, hp⟩ := h
-  induction hp using Relation.ReflTransGen.head_induction_on with
-  | refl =>
-    have : t = w := by
-      by_contra hne
-      exact hw ⟨hne, hne, .refl⟩
-    subst this
-    exact ⟨ht, ht, .refl⟩
-  | @head a b hab hbt ih =>
-    by_cases ha : a = w
-    · subst ha
-      exact ⟨hab.2.1, ht, hbt.head hab⟩
-    · exact ih fun h => hw (hasPathAvoiding_head hab.1 ha h)
-
-/-- **The unique child of a stable ancestor is a stable ancestor**: below `l`, the paths to the taxa start
-with the arc to it, when no other arc leaving `l` is ancestral to the taxa. -/
-theorem IsStableAncestor.target_of_unique (hN : N.IsPhylogenetic) {Y : Set X} (hY : Y.Nontrivial)
-    {l : V} (hst : N.IsStableAncestor Y l) {e : E}
-    (huniq : ∀ f, N.graph.source f = l → f ∈ N.ancestralArcs Y → f = e) :
-    N.IsStableAncestor Y (N.graph.target e) := by
-  intro x hx hp
-  obtain ⟨-, -, hq⟩ := hp.suffix_of_not_hasPathAvoiding (hst x hx)
-  rcases Relation.ReflTransGen.cases_head hq with h | ⟨a, ⟨⟨f, hfs, hft⟩, -, ha⟩, hat⟩
-  · exact hst.leaf_ne hN hY x h.symm
-  · have hfa : f ∈ N.ancestralArcs Y := by
-      refine ⟨x, hx, ?_⟩
-      rw [hft]
-      exact Relation.ReflTransGen.mono (fun _ _ h => h.1) _ _ hat
-    rw [huniq f hfs hfa] at hft
-    exact ha hft.symm
-
-/-- **The LSA does not have just one child below it**, else that child would be a lower stable ancestor. -/
-theorem lsaNetwork_outdegree_root_ne_one (hN : N.IsPhylogenetic) {Y : Set X} (hY : Y.Nontrivial) :
-    (lsaNetwork hN Y hY.nonempty).graph.outdegree (lsaNetwork hN Y hY.nonempty).root ≠ 1 := by
-  intro h
-  obtain ⟨e, he⟩ := (DirectedMultigraph.outdegree_eq_one_iff _ _).mp h
-  obtain ⟨hst, hleast⟩ := lsa_spec hN Y hY.nonempty
-  have hes : N.graph.source e.1 = lsa hN Y hY.nonempty := congrArg Subtype.val ((he e).mpr rfl)
-  have hc := hleast _ (hst.target_of_unique hN hY (e := e.1) fun f hfs hfa => by
-    have hf : f ∈ N.belowArcs (lsa hN Y hY.nonempty) Y := ⟨by rw [hfs]; exact .refl, hfa⟩
-    exact congrArg Subtype.val ((he ⟨f, hf⟩).mp (Subtype.ext hfs)))
-  refine hN.acyclic _ (Relation.TransGen.head' ⟨e.1, hes, rfl⟩ hc)
-
-/-- The root of the part below the LSA has outdegree two. -/
-theorem lsaNetwork_outdegree_root (hN : N.IsPhylogenetic) (hBin : N.IsBinary) {Y : Set X}
-    (hY : Y.Nontrivial) :
-    (lsaNetwork hN Y hY.nonempty).graph.outdegree (lsaNetwork hN Y hY.nonempty).root = 2 := by
-  have : Finite E := hN.finite_arcs
-  have hne := lsaNetwork_outdegree_root_ne_one hN hY
-  have hst := (lsa_spec hN Y hY.nonempty).1
-  have h0 : (lsaNetwork hN Y hY.nonempty).graph.outdegree (lsaNetwork hN Y hY.nonempty).root ≠ 0 := by
-    intro h
-    obtain ⟨x, hx⟩ := ((lsaNetwork_isPhylogenetic hN hY).leaves _).mp h
-    exact hst.leaf_ne hN hY x.1 (congrArg Subtype.val hx)
-  have hle : (lsaNetwork hN Y hY.nonempty).graph.outdegree (lsaNetwork hN Y hY.nonempty).root ≤
-      N.graph.outdegree (lsa hN Y hY.nonempty) :=
-    belowNetwork_outdegree_le _
-  have hle2 : N.graph.outdegree (lsa hN Y hY.nonempty) ≤ 2 := by
-    by_cases hr : lsa hN Y hY.nonempty = N.root
-    · rw [hr, hBin.1]
-    · have h₁ := hN.nonroot_indegree _ hr
-      have h₂ := hBin.2 _ hr (by omega)
-      omega
-  omega
 
 /-- **The vertices kept below the LSA have degree three**, or are taxa. A kept vertex of indegree one with
 one retained child is suppressed, and a reticulation keeps its two parents. -/
