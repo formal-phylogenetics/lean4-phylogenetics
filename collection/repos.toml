@@ -2,6 +2,8 @@
 #
 # The root, lean4-phylogenetics, holds the library that every repository shares. Each hub holds the
 # library of what its papers share, and the catalog of its papers (catalog/papers.toml in the hub).
+# A hub's parent is the root or the hub above it, of which it is a sub-hub; a repository requires the
+# libraries of the root and of every hub above it.
 # A paper's repository is listed in its hub's catalog; it is listed here too only when it needs a
 # note (it is off the train, or has generic module roots). A definition or result goes to the lowest
 # node above every repository that uses it (docs/CONVENTIONS.md, Section 4).
@@ -21,7 +23,7 @@ TreeOfBlobs = "f3e570dec6a32e57ae5b189806d3d02a8658fd32"       # lean4-tob 0.2.0
 PhyloNetwork = "d069aaa85c4d9ee9d2a8746b71170f27c92a8633"      # lean4-phylo-network 0.1.0
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
-# parent: the hub or root above it
+# parent: the hub or root above it (a hub under a hub is a sub-hub)
 # require: whether new repositories may require it: "always", "when-needed", or "no" (see `note`)
 
 [[repo]]
@@ -32,18 +34,7 @@ url = "https://github.com/vltanh/lean4-phylogenetics"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetics"
-summary = "What every repository shares: rooted networks (cuts, blobs, induced networks, the tree of blobs, level-1 networks), trees and quartets, neighbor joining and ASTRAL's dynamic program, Kingman's coalescent, the multispecies coalescent and the network multispecies coalescent with quartet concordance factors"
-
-[[repo]]
-name = "lean4-tob"
-role = "hub"
-parent = "lean4-phylogenetics"
-package = "TreeOfBlobs"
-url = "https://github.com/vltanh/lean4-tob"
-lean = "v4.37.0-rc1"
-require = "when-needed"
-title = "The tree of blobs"
-summary = "What the papers on inferring the tree of blobs share: hypothesis tests on quartet concordance factors, blobs of level-1 networks, networks given by tables, and the sources several papers cite (Mitchell et al. 2019, Rhodes 2020, Huber et al. 2025)"
+summary = "General phylogenetics, which every repository shares: rooted networks (cuts, blobs, induced networks, the tree of blobs, level-1 networks) and semidirected networks, trees and quartets, neighbor joining and ASTRAL's dynamic program, Kingman's coalescent, the multispecies coalescent and the network multispecies coalescent with quartet concordance factors and generic parameters"
 
 [[repo]]
 name = "lean4-phylo-network"
@@ -54,7 +45,18 @@ url = "https://github.com/vltanh/lean4-phylo-network"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetic network estimation"
-summary = "What the papers on estimating whole networks share: nothing yet. Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data"
+summary = "What the papers on estimating networks share, those of its sub-hub lean4-tob included: hypothesis tests on quartet concordance factors (Mitchell et al. 2019), blobs, blocks and wedge paths of level-1 networks with the strict dominance of an induced cut-edge split, cut splits of induced networks, the chain of the network multispecies coalescent on a concrete network, and the sources several papers cite (Rhodes 2020, Huber et al. 2025). Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data"
+
+[[repo]]
+name = "lean4-tob"
+role = "hub"
+parent = "lean4-phylo-network"
+package = "TreeOfBlobs"
+url = "https://github.com/vltanh/lean4-tob"
+lean = "v4.37.0-rc1"
+require = "when-needed"
+title = "The tree of blobs"
+summary = "What only the papers on inferring the tree of blobs share: the algorithms and standing assumptions of TINNiK, TOB-QMC and ECToBlob, networks given by tables, lowest common ancestors, the local objective of a multifurcation, counts of tree edges, and the analysis that only they use"
 
 [[repo]]
 name = "lean4-camus"

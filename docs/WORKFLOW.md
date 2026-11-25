@@ -36,8 +36,9 @@ python3 scripts/new_paper.py <id>
 ```
 
 It creates `../lean4-<id>` (or the entry's `repo`) in the layout of CONVENTIONS, Section 3, and its
-private files (Section 7). It requires the root library, the paper's hub's library, the hubs it
-`uses`, and the formalized papers it builds on, each at its pin, and lists in the manifest
+private files (Section 7). It requires the root library, the libraries of the hubs above the paper
+(its hub, and the hubs above a sub-hub), the hubs it `uses`, and the formalized papers it builds
+on, each at its pin, and lists in the manifest
 everything they require in turn. It hard-links the compiled dependencies from local checkouts
 (Mathlib from the hub's), builds, checks that the dependencies are up to date, makes the first
 commit, and marks the paper `in-progress` in its hub's catalog. Nothing is downloaded, pushed or
@@ -128,17 +129,16 @@ When a second repository needs a definition or a result that lives lower in the 
 To a new Lean and Mathlib release, or to new commits of the libraries:
 
 1. This repository: move its toolchain and Mathlib, build, audit, commit.
-2. Each hub, in the order of their requirements: move Mathlib and the pins
-   (`lake update Phylogenetics`, and the other libraries it requires), build, audit, route check,
-   commit.
+2. Each hub, in the order of their requirements, a hub before its sub-hubs: move Mathlib and the
+   pins (`lake update Phylogenetics`, and the other libraries it requires), build, audit, commit.
 3. Each paper's repository, upstream first (`builds_on` order): the same, then its Comparator.
 4. Edit `[train]` in `collection/repos.toml`, and the `commit` of each moved paper in its hub's
    catalog; run `python3 scripts/status.py check`, which must report no repository off the train
    apart from the known ones.
 
 A Palomar entry stays pinned to the commit it was submitted at: moving the train does not change
-it, and resubmitting is the maintainer's decision. The older repositories that are off the train
-join it the same way, when a paper needs to require them.
+it, and resubmitting is the maintainer's decision. A repository that is off the train joins it the
+same way.
 
 ## 8. Keep the registry and the catalogs current
 
@@ -146,11 +146,13 @@ join it the same way, when a paper needs to require them.
   `collection/foundations.toml` for the shared mathematics, and each hub's `catalog/papers.toml`
   for its papers. The READMEs' tables are generated from them: never edit those tables by hand.
 - `python3 scripts/status.py check` compares the registry and the catalogs with the repositories in
-  the workspace: versions against the train, module names that two repositories share (which
-  prevents requiring both), and cited sources that two repositories formalize. It fails only on
+  the workspace: versions against the train, the libraries of the hubs above each repository that
+  its lakefile must require, module names that two repositories share (which prevents requiring
+  both), and cited sources that two repositories formalize. It fails only on
   errors: a bad registry or catalog, or a repository of a catalog, the root or a hub that breaks the
   conventions.
 - To add a paper: add its `[[paper]]` entry to its hub's catalog (an id unused in every hub, and a
   root unused by the other repositories; for a shared repository, its `repo`, its root and a
   `paper`), then `python3 scripts/status.py readme --write`. To add a hub: add it to the registry
-  with its library's pin, give it a library, a catalog and a README with the generated blocks.
+  with its `parent` (the root, or the hub it is a sub-hub of) and its library's pin, give it a
+  library that requires the libraries above it, a catalog and a README with the generated blocks.

@@ -2,9 +2,10 @@
 
 The collection is a tree of repositories. Its root, lean4-phylogenetics, holds the library that
 everything shares, the registry of the repositories (collection/repos.toml), the shared foundations
-(collection/foundations.toml), the conventions and the tools. Each hub (lean4-tob, lean4-phylo-network)
-holds a library of what its papers share, and a catalog of its papers (catalog/papers.toml). The
-repositories sit side by side in one directory, the workspace.
+(collection/foundations.toml), the conventions and the tools. Each hub holds a library of what its
+papers share, and a catalog of its papers (catalog/papers.toml). A hub's parent is the root or another
+hub, of which it is a sub-hub: lean4-tob is a sub-hub of lean4-phylo-network. The repositories sit
+side by side in one directory, the workspace.
 
 Imported by scripts/status.py and scripts/new_paper.py. Python 3.11 or later.
 """
@@ -80,6 +81,7 @@ class Collection:
     families: dict[tuple[str, int], dict] = field(default_factory=dict)
     papers: list[Paper] = field(default_factory=list)
     catalogs: dict[str, Path] = field(default_factory=dict)   # hub -> its catalog, if on disk
+    subhubs: dict[str, list[dict]] = field(default_factory=dict)   # hub -> the [[subhub]] of its catalog
 
     @property
     def by_id(self) -> dict[str, Paper]:
@@ -109,8 +111,35 @@ class Collection:
         return r is None or r.get('lean', self.lean_version()) == self.lean_version()
 
     def library_repos(self) -> list[dict]:
-        """The root and the hubs: the nodes of the tree that hold a library."""
-        return [r for r in self.repos if r.get('role') in ('root', 'hub')]
+        """The root and the hubs: the nodes of the tree that hold a library, in the order of the
+        tree (each hub after the hub above it)."""
+        out: list[dict] = []
+
+        def visit(parent: str) -> None:
+            for r in self.repos:
+                if r.get('role') == 'hub' and r.get('parent') == parent and r not in out:
+                    out.append(r)
+                    visit(r['name'])
+
+        for r in self.repos:
+            if r.get('role') == 'root':
+                out.append(r)
+                visit(r['name'])
+        return out + [r for r in self.repos if r.get('role') in ('root', 'hub') and r not in out]
+
+    def hubs_above(self, name: str) -> list[dict]:
+        """The hubs above a hub or a paper's hub, from the top of the tree down to `name` itself if it
+        is a hub: the libraries that a repository under `name` requires besides the root's."""
+        chain: list[dict] = []
+        r = self.repo(name)
+        while r is not None and r.get('role') == 'hub' and r not in chain:
+            chain.append(r)
+            r = self.repo(r.get('parent', ''))
+        return chain[::-1]
+
+    def depth(self, hub: dict) -> int:
+        """0 for a hub under the root, 1 for its sub-hubs, and so on."""
+        return len(self.hubs_above(hub['name'])) - 1
 
     def validate(self) -> list[str]:
         errors = []
@@ -121,6 +150,17 @@ class Collection:
                 errors.append(f"{where}: role {r.get('role')!r} is not one of {ROLES}")
             if r.get('role') in ('hub', 'paper', 'background') and r.get('parent') not in names:
                 errors.append(f"{where}: its parent {r.get('parent')!r} is not in the registry")
+            if r.get('role') == 'hub':
+                above = self.repo(r.get('parent', ''))
+                if above is not None and above.get('role') not in ('root', 'hub'):
+                    errors.append(f"{where}: the parent of a hub is the root or a hub, not {above['name']}")
+                seen_up, up = set(), r
+                while up is not None and up.get('role') == 'hub':
+                    if up['name'] in seen_up:
+                        errors.append(f"{where}: the parents of the hubs form a cycle")
+                        break
+                    seen_up.add(up['name'])
+                    up = self.repo(up.get('parent', ''))
             if r.get('role') in ('root', 'hub') and r.get('package') not in self.train.get('pins', {}):
                 errors.append(f"{where}: [train.pins] has no commit of its library {r.get('package')!r}")
         if len(set(names)) != len(names):
@@ -194,6 +234,14 @@ class Collection:
                                   f'same name {q.paper!r}; each paper of a repository has its own `paper` '
                                   '(at most one leaves it to the root)')
                 names.setdefault(q.paper, q.id)
+        # A hub's catalog lists its sub-hubs, which the registry places under it.
+        for hub, listed in self.subhubs.items():
+            names_listed = {x.get('repo') for x in listed}
+            below = {h['name'] for h in self.hubs if h.get('parent') == hub}
+            for x in sorted(names_listed - below):
+                errors.append(f'catalog of {hub}: lists the sub-hub {x!r}, whose parent in the registry is not {hub}')
+            for x in sorted(below - names_listed):
+                errors.append(f'catalog of {hub}: does not list its sub-hub {x!r} ([[subhub]])')
         cycle = find_cycle({p.id: p.builds_on for p in self.papers})
         if cycle:
             errors.append('builds_on has a cycle: ' + ' -> '.join(cycle))
@@ -264,6 +312,7 @@ def load(private: bool = False, hubs_from: Path | None = None) -> Collection:
         data = _toml(path)
         for f in data.get('family', []):
             c.families[(hub['name'], f['id'])] = f
+        c.subhubs[hub['name']] = data.get('subhub', [])
         for p in data.get('paper', []):
             c.papers.append(Paper(hub=hub['name'], **p))
     for o in overlay.get('paper', []):

@@ -1,9 +1,9 @@
 # The shared mathematics that the papers of the hubs need, and where it is or will be.
 #
 # A foundation is a definition or standard theory that several papers use. Its home is the lowest
-# node of the tree above every repository that uses it (docs/CONVENTIONS.md, Section 4): this
-# repository's library when papers of several hubs need it, a hub's library when only that hub's
-# papers do. A foundation that a paper builds first moves to its home when a second paper needs it.
+# node of the tree above every repository that uses it (docs/CONVENTIONS.md, Section 4): a hub's
+# library when only the papers of that hub and of its sub-hubs need it, this repository's library
+# otherwise. A foundation that a paper builds first moves to its home when a second paper needs it.
 #
 # status: "available" (in its home, on the train), "partial" (part of it exists; `where` says what),
 #         "missing"
@@ -50,19 +50,27 @@ where = "Phylogenetics/NMSC/Level1/"
 needed_by = ["lean4-phylo-network: 1"]
 
 [[foundation]]
+id = "generic-parameters"
+name = "Generic numerical parameters: null sets of parameters, the zero sets of analytic functions, and concordance factors that differ at some parameters differ at generic parameters (Allman et al. 2023)"
+status = "available"
+home = "lean4-phylogenetics"
+where = "Phylogenetics/NMSC/Generic.lean, Phylogenetics/ForMathlib/Analysis/AnalyticZeroSet.lean"
+needed_by = ["lean4-tob", "lean4-phylo-network: 1"]
+
+[[foundation]]
 id = "quartet-tests"
 name = "Hypothesis tests on quartet concordance factors: the T1, T3 and star tests and their limit laws (Mitchell et al. 2019), combining p-values, missing taxa"
 status = "available"
-home = "lean4-tob"
-where = "TreeOfBlobs/Testing/, TreeOfBlobs/External/MitchellAllmanRhodes2019/. Papers of lean4-phylo-network use them too (NANUQ), so they belong in lean4-phylogenetics"
+home = "lean4-phylo-network"
+where = "PhyloNetwork/Testing/, PhyloNetwork/External/MitchellAllmanRhodes2019/"
 needed_by = ["lean4-tob", "lean4-phylo-network: 1"]
 
 [[foundation]]
 id = "level1-blobs"
 name = "Blobs of level-1 networks in the language of domination: bridges, the reticulation and the cycle of a blob, blocks, treelike sets of four taxa, the strict dominance of an induced cut-edge split"
 status = "available"
-home = "lean4-tob"
-where = "TreeOfBlobs/Level1Blobs.lean, TreeOfBlobs/Wedge.lean, TreeOfBlobs/Level1Blocks.lean, TreeOfBlobs/Level1CF.lean. NANUQ uses them too, so they belong in lean4-phylogenetics"
+home = "lean4-phylo-network"
+where = "PhyloNetwork/Level1Blobs.lean, PhyloNetwork/Wedge.lean, PhyloNetwork/Level1Blocks.lean, PhyloNetwork/Level1CF.lean"
 needed_by = ["lean4-tob", "lean4-phylo-network: 1"]
 
 [[foundation]]
@@ -78,7 +86,7 @@ id = "semi-directed"
 name = "Semi-directed networks: the semi-directed network of a rooted one, rootability and multi-rootability, level-k and galled semi-directed networks; the NMSC's concordance factors as a function of the semi-directed network"
 status = "partial"
 home = "lean4-phylogenetics"
-where = "Phylogenetics/Network/Semidirected.lean: the structure and the semidirected network of a binary rooted network. Rootability, level-k semidirected networks and the CFs as a function of the semidirected network are missing; Huber et al. 2025, Theorem 5.1, is proved on rooted networks instead (TreeOfBlobs/External/HuberEtAl2025/)"
+where = "Phylogenetics/Network/Semidirected.lean: the structure and the semidirected network of a binary rooted network. Rootability, level-k semidirected networks and the CFs as a function of the semidirected network are missing; Huber et al. 2025, Theorem 5.1, is proved on rooted networks instead (PhyloNetwork/External/HuberEtAl2025/)"
 needed_by = ["lean4-phylo-network: 1, 2"]
 
 [[foundation]]
@@ -150,5 +158,5 @@ id = "network-distances"
 name = "Distances between networks (the μ-distance) and inter-taxon quartet distances"
 status = "partial"
 home = "lean4-phylo-network"
-where = "quartet distances of trees and of level-1 networks: lean4-tob (TreeOfBlobs/External/Rhodes2020/) and lean4-nanuq (Nanuq/NANUQ.lean)"
+where = "quartet distances of trees and of level-1 networks: lean4-phylo-network (PhyloNetwork/External/Rhodes2020/) and lean4-nanuq (Nanuq/NANUQ.lean)"
 needed_by = ["lean4-phylo-network: 2"]

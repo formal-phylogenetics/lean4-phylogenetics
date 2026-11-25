@@ -24,29 +24,32 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 
 | Node | Repository | Library | Holds |
 | --- | --- | --- | --- |
-| Root | [lean4-phylogenetics](https://github.com/vltanh/lean4-phylogenetics) | `Phylogenetics` | what every repository shares; also the registry, the foundations, these conventions, the workflow and the tools |
-| Hub | [lean4-tob](https://github.com/vltanh/lean4-tob) | `TreeOfBlobs` | what the papers on the tree of blobs share; their catalog; the overview of their field |
-| Hub | [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share; their catalog |
+| Root | [lean4-phylogenetics](https://github.com/vltanh/lean4-phylogenetics) | `Phylogenetics` | general phylogenetics, which every repository shares: trees, networks as objects (rooted and semidirected), the coalescents, concordance factors, and the analysis and measure theory they need; also the registry, the foundations, these conventions, the workflow and the tools |
+| Hub | [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share, those of its sub-hub included; their catalog |
+| Sub-hub of lean4-phylo-network | [lean4-tob](https://github.com/vltanh/lean4-tob) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
 | Paper | `lean4-<id>` | `<Root>` (Section 3) | one paper of a hub's catalog, or several on one topic (Section 2) |
 
-A hub may have sub-hubs in the same way. The registry, [`collection/repos.toml`](../collection/repos.toml),
-lists the root, the hubs and the repositories that need a note; each hub's `catalog/papers.toml`
-lists its papers.
+A hub may have sub-hubs: hubs under it, each for a part of its field whose papers share more than
+the rest of the field does. Inferring the tree of blobs is a step of network estimation, so
+lean4-tob is a sub-hub of lean4-phylo-network. The registry,
+[`collection/repos.toml`](../collection/repos.toml), lists the root, the hubs, each with its
+`parent` (the root or the hub above it), and the repositories that need a note; each hub's
+`catalog/papers.toml` lists its papers. The hubs above a paper are its hub and every hub above that
+one.
 
 What may require what:
 
-- A paper's repository requires the root library and its hub's library, always, at the train's
-  pins (Section 5); the libraries of the other hubs it uses (`uses` in its catalog entry); and the
-  repositories of the papers whose results its proofs use (`builds_on`), in any hub.
-- A hub's library requires the root library, and may require another hub's library or a paper's
-  repository that is not below it. A library never requires a repository below it: a hub cannot
-  require its own papers, and nothing can require the root's dependents.
-- Requirements never form a cycle. `scripts/status.py check` checks the pins and the module names.
-
-Older repositories have restrictions, recorded in the registry and checked by
-`scripts/status.py check`: lean4-camus uses generic top-level modules (`Challenge`, `Solution`),
-which no other repository may use, and requires an older commit of lean4-allman2011 (its package
-`ADR11`) rather than the root library.
+- A paper's repository requires, always, at the train's pins (Section 5), the root library and the
+  libraries of the hubs above it: a paper on the tree of blobs requires `Phylogenetics`,
+  `PhyloNetwork` and `TreeOfBlobs`. It also requires the libraries of the other hubs it uses
+  (`uses` in its catalog entry), and the repositories of the papers whose results its proofs use
+  (`builds_on`), in any hub.
+- A hub's library requires the root library and the libraries of the hubs above it, and may require
+  another hub's library or a paper's repository that is not below it. A library never requires a
+  repository below it: a hub cannot require its own papers or its sub-hubs, and nothing can
+  require the root's dependents.
+- Requirements never form a cycle. `scripts/status.py check` checks the pins, that each repository
+  requires the libraries of the hubs above it, and the module names.
 
 ## 2. Names
 
@@ -60,8 +63,9 @@ which no other repository may use, and requires an older commit of lean4-allman2
 - **Root** `<Root>`, the catalog's `root`: the Lake package, and the directory that holds the
   repository's code. It is the method's name when the paper names one (`Snaq`, `NanuqPlus`),
   otherwise first author and year (`Banos2019`), with the id's keyword when there is one
-  (`Holtgrefe2025Level2`). A repository's root is never renamed, and only the entries of one
-  repository share a root. A hub's package names its library (`TreeOfBlobs`, `PhyloNetwork`).
+  (`Holtgrefe2025Level2`). The root follows the id: a repository whose id changes takes the root of
+  its new id, and its code, its namespaces and its Palomar submission follow. Only the entries of
+  one repository share a root. A hub's package names its library (`PhyloNetwork`, `TreeOfBlobs`).
 - **Paper** `<Paper>`: the name of the paper's directories (`palomar/<Paper>/`, `docs/<Paper>/`,
   and `<Root>/<Paper>/` in a repository with several papers), of its namespace and of its Palomar
   submission. It is the root, unless the entry states another in the optional field `paper`: for a
@@ -87,10 +91,6 @@ which no other repository may use, and requires an older commit of lean4-allman2
   `<Root>/External/` carries the label of its row in that repository's routes file,
   prefixed with that repository's id (``(`nanuq:thm:36`)``), so that it cannot collide with this
   paper's labels.
-- **Kept names.** The repositories split out of lean4-tob on 2026-11-21 kept every declaration's
-  name, so some declarations live outside their repository's namespace: the main results in
-  `TreeOfBlobs`, NANUQ's in `External.AllmanBanosRhodes2019`, some of `TreeOfBlobs`'s in
-  `TOBQMC.Level1` or `ECToBlob`. Renaming them is a change of its own, with deprecated aliases.
 
 ## 3. Layout of a paper's repository, and of a hub
 
@@ -166,16 +166,20 @@ by hand. In the rest of these conventions, `<Root>/Basic/`, `<Root>/External/` a
 `<Root>/Defs.lean` stand, in such a repository, for `<Root>/Common/Basic/`,
 `<Root>/Common/External/` and `<Root>/<Paper>/Defs.lean`.
 
-The repositories started before this layout keep theirs, and `scripts/status.py check` accepts them.
-lean4-allman2023, lean4-tinnik, lean4-tob-qmc, lean4-nanuq and lean4-ectoblob have every module
-under `<Root>/` (their layout allowed the top-level modules `<Root>Challenge` and `<Root>Solution`
-too), and their Palomar files and documents at the top, with the routes in `docs/`. lean4-camus
-has generic top-level modules (Section 1). Moving one to this layout is a change of its own (the
-skill's `references/multi-paper.md`, Section 9).
+Every repository of a paper has this layout, with no exception. To bring a repository to it, move
+its files with `git mv` and rename its modules by their exact names (the skill's
+`references/multi-paper.md`, Section 9).
 
 A hub has its library under `<Package>/` (with a README that says what is there and why), its
 catalog `catalog/papers.toml`, its README (whose tables `scripts/status.py` generates from the
-catalog), and, for a field with formalized papers, an overview of the field in `docs/`.
+catalog), and, for a field with formalized papers, an overview of the field in `docs/`. It holds no
+paper, so none of a paper's files: no Palomar submission, routes or audit of a paper. In its
+library, general mathematics is in `<Package>/ForMathlib/`, in Mathlib's namespaces, and imports
+only Mathlib, the libraries above and `ForMathlib/` itself; the results of a cited source are in
+`<Package>/External/<Src>/`, in the namespace `External.<Src>`, each with a README; and the rest is
+in the namespace of the package (`PhyloNetwork.Level1`) or in the root's (`Phylogenetics`,
+`Phylogenetics.RootedNetwork`), which a declaration keeps when it moves up to the root, never in a
+paper's.
 
 ## 4. Where code goes
 
@@ -185,8 +189,8 @@ that uses it.**
 | What | Where |
 | --- | --- |
 | A result of this paper | this repository |
-| What two papers or more of one hub use | that hub's library |
-| What papers of several hubs use, or a definition or result that textbooks state | the root library, `Phylogenetics`, acknowledged to its source |
+| What two papers or more of one hub use, or papers of a hub and of its sub-hubs | the library of the lowest hub above all of them |
+| What papers of hubs that have no hub above them all use, or a definition or result that textbooks state | the root library, `Phylogenetics`, acknowledged to its source |
 | General mathematics | `<Root>/Basic/` (or the hub's `ForMathlib/`); later Mathlib, or `Phylogenetics/ForMathlib/` |
 | A result of a source outside the catalogs that the paper cites | `<Root>/External/<Src>/`, unless a repository of the collection formalizes it already: then require that repository and prove this statement from its theorem |
 | A result of a paper of a catalog whose repository does not exist yet | `<Root>/External/<Src>/`, stated in the source's terms and proved (the skill's Stage 2). Note it in that paper's entry (`covered_by`), so that its repository starts from it |
@@ -216,8 +220,8 @@ the library proves that the two agree.
 
 Repositories that require one another must share one Lean and one Mathlib release, and one commit
 of each library of the tree. The train is the `[train]` table of the registry: the Lean and Mathlib
-release, and in `[train.pins]` the commit of each library (`Phylogenetics`, `TreeOfBlobs`,
-`PhyloNetwork`, …).
+release, and in `[train.pins]` the commit of each library (`Phylogenetics`, `PhyloNetwork`,
+`TreeOfBlobs`, …).
 
 - A new repository uses the train, not the newest Lean release (which the skill's Phase 0 would
   otherwise choose). It gets the train from `scripts/new_paper.py`.
@@ -248,7 +252,7 @@ skill keeps out of git is private, and stays outside the repository:
 | Path in the repository | Holds |
 | --- | --- |
 | `notes/` | the working notes: the Phase 0 configuration, the inventory, the run log, the TeX source, drafts and scratch |
-| `docs/<Paper>/NEXT.md` | the follow-up papers (the skill's Phase 8); `NEXT.md` at the top in the older layouts of Section 3 |
+| `docs/<Paper>/NEXT.md` | the follow-up papers (the skill's Phase 8) |
 | `.vscode/` | the editor's settings |
 | `CLAUDE.md` | the agent's instructions for the repository |
 

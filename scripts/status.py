@@ -2,17 +2,19 @@
 """The state of the collection, from the registry, the hubs' catalogs and the repositories on disk.
 
     python3 scripts/status.py check            # the registry and the catalogs, and every repository
-                                               # in the workspace: versions against the train, module
-                                               # names that two repositories share, sources
+                                               # in the workspace: versions against the train, the
+                                               # libraries of the hubs above it that it requires,
+                                               # module names that two repositories share, sources
                                                # formalized twice
     python3 scripts/status.py readme --write   # regenerate the tables of this README and of every
                                                # hub's README found in the workspace
     python3 scripts/status.py readme --check   # fail if one is out of date (--repo NAME: only that one)
     python3 scripts/status.py next             # the papers to start next, hub by hub
 
-`check` exits with status 1 on errors: a bad registry or catalog, or a repository of a catalog that
-breaks the conventions (a module outside its root and its Palomar submissions, a submission named as
-another repository's root or another paper, a module another repository has, off the train).
+`check` exits with status 1 on errors: a bad registry or catalog, or a repository of a catalog, the
+root or a hub that breaks the conventions (a module outside its root and its Palomar submissions, a
+submission named as another repository's root or another paper, a module another repository has, off
+the train, a library of a hub above it that it does not require).
 Problems of the older repositories are warnings. `check` and `next` read the private overlay;
 `readme` never does, since the READMEs are public.
 """
@@ -163,6 +165,7 @@ def scan(path: Path) -> dict | None:
         for e in json.loads(mf.read_text()).get('packages', []):
             pins[e['name']] = e.get('inputRev') if e['name'] == 'mathlib' else e.get('rev')
     info['pins'] = pins
+    info['requires'] = {r.get('name') for r in conf.get('require', [])}
     info['head'] = git(path, 'rev-parse', 'HEAD')[1]
     info['dirty'] = bool(git(path, 'status', '--porcelain', '--untracked-files=no')[1])
     info['ahead'] = git(path, 'rev-list', '--count', '@{u}..HEAD')[1] or '-'
@@ -211,6 +214,16 @@ def check(c: col.Collection) -> int:
             have = info['pins'].get(pkg)
             if have and have != rev:
                 complain(f'{name}: requires {pkg} at {have[:7]} (train: {rev[:7]})')
+        # The libraries of the root and of the hubs above it (docs/CONVENTIONS.md, Section 1).
+        if listed and listed.get('role') == 'root':
+            need = []
+        else:
+            hub = (listed or {}).get('parent', '') if listed or not entries else entries[0].hub
+            need = ['Phylogenetics'] + [h['package'] for h in c.hubs_above(hub)]
+        missing = [pkg for pkg in need if pkg not in info['requires']]
+        if missing:
+            complain(f'{name}: does not require {", ".join(missing)}, the libraries of the root and of '
+                     'the hubs above it (docs/CONVENTIONS.md, Section 1)')
         if listed and listed.get('lean') and not info['toolchain'].endswith(':' + listed['lean']):
             warnings.append(f'{name}: the registry says Lean {listed["lean"]}, the repository has {info["toolchain"]}')
         info['complain'] = complain
@@ -380,7 +393,12 @@ def block_papers(c: col.Collection, hub: str) -> str:
 def block_tree(c: col.Collection) -> str:
     rows = ['| Node | Repository | Its library | Holds |', '| --- | --- | --- | --- |']
     for r in c.library_repos():
-        node = 'root' if r['role'] == 'root' else f'hub: {r.get("title", "")}'
+        if r['role'] == 'root':
+            node = 'root'
+        elif c.depth(r) == 0:
+            node = f'hub: {r.get("title", "")}'
+        else:
+            node = f'sub-hub of {r.get("parent", "")}: {r.get("title", "")}'
         rows.append(f'| {cell(node)} | [{r["name"]}]({r["url"]}) | `{r["package"]}` | {cell(r.get("summary", ""))} |')
     return '\n'.join(rows)
 

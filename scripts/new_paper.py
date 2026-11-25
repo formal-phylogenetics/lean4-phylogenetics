@@ -9,8 +9,9 @@ docs/CONVENTIONS.md, Section 3, with <Root> the catalog's root and <Paper> the p
 root, unless the entry gives `paper`):
 
   - lakefile.toml, lean-toolchain and lake-manifest.json: the libraries <Root> and, last, Palomar;
-    it requires Mathlib, the root library Phylogenetics, the library of its hub, the libraries of
-    the hubs it `uses`, and the repositories of the formalized papers it builds on, each by commit;
+    it requires Mathlib, the root library Phylogenetics, the library of its hub and of every hub
+    above it, the libraries of the hubs it `uses`, and the repositories of the formalized papers it
+    builds on, each by commit;
   - <Root>/Basic/ and <Root>/External/, each with a README, and <Root>/Defs.lean,
     palomar/<Paper>/Challenge.lean and palomar/<Paper>/Solution.lean as placeholder modules;
   - .gitignore, LICENSE, a stub README.md, and CI that builds;
@@ -82,9 +83,12 @@ def requirements(c: col.Collection, p: col.Paper) -> tuple[list[dict], list[str]
     pins = c.train['pins']
     reqs = [dict(name='Phylogenetics', url=c.repo('lean4-phylogenetics')['url'], rev=pins['Phylogenetics'],
                  local=None, comment='The root of the collection: the shared library of phylogenetics.')]
-    for name in [p.hub] + [h for h in p.uses if h != p.hub]:
+    above = [h['name'] for h in c.hubs_above(p.hub)]
+    for name in above + [h for h in p.uses if h not in above]:
         hub = c.repo(name)
-        what = 'The hub of this paper' if name == p.hub else f'The hub {name}, whose library this paper uses'
+        what = ('The hub of this paper' if name == p.hub else
+                f'The hub {name}, above the hub of this paper' if name in above else
+                f'The hub {name}, whose library this paper uses')
         reqs.append(dict(name=hub['package'], url=hub['url'], rev=pins[hub['package']], local=col.WORKSPACE / name,
                          comment=f'{what}: {hub.get("title", "")}.'))
     notes = []
