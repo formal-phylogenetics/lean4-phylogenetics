@@ -293,12 +293,14 @@ untracked `notes/` is this folder.
 
 Repositories are created in the GitHub organization
 [formal-phylogenetics](https://github.com/formal-phylogenetics), whose profile (`profile/README.md`
-in its repository `.github`) lists the root and the hubs: a new hub is added there. Creating a
-repository, pushing, changing its visibility, opening or closing pull requests, running Palomar's
-preflight and submitting to Palomar each need the maintainer's explicit permission, and permission
-for one is not permission for another (the skill's Rules). Push in the order of the requirements,
-upstream first, so that every pinned commit exists when a repository that requires it is pushed.
-Each paper is a Palomar submission of its own.
+in its repository `.github`) lists the root and the hubs: a new hub is added there. Its site,
+<https://formal-phylogenetics.github.io/> (repository `formal-phylogenetics.github.io`), reads the
+registry and the hubs' catalogs from GitHub, so a change to their fields is a change to the site.
+Creating a repository, pushing, changing its visibility, opening or closing pull requests, running
+Palomar's preflight and submitting to Palomar each need the maintainer's explicit permission, and
+permission for one is not permission for another (the skill's Rules). Push in the order of the
+requirements, upstream first, so that every pinned commit exists when a repository that requires it
+is pushed. Each paper is a Palomar submission of its own.
 
 A repository's description on GitHub has one of these forms, with no count of anything:
 
