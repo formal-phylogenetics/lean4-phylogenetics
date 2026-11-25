@@ -30,7 +30,7 @@ therefore differ at generic parameters.
 
 The closure properties come from lean4-phylo-tree-of-blobs (`TreeOfBlobs/General.lean`) and
 lean4-banos2019 (`isGenericNull_empty`), and the analytic argument from lean4-allman2023
-(`Allman2023/FourTaxa/GenericCF.lean`), <https://github.com/vltanh>.
+(`Allman2023/FourTaxa/GenericCF.lean`), <https://github.com/formal-phylogenetics>.
 
 ## References
 

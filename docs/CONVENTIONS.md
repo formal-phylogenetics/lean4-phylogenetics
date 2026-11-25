@@ -24,16 +24,16 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 
 | Node | Repository | Library | Holds |
 | --- | --- | --- | --- |
-| Root | [lean4-phylogenetics](https://github.com/vltanh/lean4-phylogenetics) | `Phylogenetics` | general phylogenetics, which every repository shares: trees, networks as objects (rooted and semidirected), the coalescents, concordance factors, and the analysis and measure theory they need; also the registry, the foundations, these conventions, the workflow and the tools |
-| Hub of inference | [lean4-phylo-alignment](https://github.com/vltanh/lean4-phylo-alignment) | `PhyloAlignment` | what the papers on sequence alignment, and on its joint estimation with trees, share; their catalog |
-| Hub of inference | [lean4-phylo-gene-tree](https://github.com/vltanh/lean4-phylo-gene-tree) | `PhyloGeneTree` | what the papers on estimating a tree from sequences share; their catalog |
-| Hub of inference | [lean4-phylo-species-tree](https://github.com/vltanh/lean4-phylo-species-tree) | `PhyloSpeciesTree` | what the papers on species tree estimation share; their catalog |
-| Hub of inference | [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share, those of its sub-hub included; their catalog |
-| Sub-hub of lean4-phylo-network | [lean4-phylo-tree-of-blobs](https://github.com/vltanh/lean4-phylo-tree-of-blobs) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
-| Hub of theory | [lean4-phylo-combinatorics](https://github.com/vltanh/lean4-phylo-combinatorics) | `PhyloCombinatorics` | what the papers on the combinatorics of trees and networks, compatibility and complexity share; their catalog |
-| Hub of theory | [lean4-phylo-algebraic](https://github.com/vltanh/lean4-phylo-algebraic) | `PhyloAlgebraic` | what the papers on invariants, identifiability and mixtures share; their catalog |
-| Hub of theory | [lean4-phylo-statistics](https://github.com/vltanh/lean4-phylo-statistics) | `PhyloStatistics` | what the papers on consistency, sample complexity and the limits of inference share; their catalog |
-| Hub of theory | [lean4-phylo-geometry](https://github.com/vltanh/lean4-phylo-geometry) | `PhyloGeometry` | what the papers on spaces of trees, their geodesics and the statistics in them share; their catalog |
+| Root | [lean4-phylogenetics](https://github.com/formal-phylogenetics/lean4-phylogenetics) | `Phylogenetics` | general phylogenetics, which every repository shares: trees, networks as objects (rooted and semidirected), the coalescents, concordance factors, and the analysis and measure theory they need; also the registry, the foundations, these conventions, the workflow and the tools |
+| Hub of inference | [lean4-phylo-alignment](https://github.com/formal-phylogenetics/lean4-phylo-alignment) | `PhyloAlignment` | what the papers on sequence alignment, and on its joint estimation with trees, share; their catalog |
+| Hub of inference | [lean4-phylo-gene-tree](https://github.com/formal-phylogenetics/lean4-phylo-gene-tree) | `PhyloGeneTree` | what the papers on estimating a tree from sequences share; their catalog |
+| Hub of inference | [lean4-phylo-species-tree](https://github.com/formal-phylogenetics/lean4-phylo-species-tree) | `PhyloSpeciesTree` | what the papers on species tree estimation share; their catalog |
+| Hub of inference | [lean4-phylo-network](https://github.com/formal-phylogenetics/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share, those of its sub-hub included; their catalog |
+| Sub-hub of lean4-phylo-network | [lean4-phylo-tree-of-blobs](https://github.com/formal-phylogenetics/lean4-phylo-tree-of-blobs) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
+| Hub of theory | [lean4-phylo-combinatorics](https://github.com/formal-phylogenetics/lean4-phylo-combinatorics) | `PhyloCombinatorics` | what the papers on the combinatorics of trees and networks, compatibility and complexity share; their catalog |
+| Hub of theory | [lean4-phylo-algebraic](https://github.com/formal-phylogenetics/lean4-phylo-algebraic) | `PhyloAlgebraic` | what the papers on invariants, identifiability and mixtures share; their catalog |
+| Hub of theory | [lean4-phylo-statistics](https://github.com/formal-phylogenetics/lean4-phylo-statistics) | `PhyloStatistics` | what the papers on consistency, sample complexity and the limits of inference share; their catalog |
+| Hub of theory | [lean4-phylo-geometry](https://github.com/formal-phylogenetics/lean4-phylo-geometry) | `PhyloGeometry` | what the papers on spaces of trees, their geodesics and the statistics in them share; their catalog |
 | Paper | `lean4-<id>` | `<Root>` (Section 3) | one paper of a hub's catalog, or several on one topic (Section 2) |
 
 The hubs under the root are of two kinds: hubs of inference, one for each object that is estimated
@@ -291,12 +291,13 @@ untracked `notes/` is this folder.
 
 ## 8. Publishing
 
-Repositories are created under `github.com/vltanh`. Creating one, pushing, changing its
+Repositories are created in the GitHub organization
+[formal-phylogenetics](https://github.com/formal-phylogenetics). Creating one, pushing, changing its
 visibility, opening or closing pull requests, running Palomar's preflight and submitting to Palomar
-each need the maintainer's explicit permission, and permission for one is not permission for
-another (the skill's Rules). Push in the order of the requirements, upstream first, so that every
-pinned commit exists when a repository that requires it is pushed. Each paper is a Palomar
-submission of its own.
+each need the maintainer's explicit permission, and permission for one is not permission for another
+(the skill's Rules). Push in the order of the requirements, upstream first, so that every pinned
+commit exists when a repository that requires it is pushed. Each paper is a Palomar submission of
+its own.
 
 A repository's description on GitHub has one of these forms, with no count of anything:
 

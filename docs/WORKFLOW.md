@@ -113,7 +113,7 @@ Only with the maintainer's go-ahead, each step on its own (CONVENTIONS, Section 
 first:
 
 ```sh
-gh repo create vltanh/lean4-<id> --private --source . --push   # or --public
+gh repo create formal-phylogenetics/lean4-<id> --private --source . --push   # or --public
 ```
 
 Then Palomar's preflight (`.github/workflows/palomar_preflight_<paper>.yml`, with the paper's name

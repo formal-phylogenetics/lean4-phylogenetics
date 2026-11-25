@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent      # this repository
 COLLECTION = ROOT / 'collection'
 WORKSPACE = ROOT.parent
-GITHUB_OWNER = 'vltanh'
+GITHUB_OWNER = 'formal-phylogenetics'
 
 STATUSES = ('formalized', 'in-progress', 'partial', 'todo')
 KINDS = ('theory', 'theory+algorithm', 'method', 'evaluation', 'method+evaluation', 'theory+evaluation',

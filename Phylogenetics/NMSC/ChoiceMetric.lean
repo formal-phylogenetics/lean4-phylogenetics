@@ -21,8 +21,8 @@ The case `ρ = 1` is `RootedNetwork.nmscCF_choiceMetric_eq_third`.
 ## Source
 
 From lean4-phylo-tree-of-blobs (`TreeOfBlobs/General.lean`,
-<https://github.com/vltanh/lean4-phylo-tree-of-blobs>), where the formalization of ECToBlob
-(Rhodes, Allman, Ané, Baños 2026) uses it.
+<https://github.com/formal-phylogenetics/lean4-phylo-tree-of-blobs>), where the formalization of
+ECToBlob (Rhodes, Allman, Ané, Baños 2026) uses it.
 -/
 
 @[expose] public noncomputable section
