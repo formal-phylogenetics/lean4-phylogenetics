@@ -87,7 +87,7 @@ root = "Gusfield2007"
 url = "https://github.com/vltanh/lean4-gusfield2007"
 lean = "v4.37.0-rc1"
 require = "when-needed"
-commit = "70f60ac84040bb3c7f1e05eaeb00e3198ec2ee88"
+commit = "1bf41f999de29159a9e3059eb5d037b740c3e729"
 summary = "Gusfield, Bansal, Bafna, Song 2007: the decomposition theory of networks with recombination"
 
 [[repo]]
