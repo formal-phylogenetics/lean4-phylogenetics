@@ -301,6 +301,16 @@ another (the skill's Rules). Push in the order of the requirements, upstream fir
 pinned commit exists when a repository that requires it is pushed. Each paper is a Palomar
 submission of its own.
 
+A repository's description on GitHub has one of these forms, with no count of anything:
+
+- a hub: `<its title> in Lean 4: a hub of <inference or theory>, with its shared library <Package>
+  and its catalog of papers` (a sub-hub: `a sub-hub of <its hub>`);
+- a paper: `Lean 4 formalization of <the authors in full> (<year>), "<the paper's title>"`, with `,
+  in progress,` after `formalization` while it is.
+
+The README of a paper opens the same way: its first sentence names the authors in full, the year, the
+title in quotes and the venue, and says that it is a Lean 4 formalization.
+
 ## 9. When a paper is done
 
 When the skill's completion gates are met:
