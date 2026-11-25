@@ -18,6 +18,7 @@ public import Phylogenetics.Computation.FiveTaxa
 public import Phylogenetics.Computation.FourTaxa
 public import Phylogenetics.Computation.ThreeTaxa
 public import Phylogenetics.Computation.Toolkit
+public import Phylogenetics.ForMathlib.Analysis.AnalyticZeroSet
 public import Phylogenetics.ForMathlib.Analysis.MatrixExponential
 public import Phylogenetics.ForMathlib.MeasureTheory.HaarPreimage
 public import Phylogenetics.Graph.Basic
@@ -46,10 +47,12 @@ public import Phylogenetics.MSC.MultiSample
 public import Phylogenetics.MSC.Relabel
 public import Phylogenetics.NMSC.Analytic
 public import Phylogenetics.NMSC.Basic
+public import Phylogenetics.NMSC.ChoiceMetric
 public import Phylogenetics.NMSC.Defs
 public import Phylogenetics.NMSC.DisplayedTreeModel
 public import Phylogenetics.NMSC.Exchangeability
 public import Phylogenetics.NMSC.Factor
+public import Phylogenetics.NMSC.Generic
 public import Phylogenetics.NMSC.Glue
 public import Phylogenetics.NMSC.History
 public import Phylogenetics.NMSC.Induced

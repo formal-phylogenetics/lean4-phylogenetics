@@ -23,6 +23,7 @@ import all Phylogenetics.Computation.FiveTaxa
 import all Phylogenetics.Computation.FourTaxa
 import all Phylogenetics.Computation.ThreeTaxa
 import all Phylogenetics.Computation.Toolkit
+import all Phylogenetics.ForMathlib.Analysis.AnalyticZeroSet
 import all Phylogenetics.ForMathlib.Analysis.MatrixExponential
 import all Phylogenetics.ForMathlib.MeasureTheory.HaarPreimage
 import all Phylogenetics.Graph.Basic
@@ -51,10 +52,12 @@ import all Phylogenetics.MSC.MultiSample
 import all Phylogenetics.MSC.Relabel
 import all Phylogenetics.NMSC.Analytic
 import all Phylogenetics.NMSC.Basic
+import all Phylogenetics.NMSC.ChoiceMetric
 import all Phylogenetics.NMSC.Defs
 import all Phylogenetics.NMSC.DisplayedTreeModel
 import all Phylogenetics.NMSC.Exchangeability
 import all Phylogenetics.NMSC.Factor
+import all Phylogenetics.NMSC.Generic
 import all Phylogenetics.NMSC.Glue
 import all Phylogenetics.NMSC.History
 import all Phylogenetics.NMSC.Induced
@@ -175,6 +178,10 @@ meta def mainResults : List (String × Name) :=
    ("The split of a fork has the largest concordance factor", ``Phylogenetics.NMSC.nmscCF_lt_of_fork),
    ("Concordance factors are entire in the parameters",
     ``Phylogenetics.analyticOnNhd_nmscCF_coordMetric),
+   ("Concordance factors that differ at some parameters differ at generic parameters",
+    ``Phylogenetics.RootedNetwork.isGenericNull_nmscCF_eq),
+   ("The zero set of a real analytic function that is not identically zero is null",
+    ``AnalyticOnNhd.prod_pi_volume_setOf_eq_zero),
    ("The term-based coalescent is the general one at correlation 0",
     ``Phylogenetics.Net.geneTreeDist_toRootedNetwork),
    ("The multispecies coalescent is the general one on a tree",

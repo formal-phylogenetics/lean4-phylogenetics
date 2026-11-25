@@ -1,5 +1,5 @@
 name = "Phylogenetics"
-version = "0.5.0"
+version = "0.6.0"
 keywords = ["math", "phylogenetics"]
 description = "Phylogenetic trees and networks, directed multigraphs and blobs, the coalescent and the (network) multispecies coalescent, quartet concordance factors and hypothesis tests"
 defaultTargets = ["Phylogenetics"]

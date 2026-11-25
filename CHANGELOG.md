@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.6.0
+
+Null sets of numerical parameters, and the analytic argument for generic parameters, which the papers of
+both hubs use:
+
+- `Phylogenetics/ForMathlib/Analysis/AnalyticZeroSet.lean`: the zero set of a real analytic function on
+  `ι → ℝ` or `(ι → ℝ) × (κ → ℝ)` that is not identically zero is null, for Lebesgue measure and for
+  products of measures with atoms at `0` (`AnalyticOnNhd.prod_pi_volume_setOf_eq_zero`,
+  `AnalyticOnNhd.measure_pi_setOf_eq_zero` and the others of the module). From lean4-tob, whose module
+  `TreeOfBlobs.ForMathlib.Analysis.AnalyticZeroSet` it replaces, with the same declarations.
+- `Phylogenetics/NMSC/Generic.lean`: `RootedNetwork.IsGenericNull.mono`, `.union`, `.iUnion` and
+  `RootedNetwork.isGenericNull_empty`; `coordMetric_self`; `RootedNetwork.isGenericNull_of_analyticOnNhd`
+  and `RootedNetwork.isGenericNull_nmscCF_eq` (Allman, Baños, Mitchell, Rhodes 2023, proof of Theorem 1).
+  From lean4-tob (`TreeOfBlobs/General.lean`), lean4-allman2023 (`Allman2023/FourTaxa/GenericCF.lean`,
+  where the last three were `Allman2023.coordMetric_self`, `Allman2023.isGenericNull_of_analyticOnNhd`
+  and `Allman2023.isGenericNull_nmscCF_eq`) and lean4-banos2019.
+- `Phylogenetics/NMSC/ChoiceMetric.lean`: `RootedNetwork.isWeakMetric_choiceNetworkMetric` and
+  `RootedNetwork.nmscCF_choiceMetric_eq_third_of_nonneg`, the case of every correlation of
+  `RootedNetwork.nmscCF_choiceMetric_eq_third`. From lean4-tob (`TreeOfBlobs/General.lean`).
+
+No declaration of the library changed its name or its statement.
+
 ## 0.5.0
 
 Semidirected networks, in `Phylogenetics/Network/Semidirected.lean`: the structure `Phylogenetics.SemidirectedNetwork`
