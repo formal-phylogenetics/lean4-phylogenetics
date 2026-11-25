@@ -31,7 +31,7 @@ name = "Rooted trees as hierarchies, unrooted trees as split families, quartets,
 status = "available"
 home = "lean4-phylogenetics"
 where = "Phylogenetics/Hierarchy/, Phylogenetics/Tree/"
-needed_by = ["lean4-tob", "lean4-phylo-network: 1-5"]
+needed_by = ["lean4-tob", "lean4-phylo-network: 1-5", "lean4-phylo-tree: 1-10"]
 
 [[foundation]]
 id = "coalescent"
@@ -39,7 +39,7 @@ name = "Kingman's coalescent, the multispecies coalescent, and the network multi
 status = "available"
 home = "lean4-phylogenetics"
 where = "Phylogenetics/Coalescent/, Phylogenetics/MSC/, Phylogenetics/NMSC/"
-needed_by = ["lean4-tob", "lean4-phylo-network: 1, 5"]
+needed_by = ["lean4-tob", "lean4-phylo-network: 1, 5", "lean4-phylo-tree: 1-8"]
 
 [[foundation]]
 id = "level1-cf"
@@ -131,27 +131,27 @@ needed_by = ["lean4-phylo-network: 4"]
 
 [[foundation]]
 id = "sequence-models"
-name = "Sequence evolution on networks: the CFN, Jukes–Cantor and GTR models, site-pattern probabilities, bi-allelic markers and SNPs, the logDet distance"
+name = "Sequence evolution on trees and networks: the CFN, Jukes–Cantor, GTR and general Markov models, site-pattern probabilities, bi-allelic markers and SNPs, the logDet distance"
 status = "partial"
 home = "lean4-phylogenetics"
 where = "the logDet distance in lean4-ectoblob (ECToBlob/LogDet.lean); the SNP site model of Warnow et al. 2025 in lean4-camus"
-needed_by = ["lean4-phylo-network: 1, 5"]
+needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-tree: 4, 5, 8, 10"]
 
 [[foundation]]
 id = "likelihood"
-name = "Likelihood, pseudolikelihood and composite likelihood of networks, and the consistency of their maximizers"
+name = "Likelihood, pseudolikelihood and composite likelihood of trees and networks, and the consistency of their maximizers"
 status = "missing"
 home = "lean4-phylogenetics"
 where = ""
-needed_by = ["lean4-phylo-network: 1, 5"]
+needed_by = ["lean4-phylo-network: 1, 5", "lean4-phylo-tree: 2, 4, 5, 8, 10"]
 
 [[foundation]]
 id = "bayesian"
-name = "Priors on networks, posteriors, and the Markov chains that sample them"
+name = "Priors on trees and networks, posteriors, and the Markov chains that sample them"
 status = "missing"
-home = "lean4-phylo-network"
+home = "lean4-phylogenetics"
 where = ""
-needed_by = ["lean4-phylo-network: 5"]
+needed_by = ["lean4-phylo-network: 5", "lean4-phylo-tree: 5, 10"]
 
 [[foundation]]
 id = "network-distances"

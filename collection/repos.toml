@@ -19,6 +19,7 @@ mathlib = "v4.37.0-rc1"
 
 [train.pins]
 Phylogenetics = "3fcabfd7d191990dda268b0b3968d945b65eb59a"     # lean4-phylogenetics 0.6.1
+PhyloTree = "def40ffcbe6866d0b67701e60049099832005ee6"         # lean4-phylo-tree 0.1.0
 PhyloNetwork = "4ed2bb0f7085acbf1326f43e2a5c582ba4566125"      # lean4-phylo-network 0.2.0
 TreeOfBlobs = "265ba443cb147a33ff2478cbc311a5597db1c1c7"       # lean4-tob 0.3.1
 
@@ -35,6 +36,17 @@ lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetics"
 summary = "General phylogenetics, which every repository shares: rooted networks (cuts, blobs, induced networks, the tree of blobs, level-1 networks) and semidirected networks, trees and quartets, neighbor joining and ASTRAL's dynamic program, Kingman's coalescent, the multispecies coalescent and the network multispecies coalescent with quartet concordance factors and generic parameters"
+
+[[repo]]
+name = "lean4-phylo-tree"
+role = "hub"
+parent = "lean4-phylogenetics"
+package = "PhyloTree"
+url = "https://github.com/vltanh/lean4-phylo-tree"
+lean = "v4.37.0-rc1"
+require = "always"
+title = "Phylogenetic tree estimation"
+summary = "What the papers on estimating trees share and the root library does not hold: nothing yet. Its catalog has the papers on species trees from gene trees (quartets, rooted triplets and clades, distances), from sequences, by likelihood and Bayesian inference, and under duplication, loss and transfer; on rooting, branch lengths and tests, on consistency, on supertrees, and on the classical estimation of gene trees"
 
 [[repo]]
 name = "lean4-phylo-network"
@@ -73,8 +85,8 @@ note = "Requires lean4-phylogenetics and lean4-phylo-network at the train's pins
 
 [[repo]]
 name = "lean4-allman2011"
-role = "background"
-parent = "lean4-phylogenetics"
+role = "paper"
+parent = "lean4-phylo-tree"
 package = "Allman2011"
 root = "Allman2011"
 url = "https://github.com/vltanh/lean4-allman2011"
@@ -82,7 +94,7 @@ lean = "v4.37.0-rc1"
 require = "when-needed"
 commit = "d4ada2c6cbbb5b8629eb9740dc5d5a9984a06a78"
 summary = "Allman, Degnan, Rhodes 2011: the rooted species tree from unrooted gene trees under the coalescent, stated on the species trees of lean4-phylogenetics"
-note = "Requires lean4-phylogenetics at the train's pin, which holds its general parts, and has the layout of a paper's repository (root and paper Allman2011)"
+note = "Requires lean4-phylogenetics at the train's pin, which holds its general parts, and not PhyloTree, the library of its hub, which it predates; has the layout of a paper's repository (root and paper Allman2011)"
 
 [[repo]]
 name = "lean4-gusfield2007"
