@@ -25,7 +25,8 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 | Node | Repository | Library | Holds |
 | --- | --- | --- | --- |
 | Root | [lean4-phylogenetics](https://github.com/vltanh/lean4-phylogenetics) | `Phylogenetics` | general phylogenetics, which every repository shares: trees, networks as objects (rooted and semidirected), the coalescents, concordance factors, and the analysis and measure theory they need; also the registry, the foundations, these conventions, the workflow and the tools |
-| Hub | [lean4-phylo-tree](https://github.com/vltanh/lean4-phylo-tree) | `PhyloTree` | what the papers on tree estimation share; their catalog |
+| Hub | [lean4-phylo-gene-tree](https://github.com/vltanh/lean4-phylo-gene-tree) | `PhyloGeneTree` | what the papers on estimating a tree from sequences share; their catalog |
+| Hub | [lean4-phylo-species-tree](https://github.com/vltanh/lean4-phylo-species-tree) | `PhyloSpeciesTree` | what the papers on species tree estimation share; their catalog |
 | Hub | [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share, those of its sub-hub included; their catalog |
 | Sub-hub of lean4-phylo-network | [lean4-tob](https://github.com/vltanh/lean4-tob) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
 | Paper | `lean4-<id>` | `<Root>` (Section 3) | one paper of a hub's catalog, or several on one topic (Section 2) |
