@@ -351,12 +351,6 @@ def cell(text: str) -> str:
     return text.replace('|', '\\|').replace('\n', ' ')
 
 
-STATUS_WORDS = {'formalized': 'formalized', 'in-progress': 'in progress', 'partial': 'partly covered', 'todo': 'to do'}
-KIND_WORDS = {'theory': 'theory', 'method': 'method', 'theory+algorithm': 'theory and algorithm',
-              'evaluation': 'evaluation', 'method+evaluation': 'method and evaluation',
-              'theory+evaluation': 'theory and evaluation', 'theory+method': 'theory and method'}
-
-
 def anchor(fid: int, title: str) -> str:
     return '#' + re.sub(r'[^\w\- ]', '', f'{fid}. {title}'.lower()).replace(' ', '-')
 
@@ -381,28 +375,23 @@ def block_summary(c: col.Collection, hub: str) -> str:
 
 
 def block_papers(c: col.Collection, hub: str) -> str:
+    """The checklist of the hub's papers, family by family: a paper is checked once formalized."""
     out = []
     fams = sorted(f for (h, f) in c.families if h == hub)
     for fid in fams:
         fam = c.families[(hub, fid)]
         if len(fams) > 1:
             out.append(f'### {fid}. {fam["title"]}\n')
-            if fam.get('priority'):
-                out.append(f'Priority: {fam["priority"]}.\n')
-        out.append('| # | Paper | Kind | Repository | Status | Uses |\n| ---: | --- | --- | --- | --- | --- |')
         for p in c.in_family(hub, fid):
-            if p.status in ('formalized', 'in-progress') and p.commit:
-                repo = f'[{p.repo}]({p.github})'
-            else:
-                repo = f'`{p.repo}`'
-            status = STATUS_WORDS[p.status]
-            if p.status == 'formalized' and not c.on_train(p.repo):
-                status += ' (off the train)'
-            if p.covered_by and p.status != 'formalized':
-                status += ': ' + ', '.join(sorted({x['repo'] for x in p.covered_by}))
-            uses = [c.paper(d).short or c.paper(d).cite for d in p.builds_on] + list(p.uses)
-            out.append(f'| {p.order} | {cell(p.authors)} ({p.year}), [{cell(p.title)}]({p.url}) | '
-                       f'{KIND_WORDS[p.kind]} | {repo} | {cell(status)} | {cell(", ".join(uses)) or "-"} |')
+            item = f'- [{"x" if p.status == "formalized" else " "}] {p.authors} ({p.year}), [{p.title}]({p.url})'
+            repo = f'[{p.repo}]({p.github})' if p.commit else ''
+            if p.status == 'formalized':
+                item += f': {repo}' + ('' if c.on_train(p.repo) else ' (off the train)')
+            elif p.status == 'in-progress':
+                item += ', in progress' + (f': {repo}' if repo else '')
+            elif p.status == 'partial':
+                item += ', partly covered by ' + ', '.join(sorted({x['repo'] for x in p.covered_by}))
+            out.append(item)
         out.append('')
     return '\n'.join(out).rstrip()
 
@@ -425,6 +414,8 @@ def block_repositories(c: col.Collection) -> str:
     rows = ['| Repository | Role | Under | Lean | Required by new repositories | Holds |',
             '| --- | --- | --- | --- | --- | --- |']
     for r in c.repos:
+        if r['role'] in ('paper', 'background'):
+            continue  # the papers are in the hubs' checklists
         req = words.get(r.get('require', ''), r.get('require', '-'))
         if r.get('note'):
             req += f'. {r["note"]}'
