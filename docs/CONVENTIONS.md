@@ -28,12 +28,12 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 | Hub | [lean4-phylo-gene-tree](https://github.com/vltanh/lean4-phylo-gene-tree) | `PhyloGeneTree` | what the papers on estimating a tree from sequences share; their catalog |
 | Hub | [lean4-phylo-species-tree](https://github.com/vltanh/lean4-phylo-species-tree) | `PhyloSpeciesTree` | what the papers on species tree estimation share; their catalog |
 | Hub | [lean4-phylo-network](https://github.com/vltanh/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share, those of its sub-hub included; their catalog |
-| Sub-hub of lean4-phylo-network | [lean4-tob](https://github.com/vltanh/lean4-tob) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
+| Sub-hub of lean4-phylo-network | [lean4-phylo-tree-of-blobs](https://github.com/vltanh/lean4-phylo-tree-of-blobs) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
 | Paper | `lean4-<id>` | `<Root>` (Section 3) | one paper of a hub's catalog, or several on one topic (Section 2) |
 
 A hub may have sub-hubs: hubs under it, each for a part of its field whose papers share more than
 the rest of the field does. Inferring the tree of blobs is a step of network estimation, so
-lean4-tob is a sub-hub of lean4-phylo-network. The registry,
+lean4-phylo-tree-of-blobs is a sub-hub of lean4-phylo-network. The registry,
 [`collection/repos.toml`](../collection/repos.toml), lists the root, the hubs, each with its
 `parent` (the root or the hub above it), and the repositories that need a note; each hub's
 `catalog/papers.toml` lists its papers. The hubs above a paper are its hub and every hub above that

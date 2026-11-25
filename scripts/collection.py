@@ -4,7 +4,7 @@ The collection is a tree of repositories. Its root, lean4-phylogenetics, holds t
 everything shares, the registry of the repositories (collection/repos.toml), the shared foundations
 (collection/foundations.toml), the conventions and the tools. Each hub holds a library of what its
 papers share, and a catalog of its papers (catalog/papers.toml). A hub's parent is the root or another
-hub, of which it is a sub-hub: lean4-tob is a sub-hub of lean4-phylo-network. The repositories sit
+hub, of which it is a sub-hub: lean4-phylo-tree-of-blobs is a sub-hub of lean4-phylo-network. The repositories sit
 side by side in one directory, the workspace.
 
 Imported by scripts/status.py and scripts/new_paper.py. Python 3.11 or later.

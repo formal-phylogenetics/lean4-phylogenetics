@@ -22,7 +22,7 @@ Phylogenetics = "3fcabfd7d191990dda268b0b3968d945b65eb59a"     # lean4-phylogene
 PhyloGeneTree = "45e6d3da4499b207b8ea5c5e5a3e8f682ad6e4fd"     # lean4-phylo-gene-tree 0.1.0
 PhyloSpeciesTree = "cf452409ed970ce8b219a2ca2bea3423d06a6030"  # lean4-phylo-species-tree 0.1.0
 PhyloNetwork = "4ed2bb0f7085acbf1326f43e2a5c582ba4566125"      # lean4-phylo-network 0.2.0
-TreeOfBlobs = "265ba443cb147a33ff2478cbc311a5597db1c1c7"       # lean4-tob 0.3.1
+TreeOfBlobs = "265ba443cb147a33ff2478cbc311a5597db1c1c7"       # lean4-phylo-tree-of-blobs 0.3.1
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it (a hub under a hub is a sub-hub)
@@ -69,14 +69,14 @@ url = "https://github.com/vltanh/lean4-phylo-network"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetic network estimation"
-summary = "What the papers on estimating networks share, those of its sub-hub lean4-tob included: hypothesis tests on quartet concordance factors (Mitchell et al. 2019), blobs, blocks and wedge paths of level-1 networks with the strict dominance of an induced cut-edge split, cut splits of induced networks, the chain of the network multispecies coalescent on a concrete network, and the sources several papers cite (Rhodes 2020, Huber et al. 2025). Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data"
+summary = "What the papers on estimating networks share, those of its sub-hub lean4-phylo-tree-of-blobs included: hypothesis tests on quartet concordance factors (Mitchell et al. 2019), blobs, blocks and wedge paths of level-1 networks with the strict dominance of an induced cut-edge split, cut splits of induced networks, the chain of the network multispecies coalescent on a concrete network, and the sources several papers cite (Rhodes 2020, Huber et al. 2025). Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data"
 
 [[repo]]
-name = "lean4-tob"
+name = "lean4-phylo-tree-of-blobs"
 role = "hub"
 parent = "lean4-phylo-network"
 package = "TreeOfBlobs"
-url = "https://github.com/vltanh/lean4-tob"
+url = "https://github.com/vltanh/lean4-phylo-tree-of-blobs"
 lean = "v4.37.0-rc1"
 require = "when-needed"
 title = "The tree of blobs"
