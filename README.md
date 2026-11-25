@@ -59,7 +59,7 @@ the tree at one commit, the train:
 | Mathlib | `v4.37.0-rc1` |
 | Phylogenetics | [`3fcabfd`](https://github.com/vltanh/lean4-phylogenetics/commit/3fcabfd7d191990dda268b0b3968d945b65eb59a) |
 | PhyloNetwork | [`4ed2bb0`](https://github.com/vltanh/lean4-phylo-network/commit/4ed2bb0f7085acbf1326f43e2a5c582ba4566125) |
-| TreeOfBlobs | [`31465cd`](https://github.com/vltanh/lean4-tob/commit/31465cd5dd0b4c173b8bcb49bb5f5dfeb8c99241) |
+| TreeOfBlobs | [`265ba44`](https://github.com/vltanh/lean4-tob/commit/265ba443cb147a33ff2478cbc311a5597db1c1c7) |
 
 <!-- END collection:train -->
 

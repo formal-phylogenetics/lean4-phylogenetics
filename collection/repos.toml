@@ -20,7 +20,7 @@ mathlib = "v4.37.0-rc1"
 [train.pins]
 Phylogenetics = "3fcabfd7d191990dda268b0b3968d945b65eb59a"     # lean4-phylogenetics 0.6.1
 PhyloNetwork = "4ed2bb0f7085acbf1326f43e2a5c582ba4566125"      # lean4-phylo-network 0.2.0
-TreeOfBlobs = "31465cd5dd0b4c173b8bcb49bb5f5dfeb8c99241"       # lean4-tob 0.3.0
+TreeOfBlobs = "265ba443cb147a33ff2478cbc311a5597db1c1c7"       # lean4-tob 0.3.1
 
 # role: root | hub | paper | background (a formalized paper outside every catalog) | tool
 # parent: the hub or root above it (a hub under a hub is a sub-hub)
