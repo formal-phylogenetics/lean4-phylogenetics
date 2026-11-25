@@ -102,7 +102,7 @@ package = "TreeOfBlobs"
 url = "https://github.com/vltanh/lean4-phylo-tree-of-blobs"
 lean = "v4.37.0-rc1"
 require = "when-needed"
-title = "The tree of blobs"
+title = "The tree of blobs of a phylogenetic network"
 summary = "What only the papers on inferring the tree of blobs share: the algorithms and standing assumptions of TINNiK, TOB-QMC and ECToBlob, networks given by tables, lowest common ancestors, the local objective of a multifurcation, counts of tree edges, and the analysis that only they use"
 
 [[repo]]
@@ -114,7 +114,7 @@ package = "PhyloCombinatorics"
 url = "https://github.com/vltanh/lean4-phylo-combinatorics"
 lean = "v4.37.0-rc1"
 require = "always"
-title = "Combinatorics of phylogenetic trees"
+title = "The combinatorics of phylogenetic trees"
 summary = "What the papers on the combinatorics of trees share and the root library does not hold: nothing yet. Its catalog has the papers on the characterization, comparison and reconstruction of trees, perfect phylogeny and the compatibility of characters, and the amalgamation of quartets, with the computational complexity of these problems"
 
 [[repo]]
@@ -138,7 +138,7 @@ package = "PhyloStatistics"
 url = "https://github.com/vltanh/lean4-phylo-statistics"
 lean = "v4.37.0-rc1"
 require = "always"
-title = "Statistical theory of phylogenetic inference"
+title = "The statistical theory of phylogenetic inference"
 summary = "What the papers on the statistical theory of phylogenetic inference share and the root library does not hold: nothing yet. Its catalog has the papers on fast convergence and sample complexity, consistency and model misspecification, gene-tree discordance and the limits of species-tree inference, the identifiability and consistency of indel models, and tests near singularities and boundaries"
 
 [[repo]]
