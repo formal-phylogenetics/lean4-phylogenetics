@@ -30,6 +30,7 @@ PhyloCombinatorics = "8a4fe61016489eaa2892826a2309d619df73d342" # lean4-phylo-co
 PhyloAlgebraic = "c730cde00d9ab76e54a641c20e53ec7bdb417a0b"    # lean4-phylo-algebraic 0.1.0
 PhyloStatistics = "d54794c6e5ce99fe96da232ec169dcaa2a5e34dd"   # lean4-phylo-statistics 0.1.0
 PhyloGeometry = "af37fc2c7f94f62f85788f981601424833a47485"     # lean4-phylo-geometry 0.1.0
+PhyloPlacement = "6728e38402c2051fd59b8d3f3f20ad9739a6c2d5"    # lean4-phylo-placement 0.1.0
 
 # role: root | hub | library (under a hub, with no catalog) | paper | background (a formalized paper
 #   outside every catalog) | tool
@@ -107,6 +108,18 @@ lean = "v4.37.0-rc1"
 require = "when-needed"
 title = "The tree of blobs"
 summary = "What only the papers of lean4-phylo-network on inferring the tree of blobs share: the algorithms and standing assumptions of TINNiK, TOB-QMC and ECToBlob, networks given by tables, lowest common ancestors, the local objective of a multifurcation, counts of tree edges, and the analysis that only they use"
+
+[[repo]]
+name = "lean4-phylo-placement"
+role = "hub"
+parent = "lean4-phylogenetics"
+kind = "inference"
+package = "PhyloPlacement"
+url = "https://github.com/formal-phylogenetics/lean4-phylo-placement"
+lean = "v4.37.0-rc1"
+require = "always"
+title = "Phylogenetic placement"
+summary = "What the papers on phylogenetic placement share and the root library does not hold: nothing yet. Its catalog has the papers on placing sequences on a reference tree by likelihood, distances, quartets and learned embeddings, alignment-free and genome-wide placement from k-mers, the incremental reconstruction of trees at pandemic scale, and phylogenetic metagenomics: taxonomic assignment and profiling, phylogenetic diversity, distances between communities, and phylogenetically structured statistics"
 
 [[repo]]
 name = "lean4-phylo-combinatorics"
