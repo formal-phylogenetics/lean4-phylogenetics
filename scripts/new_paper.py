@@ -91,6 +91,7 @@ def requirements(c: col.Collection, p: col.Paper) -> tuple[list[dict], list[str]
         hub = c.repo(name)
         what = ('The hub of this paper' if name == p.hub else
                 f'The hub {name}, above the hub of this paper' if name in above else
+                f'The library {name}, which this paper uses' if hub.get('role') == 'library' else
                 f'The hub {name}, whose library this paper uses')
         reqs.append(dict(name=hub['package'], url=hub['url'], rev=pins[hub['package']], local=c.path(name),
                          comment=f'{what}: {hub.get("title", "")}.'))

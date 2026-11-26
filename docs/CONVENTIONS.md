@@ -28,8 +28,8 @@ The collection is a tree. Each node holds a Lean library of what the repositorie
 | Hub of inference | [lean4-phylo-alignment](https://github.com/formal-phylogenetics/lean4-phylo-alignment) | `PhyloAlignment` | what the papers on sequence alignment, and on its joint estimation with trees, share; their catalog |
 | Hub of inference | [lean4-phylo-gene-tree](https://github.com/formal-phylogenetics/lean4-phylo-gene-tree) | `PhyloGeneTree` | what the papers on estimating a tree from sequences share; their catalog |
 | Hub of inference | [lean4-phylo-species-tree](https://github.com/formal-phylogenetics/lean4-phylo-species-tree) | `PhyloSpeciesTree` | what the papers on species tree estimation share; their catalog |
-| Hub of inference | [lean4-phylo-network](https://github.com/formal-phylogenetics/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share, those of its sub-hub included; their catalog |
-| Sub-hub of lean4-phylo-network | [lean4-phylo-tree-of-blobs](https://github.com/formal-phylogenetics/lean4-phylo-tree-of-blobs) | `TreeOfBlobs` | what only the papers on the tree of blobs share; their catalog; the overview of their field |
+| Hub of inference | [lean4-phylo-network](https://github.com/formal-phylogenetics/lean4-phylo-network) | `PhyloNetwork` | what the papers on network estimation share; their catalog |
+| Library under lean4-phylo-network | [lean4-phylo-tree-of-blobs](https://github.com/formal-phylogenetics/lean4-phylo-tree-of-blobs) | `TreeOfBlobs` | what only the papers on the tree of blobs, of lean4-phylo-network's family Tree of blobs, share; the overview of their field |
 | Hub of theory | [lean4-phylo-combinatorics](https://github.com/formal-phylogenetics/lean4-phylo-combinatorics) | `PhyloCombinatorics` | what the papers on the combinatorics of trees and networks, compatibility and complexity share; their catalog |
 | Hub of theory | [lean4-phylo-algebraic](https://github.com/formal-phylogenetics/lean4-phylo-algebraic) | `PhyloAlgebraic` | what the papers on invariants, identifiability and mixtures share; their catalog |
 | Hub of theory | [lean4-phylo-statistics](https://github.com/formal-phylogenetics/lean4-phylo-statistics) | `PhyloStatistics` | what the papers on consistency, sample complexity and the limits of inference share; their catalog |
@@ -46,28 +46,31 @@ estimator it is about, with the theory of that estimator (the sample complexity 
 ASTRAL); a general result that serves several methods (an identifiability theorem for a model, the
 sequence length that every method needs, the complexity of a problem on trees, the geodesics of tree
 space) is in the hub of theory of its kind. The registry gives each hub under the root its `kind`,
-`inference` or `theory`; a sub-hub is of its hub's kind. Each paper has one entry in all the
-catalogs, whichever hubs use its results.
+`inference` or `theory`; a sub-hub, or a library, is of its hub's kind. Each paper has one entry in
+all the catalogs, whichever hubs use its results.
 
-A hub may have sub-hubs: hubs under it, each for a part of its field whose papers share more than
-the rest of the field does. Inferring the tree of blobs is a step of network estimation, so
-lean4-phylo-tree-of-blobs is a sub-hub of lean4-phylo-network. The registry,
-[`collection/repos.toml`](../collection/repos.toml), lists the root, the hubs, each with its
-`parent` (the root or the hub above it), and the repositories that need a note; each hub's
-`catalog/papers.toml` lists its papers. The hubs above a paper are its hub and every hub above that
-one.
+A hub may have sub-hubs: hubs under it, each with its catalog, for a part of its field whose papers
+share more than the rest of the field does. A hub may also have libraries: repositories under it
+with a library and no catalog, for what only some of its papers share. Those papers stay in the
+hub's catalog, in their family, and name the library in `uses`. Inferring the tree of blobs is a
+step of network estimation, so its papers are the family Tree of blobs of lean4-phylo-network, and
+what only they share is the library `TreeOfBlobs` of lean4-phylo-tree-of-blobs. The registry,
+[`collection/repos.toml`](../collection/repos.toml), lists the root, the hubs and the libraries,
+each with its `parent` (the root or the hub above it), and the repositories that need a note; each
+hub's `catalog/papers.toml` lists its papers. The hubs above a paper are its hub and every hub above
+that one.
 
 What may require what:
 
 - A paper's repository requires, always, at the train's pins (Section 5), the root library and the
-  libraries of the hubs above it: a paper on the tree of blobs requires `Phylogenetics`,
-  `PhyloNetwork` and `TreeOfBlobs`. It also requires the libraries of the other hubs it uses
-  (`uses` in its catalog entry), and the repositories of the papers whose results its proofs use
-  (`builds_on`), in any hub.
-- A hub's library requires the root library and the libraries of the hubs above it, and may require
-  another hub's library or a paper's repository that is not below it. A library never requires a
-  repository below it: a hub cannot require its own papers or its sub-hubs, and nothing can
-  require the root's dependents.
+  libraries of the hubs above it. It also requires the libraries it uses, of other hubs or under
+  its hub (`uses` in its catalog entry): a paper on the tree of blobs requires `Phylogenetics`,
+  `PhyloNetwork` and `TreeOfBlobs`. It requires too the repositories of the papers whose results its
+  proofs use (`builds_on`), in any hub.
+- A hub's library, or a library under a hub, requires the root library and the libraries of the
+  hubs above it, and may require another hub's library or a paper's repository that is not below
+  it. A library never requires a repository below it: a hub cannot require its own papers, its
+  sub-hubs or its libraries, and nothing can require the root's dependents.
 - Requirements never form a cycle. `scripts/status.py check` checks the pins, that each repository
   requires the libraries of the hubs above it, and the module names.
 
@@ -192,10 +195,11 @@ its files with `git mv` and rename its modules by their exact names (the skill's
 
 A hub has its library under `<Package>/` (with a README that says what is there and why), its
 catalog `catalog/papers.toml`, its README (whose tables `scripts/status.py` generates from the
-catalog), and, for a field with formalized papers, an overview of the field in `docs/`. It holds no
-paper, so none of a paper's files: no Palomar submission, routes or audit of a paper. In its
-library, general mathematics is in `<Package>/ForMathlib/`, in Mathlib's namespaces, and imports
-only Mathlib, the libraries above and `ForMathlib/` itself; the results of a cited source are in
+catalog), and, for a field with formalized papers, an overview of the field in `docs/`. A library
+under a hub has the same but the catalog, and a README written by hand. Neither holds a paper, so
+none of a paper's files: no Palomar submission, routes or audit of a paper. In its library, general
+mathematics is in `<Package>/ForMathlib/`, in Mathlib's namespaces, and imports only Mathlib, the
+libraries above and `ForMathlib/` itself; the results of a cited source are in
 `<Package>/External/<Src>/`, in the namespace `External.<Src>`, each with a README; and the rest is
 in the namespace of the package (`PhyloNetwork.Level1`) or in the root's (`Phylogenetics`,
 `Phylogenetics.RootedNetwork`), which a declaration keeps when it moves up to the root, never in a
@@ -210,6 +214,7 @@ that uses it.**
 | --- | --- |
 | A result of this paper | this repository |
 | What two papers or more of one hub use, or papers of a hub and of its sub-hubs | the library of the lowest hub above all of them |
+| What only papers of one hub that require a library under it use | that library |
 | What papers of hubs that have no hub above them all use, or a definition or result that textbooks state | the root library, `Phylogenetics`, acknowledged to its source |
 | General mathematics | `<Root>/Basic/` (or the hub's `ForMathlib/`); later Mathlib, or `Phylogenetics/ForMathlib/` |
 | A result of a source outside the catalogs that the paper cites | `<Root>/External/<Src>/`, unless a repository of the collection formalizes it already: then require that repository and prove this statement from its theorem |
@@ -306,6 +311,8 @@ A repository's description on GitHub has one of these forms, with no count of an
 
 - a hub: `<its title> in Lean 4: a hub of <inference or theory>, with its shared library <Package>
   and its catalog of papers` (a sub-hub: `a sub-hub of <its hub>`);
+- a library under a hub: `<its title> in Lean 4: a library under <its hub>, <Package>, for what only
+  some of its papers share`;
 - a paper: `Lean 4 formalization of <the authors in full> (<year>), "<the paper's title>"`, with `,
   in progress,` after `formalization` while it is.
 

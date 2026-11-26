@@ -3,7 +3,9 @@
 # The root, lean4-phylogenetics, holds the library that every repository shares. Each hub holds the
 # library of what its papers share, and the catalog of its papers (catalog/papers.toml in the hub).
 # A hub's parent is the root or the hub above it, of which it is a sub-hub; a repository requires the
-# libraries of the root and of every hub above it.
+# libraries of the root and of every hub above it. A library is a repository under a hub with a
+# library and no catalog: what some papers of that hub share and the rest do not; those papers name
+# it in `uses`, and require it.
 # A paper's repository is listed in its hub's catalog; it is listed here too only when it needs a
 # note (it is off the train, or has generic module roots). A definition or result goes to the lowest
 # node above every repository that uses it (docs/CONVENTIONS.md, Section 4).
@@ -29,11 +31,12 @@ PhyloAlgebraic = "c730cde00d9ab76e54a641c20e53ec7bdb417a0b"    # lean4-phylo-alg
 PhyloStatistics = "d54794c6e5ce99fe96da232ec169dcaa2a5e34dd"   # lean4-phylo-statistics 0.1.0
 PhyloGeometry = "af37fc2c7f94f62f85788f981601424833a47485"     # lean4-phylo-geometry 0.1.0
 
-# role: root | hub | paper | background (a formalized paper outside every catalog) | tool
-# parent: the hub or root above it (a hub under a hub is a sub-hub)
+# role: root | hub | library (under a hub, with no catalog) | paper | background (a formalized paper
+#   outside every catalog) | tool
+# parent: the hub or root above it (a hub under a hub is a sub-hub); a library's is a hub
 # kind: for a hub under the root, "inference" (the papers on estimating one object, with the theory
 #   of each estimator) or "theory" (the papers of one kind of general result); docs/CONVENTIONS.md,
-#   Section 1. A sub-hub is of its hub's kind
+#   Section 1. A sub-hub, or a library, is of its hub's kind
 # require: whether new repositories may require it: "always", "when-needed", or "no" (see `note`)
 
 [[repo]]
@@ -92,18 +95,18 @@ url = "https://github.com/formal-phylogenetics/lean4-phylo-network"
 lean = "v4.37.0-rc1"
 require = "always"
 title = "Phylogenetic network estimation"
-summary = "What the papers on estimating networks share, those of its sub-hub lean4-phylo-tree-of-blobs included: hypothesis tests on quartet concordance factors (Mitchell et al. 2019), blobs, blocks and wedge paths of level-1 networks with the strict dominance of an induced cut-edge split, cut splits of induced networks, the chain of the network multispecies coalescent on a concrete network, and the sources several papers cite (Rhodes 2020, Huber et al. 2025). Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, and sequence data"
+summary = "What the papers on estimating networks share, those on the tree of blobs included: hypothesis tests on quartet concordance factors (Mitchell et al. 2019), blobs, blocks and wedge paths of level-1 networks with the strict dominance of an induced cut-edge split, cut splits of induced networks, the chain of the network multispecies coalescent on a concrete network, and the sources several papers cite (Rhodes 2020, Huber et al. 2025). Its catalog has the papers on quartet- and quintet-based inference, semi-directed and rooted reconstruction, multiple trees, sequence data, and the tree of blobs"
 
 [[repo]]
 name = "lean4-phylo-tree-of-blobs"
-role = "hub"
+role = "library"
 parent = "lean4-phylo-network"
 package = "TreeOfBlobs"
 url = "https://github.com/formal-phylogenetics/lean4-phylo-tree-of-blobs"
 lean = "v4.37.0-rc1"
 require = "when-needed"
-title = "The tree of blobs of a phylogenetic network"
-summary = "What only the papers on inferring the tree of blobs share: the algorithms and standing assumptions of TINNiK, TOB-QMC and ECToBlob, networks given by tables, lowest common ancestors, the local objective of a multifurcation, counts of tree edges, and the analysis that only they use"
+title = "The tree of blobs"
+summary = "What only the papers of lean4-phylo-network on inferring the tree of blobs share: the algorithms and standing assumptions of TINNiK, TOB-QMC and ECToBlob, networks given by tables, lowest common ancestors, the local objective of a multifurcation, counts of tree edges, and the analysis that only they use"
 
 [[repo]]
 name = "lean4-phylo-combinatorics"

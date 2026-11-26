@@ -4,8 +4,10 @@ The collection is a tree of repositories. Its root, lean4-phylogenetics, holds t
 everything shares, the registry of the repositories (collection/repos.toml), the shared foundations
 (collection/foundations.toml), the conventions and the tools. Each hub holds a library of what its
 papers share, and a catalog of its papers (catalog/papers.toml). A hub's parent is the root or another
-hub, of which it is a sub-hub: lean4-phylo-tree-of-blobs is a sub-hub of lean4-phylo-network. The repositories are
-in one directory, the workspace: this one and the private repository at its top, the hubs in hubs/, the
+hub, of which it is a sub-hub. A library is a repository under a hub, with a library and no catalog:
+what some papers of that hub share and the rest do not, which they require through `uses`
+(lean4-phylo-tree-of-blobs, under lean4-phylo-network). The repositories are in one directory, the
+workspace: this one and the private repository at its top, the hubs and the libraries in hubs/, the
 repositories of papers in papers/<hub>/ (`repo_path`). The private files of each repository are kept at
 the same place in the private repository (docs/CONVENTIONS.md, Section 7).
 
@@ -29,7 +31,7 @@ GITHUB_OWNER = 'formal-phylogenetics'
 STATUSES = ('formalized', 'in-progress', 'partial', 'todo')
 KINDS = ('theory', 'theory+algorithm', 'method', 'evaluation', 'method+evaluation', 'theory+evaluation',
          'theory+method')
-ROLES = ('root', 'hub', 'paper', 'background', 'tool')
+ROLES = ('root', 'hub', 'library', 'paper', 'background', 'tool')
 HUB_KINDS = ('inference', 'theory')   # of a hub under the root (docs/CONVENTIONS.md, Section 1)
 # Generic module roots that older repositories use and that no new repository may use: Lean module
 # names are global, and the repositories of the collection import one another.
@@ -97,6 +99,11 @@ class Collection:
     def hubs(self) -> list[dict]:
         return [r for r in self.repos if r.get('role') == 'hub']
 
+    @property
+    def libraries(self) -> list[dict]:
+        """The repositories of role `library`: a library under a hub, with no catalog."""
+        return [r for r in self.repos if r.get('role') == 'library']
+
     def paper(self, pid: str) -> Paper:
         try:
             return self.by_id[pid]
@@ -134,13 +141,13 @@ class Collection:
         return r is None or r.get('lean', self.lean_version()) == self.lean_version()
 
     def library_repos(self) -> list[dict]:
-        """The root and the hubs: the nodes of the tree that hold a library, in the order of the
-        tree (each hub after the hub above it)."""
+        """The root, the hubs and the libraries: the nodes of the tree that hold a library, in the
+        order of the tree (each hub, and each library, after the hub above it)."""
         out: list[dict] = []
 
         def visit(parent: str) -> None:
             for r in self.repos:
-                if r.get('role') == 'hub' and r.get('parent') == parent and r not in out:
+                if r.get('role') in ('hub', 'library') and r.get('parent') == parent and r not in out:
                     out.append(r)
                     visit(r['name'])
 
@@ -148,7 +155,7 @@ class Collection:
             if r.get('role') == 'root':
                 out.append(r)
                 visit(r['name'])
-        return out + [r for r in self.repos if r.get('role') in ('root', 'hub') and r not in out]
+        return out + [r for r in self.repos if r.get('role') in ('root', 'hub', 'library') and r not in out]
 
     def hubs_above(self, name: str) -> list[dict]:
         """The hubs above a hub or a paper's hub, from the top of the tree down to `name` itself if it
@@ -175,7 +182,7 @@ class Collection:
             where = f"repository {r.get('name')!r}"
             if r.get('role') not in ROLES:
                 errors.append(f"{where}: role {r.get('role')!r} is not one of {ROLES}")
-            if r.get('role') in ('hub', 'paper', 'background') and r.get('parent') not in names:
+            if r.get('role') in ('hub', 'library', 'paper', 'background') and r.get('parent') not in names:
                 errors.append(f"{where}: its parent {r.get('parent')!r} is not in the registry")
             if r.get('role') == 'hub':
                 above = self.repo(r.get('parent', ''))
@@ -194,11 +201,18 @@ class Collection:
                     errors.append(f"{where}: a hub under the root has a `kind`, one of {HUB_KINDS}")
                 if not under_root and 'kind' in r:
                     errors.append(f"{where}: a sub-hub is of its hub's kind and states none")
-            if r.get('role') in ('root', 'hub') and r.get('package') not in self.train.get('pins', {}):
+            if r.get('role') == 'library':
+                above = self.repo(r.get('parent', ''))
+                if above is not None and above.get('role') != 'hub':
+                    errors.append(f"{where}: the parent of a library is a hub, not {above['name']}")
+                if 'kind' in r:
+                    errors.append(f"{where}: a library is of its hub's kind and states none")
+            if r.get('role') in ('root', 'hub', 'library') and r.get('package') not in self.train.get('pins', {}):
                 errors.append(f"{where}: [train.pins] has no commit of its library {r.get('package')!r}")
         if len(set(names)) != len(names):
             errors.append('the registry lists a repository twice')
         hubs = {h['name'] for h in self.hubs}
+        usable = hubs | {r['name'] for r in self.libraries}
         # The roots of the repositories, by owner: each package of the registry, and each paper's.
         # Papers that share a repository share its root.
         packages = {r['package']: r['name'] for r in self.repos if r.get('package')}
@@ -243,8 +257,8 @@ class Collection:
             if p.status == 'partial' and not p.covered_by:
                 errors.append(f'{where}: a partial paper says what covers it (covered_by)')
             for h in p.uses:
-                if h not in hubs:
-                    errors.append(f'{where}: uses {h!r}, which is not a hub')
+                if h not in usable:
+                    errors.append(f'{where}: uses {h!r}, which is not a hub or a library')
             for dep in p.builds_on:
                 if dep not in self.by_id:
                     errors.append(f'{where}: builds_on names an unknown paper {dep!r}')
@@ -305,9 +319,9 @@ def paper_folder(hub: str) -> str:
 
 
 def repo_home(name: str, role: str = '', hub: str = '') -> Path:
-    """Where the repository `name` belongs in the workspace: a hub in hubs/, a paper's repository in
-    papers/<the folder of its hub>/, the root and the others at the top."""
-    if role == 'hub':
+    """Where the repository `name` belongs in the workspace: a hub or a library in hubs/, a paper's
+    repository in papers/<the folder of its hub>/, the root and the others at the top."""
+    if role in ('hub', 'library'):
         return WORKSPACE / 'hubs' / name
     if role in ('paper', 'background'):
         return WORKSPACE / 'papers' / paper_folder(hub) / name

@@ -207,7 +207,7 @@ def check(c: col.Collection) -> int:
         scanned[name] = info
         listed = c.repo(name)
         new = bool(entries) and (listed is None or listed.get('role') not in ('paper', 'background'))
-        complain = errors.append if (new or (listed and listed.get('role') in ('root', 'hub'))) else warnings.append
+        complain = errors.append if (new or (listed and listed.get('role') in ('root', 'hub', 'library'))) else warnings.append
         # Each entry's status is its own. A paper of a shared repository has joined it when its
         # directories exist; one that has not is still to do.
         root = entries[0].root if entries else ''
@@ -401,6 +401,8 @@ def block_tree(c: col.Collection) -> str:
     for r in c.library_repos():
         if r['role'] == 'root':
             node = 'root'
+        elif r['role'] == 'library':
+            node = f'library under {r.get("parent", "")}: {r.get("title", "")}'
         elif c.depth(r) == 0:
             node = f'hub of {c.kind(r)}: {r.get("title", "")}'
         else:
@@ -506,9 +508,10 @@ def next_papers(c: col.Collection) -> int:
 
 
 def fetch_hubs() -> None:
-    """Clone, shallowly, every hub of the registry that is not in the workspace."""
-    for hub in col.load(private=False).hubs:
-        path = col.repo_path(hub['name'], 'hub')
+    """Clone, shallowly, every hub and library of the registry that is not in the workspace."""
+    c = col.load(private=False)
+    for hub in c.hubs + c.libraries:
+        path = col.repo_path(hub['name'], hub['role'])
         if not path.exists():
             path.parent.mkdir(parents=True, exist_ok=True)
             subprocess.run(['git', 'clone', '--quiet', '--depth', '1', hub['url'], str(path)], check=True)

@@ -2,11 +2,11 @@
 
 How a paper of a hub's catalog becomes a finished formalization, and how the collection is kept
 together. The rules are in [CONVENTIONS.md](CONVENTIONS.md). The repositories are in one directory,
-the workspace: this one and the private repository at its top, the hubs in `hubs/`, and the
-repositories of papers in `papers/`, one folder per hub (`papers/network/`, `papers/tree-of-blobs/`,
-…, and `papers/background/` for those under no hub). The private files of each repository are at
-the same place in the private repository (CONVENTIONS, Section 7). The commands run from this
-repository.
+the workspace: this one and the private repository at its top, the hubs and the libraries under
+them in `hubs/`, and the repositories of papers in `papers/`, one folder per hub (`papers/network/`,
+`papers/species-tree/`, …, and `papers/background/` for those under no hub). The private files of
+each repository are at the same place in the private repository (CONVENTIONS, Section 7). The
+commands run from this repository.
 
 ## Contents
 
@@ -46,8 +46,8 @@ no repository loses nothing: its entry keeps its place, its `builds_on` and its 
 
 It creates `../lean4-<id>` (or the entry's `repo`) in the layout of CONVENTIONS, Section 3, and its
 private files (Section 7). It requires the root library, the libraries of the hubs above the paper
-(its hub, and the hubs above a sub-hub), the hubs it `uses`, and the formalized papers it builds
-on, each at its pin, and lists in the manifest
+(its hub, and the hubs above a sub-hub), the hubs and libraries it `uses`, and the formalized papers
+it builds on, each at its pin, and lists in the manifest
 everything they require in turn. It hard-links the compiled dependencies from local checkouts
 (Mathlib from the hub's), builds, checks that the dependencies are up to date, makes the first
 commit, and marks the paper `in-progress` in its hub's catalog. Nothing is downloaded, pushed or
@@ -138,8 +138,9 @@ When a second repository needs a definition or a result that lives lower in the 
 To a new Lean and Mathlib release, or to new commits of the libraries:
 
 1. This repository: move its toolchain and Mathlib, build, audit, commit.
-2. Each hub, in the order of their requirements, a hub before its sub-hubs: move Mathlib and the
-   pins (`lake update Phylogenetics`, and the other libraries it requires), build, audit, commit.
+2. Each hub and library, in the order of their requirements, a hub before its sub-hubs and its
+   libraries: move Mathlib and the pins (`lake update Phylogenetics`, and the other libraries it
+   requires), build, audit, commit.
 3. Edit `[train]` in `collection/repos.toml`.
 4. Each formalized paper's repository, upstream first (`builds_on` order): the same as a hub, then
    its Comparator; and the `commit` of its entry in its hub's catalog.
@@ -176,4 +177,6 @@ same way.
   unused in every hub, and a root unused by the other repositories; for a shared repository, its
   `repo`, its root and a `paper`), then `python3 scripts/status.py readme --write`. To add a hub: add it to the registry
   with its `parent` (the root, or the hub it is a sub-hub of) and its library's pin, give it a
-  library that requires the libraries above it, a catalog and a README with the generated blocks.
+  library that requires the libraries above it, a catalog and a README with the generated blocks. A
+  library under a hub (role `library`) is added the same way, with no catalog; the papers that
+  require it name it in `uses`.
